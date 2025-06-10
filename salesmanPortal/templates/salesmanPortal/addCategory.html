@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Category</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .form-container {
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+        
+        .form-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            background: white;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .form-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .form-body {
+            padding: 0 2rem 2rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .form-control {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h1 class="form-title"><i class="bi bi-tags-fill me-2"></i>Add New Category</h1>
+                <p class="form-subtitle">Organize your content with meaningful categories</p>
+            </div>
+            
+            <form action="" method="POST" class="form-body">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="name" class="form-label">Category Name</label>
+                    <div class="input-icon">
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" placeholder="Enter category name" required>
+                        <i class="bi bi-card-heading"></i>
+                    </div>
+                    <small class="text-muted">Give your category a clear, descriptive name</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Add a brief description (optional)"></textarea>
+                    <small class="text-muted">This helps others understand what this category contains</small>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-submit btn-lg rounded-pill">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Create Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

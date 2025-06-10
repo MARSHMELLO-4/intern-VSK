@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .logout-container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logout-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 16px;
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logout-container">
+    <h2>Confirm Logout</h2>
+
+    <form id="logoutForm" method="post" action="{% url 'logoutUser' %}">
+        {% csrf_token %}
+        
+        <label>
+            <input type="checkbox" id="confirmLogout">
+            Are you sure you want to logout?
+        </label>
+        <br>
+        
+        <button type="submit" id="logoutBtn" disabled>Logout</button>
+    </form>
+</div>
+
+<script>
+    const checkbox = document.getElementById('confirmLogout');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    checkbox.addEventListener('change', function () {
+        logoutBtn.disabled = !this.checked;
+    });
+</script>
+
+</body>
+</html>

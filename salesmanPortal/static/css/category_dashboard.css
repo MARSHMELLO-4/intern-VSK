@@ -1,0 +1,108 @@
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-bg: #f8f9fa;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-category {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            position: relative;
+        }
+        
+        .card-category:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(67, 97, 238, 0.15);
+        }
+        
+        .card-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: var(--accent-color);
+            transition: height 0.3s ease;
+        }
+        
+        .card-category:hover::before {
+            height: 100%;
+        }
+        
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 10px 24px;
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .empty-state-icon {
+            font-size: 5rem;
+            color: #dee2e6;
+        }
+        
+        .category-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff6b6b;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .manage-badge {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+        
+        .card-category:hover .manage-badge {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }

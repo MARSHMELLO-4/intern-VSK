@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Admin Logout</title>
+</head>
+<body>
+    <form action="" method="POST" class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    {% csrf_token %}
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 1rem;">
+        <div class="card-body text-center">
+            <h2 class="card-title mb-3 text-danger">Confirm Logout</h2>
+            <p class="card-text mb-4">Are you sure you want to log out?</p>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-danger btn-lg">Logout</button>
+                <a href="{% url 'viewCategory' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>    
+</body>
+</html>
