@@ -18,4 +18,5 @@ urlpatterns = [
     path('viewCategory/', views.viewCategory, name='viewCategory'),
     path('addCategory/', views.addCategory, name='addCategory'),
     path('logoutAdmin/', views.logOutAdmin, name='logoutAdmin'),
+    path('viewSalesman/<str:email>/', views.viewSalesman, name='viewSalesman'),
 ]

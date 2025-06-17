@@ -1,0 +1,176 @@
+/* Main Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Messages */
+.message-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    z-index: 1000;
+}
+
+/* Auth Layout */
+.auth-container {
+    display: flex;
+    flex-grow: 1;
+}
+
+/* Brand Panel */
+.brand-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.brand-content {
+    max-width: 500px;
+    text-align: center;
+}
+
+.brand-logo {
+    max-width: 200px;
+    margin-bottom: 2rem;
+}
+
+.brand-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.brand-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Form Panel */
+.form-panel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #333;
+}
+
+/* Form Elements */
+.auth-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #4b6cb7;
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4b6cb7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #3a5a9c;
+}
+
+/* Form Footer */
+.form-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.switch-text {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.switch-link {
+    color: #4b6cb7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.switch-link:hover {
+    text-decoration: underline;
+}
+
+.admin-link {
+    display: block;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.admin-link:hover {
+    color: #4b6cb7;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+    }
+    
+    .brand-panel {
+        padding: 1.5rem;
+    }
+    
+    .brand-title {
+        font-size: 2rem;
+    }
+    
+    .form-panel {
+        padding: 1.5rem;
+    }
+}

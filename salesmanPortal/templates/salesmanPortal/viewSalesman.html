@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesman Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { /* Added for color variables to be available */
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #343a40;
+            --light-text: #6c757d;
+        }
+
+        body { padding: 20px; background-color: var(--light-bg); color: var(--text-color); }
+        .container { max-width: 800px; background-color: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1 { color: var(--primary-color); margin-bottom: 25px; }
+        .card { border: none; box-shadow: none; }
+        .card-header { background-color: var(--light-bg); font-weight: bold; } /* Adjusted color */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .detail-row:last-of-type { /* Use last-of-type for robustness */
+            border-bottom: none;
+        }
+        .detail-row strong {
+            color: var(--secondary-color);
+        }
+        .leads-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .lead-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .lead-item strong {
+            color: var(--primary-color);
+        }
+        .lead-status {
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 500;
+        }
+        .status-new { background-color: #0d6efd; } /* Bootstrap primary */
+        .status-contacted { background-color: #6f42c1; } /* Bootstrap purple */
+        .status-qualified { background-color: #20c997; } /* Bootstrap teal */
+        .status-lost { background-color: #dc3545; } /* Bootstrap danger */
+        .status-won { background-color: #198754; } /* Bootstrap success */
+        .status-default { background-color: #6c757d; } /* Bootstrap secondary */
+
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        {% if selected_salesman %}
+            <h1 class="text-center">Salesman Profile</h1>
+            <p>Details are :- </p>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ selected_salesman.first_name }} {{ selected_salesman.last_name }}</h5>
+
+                    <div class="detail-row">
+                        <span><strong>Username:</strong></span>
+                        <span>{{ selected_salesman.username }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span><strong>Email:</strong></span>
+                        <span>{{ selected_salesman.email }}</span>
+                    </div>
+                    {% if selected_salesman.phone %}
+                    <div class="detail-row">
+                        <span><strong>Phone:</strong></span>
+                        <span>{{ selected_salesman.phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if selected_salesman.address %}
+                    <div class="detail-row">
+                        <span><strong>Address:</strong></span>
+                        <span>{{ selected_salesman.address }}</span>
+                    </div>
+                    {% endif %}
+                    {% if selected_salesman.region %}
+                    <div class="detail-row">
+                        <span><strong>Region:</strong></span>
+                        <span>{{ selected_salesman.region }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="detail-row">
+                        <span><strong>Date Joined:</strong></span>
+                        <span>{{ selected_salesman.date_joined|date:"F d, Y P" }}</span>
+                    </div>
+                    {% if selected_salesman.last_login %}
+                    <div class="detail-row">
+                        <span><strong>Last Login:</strong></span>
+                        <span>{{ selected_salesman.last_login|date:"F d, Y P" }}</span>
+                    </div>
+                    {% else %}
+                    <div class="detail-row">
+                        <span><strong>Last Login:</strong></span>
+                        <span>Never logged in</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="detail-row">
+                        <span><strong>Assigned Leads Count:</strong></span>
+                        <span>{{ assigned_leads_count }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="leads-section">
+                <h4>Assigned Leads</h4>
+                {% if assigned_leads %}
+                    {% for lead in assigned_leads %}
+                        <div class="lead-item">
+                            <div>
+                                <strong>{{ lead.name }}</strong>
+                                <small class="text-muted d-block">{{ lead.description|truncatechars:70 }}</small>
+                            </div>
+                            {% comment %} Dynamically add status class based on lead.status {% endcomment %}
+                            <span class="lead-status status-{{ lead.status|lower|cut:' ' }}">
+                                {{ lead.status }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        No leads currently assigned to this salesman.
+                    </div>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'viewCategory' %}" class="btn btn-secondary mt-4">Back to Salesmen List</a>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                Salesman details could not be loaded.
+            </div>
+            <a href="{% url 'viewCategory' %}" class="btn btn-secondary mt-4">Back to Salesmen List</a>
+        {% endif %}
+    </div>
+</body>
+</html>

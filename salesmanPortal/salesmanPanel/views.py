@@ -5,48 +5,53 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
-from .models import Lead, category  # Ensure Lead and category models are imported
+from .models import Lead, category ,CustomUser # Ensure Lead and category models are imported
 import pandas as pd
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
 import json
+from .forms import CustomUserCreationForm
 def loginSalesman(request):
     page = 'login'
-    if(request.method == 'POST'):
-        username = request.POST.get('username')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email')
         password = request.POST.get('password')
+
         try: 
-            user = User.objects.get(username=username)  # Get the user by username
-        except User.DoesNotExist:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
             messages.error(request, "User does not exist")
-        user = authenticate(request,username=username,password=password) # this will authenticate the user
+            return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
+
+        # Authenticate using email instead of username
+        user = authenticate(request, username=user.username, password=password)
+        
         if user is not None:
-            login(request,user) # this will log in the user and add in the session database
-            return redirect('salesmanDashboard')  # Redirect to home page after login
+            login(request, user)
+            return redirect('salesmanDashboard')
         else:
-            messages.error(request, "Username or password does not exist")
-    context = {
-        'page': page,
-    }   
-    return render(request, 'salesmanPortal/loginSalesmen.html',context)
+            messages.error(request, "Incorrect password")
+
+    return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
+
+from .forms import CustomUserCreationForm
 
 def registerUser(request):
-    form = UserCreationForm()
-    context = {'form': form}
-    if(request.method == 'POST'):
-        form = UserCreationForm(request.POST)
-        if(form.is_valid()):
-            user = form.save(commit=False)
-            user.save()  # Save the new user
-            username = form.cleaned_data.get('username')  # Get the username from the form
-            password = form.cleaned_data.get('password1')  # Get the password from the form
-            user = authenticate(username=username, password=password)  # Authenticate the user
-            login(request, user)  # Log in the user
-            return redirect('salesmanDashboard')  # Redirect to home page after registration
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Registration successful!')
+            return redirect('loginSalesman')  # Redirect to login page after successful registration
         else:
-            messages.error(request, "An error occurred during registration")
-    return render(request, 'salesmanPortal/loginSalesmen.html',context)
+            # Print form errors to console for debugging
+            print(form.errors)
+            messages.error(request, 'Registration failed. Please correct the errors below.')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'salesmanPortal/salesmanRegister.html', {'form': form}) # Render the registration template with the form
 
 def salesmanDashboard(request):
     if not request.user.is_authenticated:
@@ -63,6 +68,12 @@ def loginAdmin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        try:
+            user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Admin user does not exist")
+            return render(request, 'salesmanPortal/loginAdmin.html')
+
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_superuser:
             login(request, user)
@@ -73,44 +84,62 @@ def loginAdmin(request):
 
 from django.db.models import F
 
-def adminDashboard(request,category_id=None):
+def adminDashboard(request, category_id=None):
     if not request.user.is_authenticated or not request.user.is_superuser:
         return redirect('loginAdmin')
 
-    # Only leads that were actually updated after creation
+    # Get leads that were actually updated after creation
     leads = Lead.objects.exclude(updated_at=F('created_at')).order_by('-updated_at')
+    
+    # Apply category filter if specified
     if category_id:
         leads = leads.filter(category_id=category_id)
     else:
         leads = leads.filter(category__isnull=False)
-    total_leads = leads.count()  # Count only the filtered leads
-    total_salesmen = User.objects.filter(is_staff=False).count()
-    users = User.objects.all()
-    if category_id:
-        new_leads = Lead.objects.filter(status='New', category_id=category_id).count()  # Count 'New' leads for selected category
-    else:
-        new_leads = Lead.objects.filter(status='New').count()  # Count all 'New' leads
-    contacted_leads = Lead.objects.filter(status='Contacted',category_id=category_id).count()  # Count leads with status 'Contacted'
-    in_discussion_leads = Lead.objects.filter(status='In Discussion',category_id=category_id).count()  # Count leads with status 'In Discussion'
-    not_interested_leads = Lead.objects.filter(status='Not Interested',category_id=category_id).count()  # Count leads with status 'Not Interested'
-    converted_leads = Lead.objects.filter(status='Converted',category_id=category_id).count()  # Count leads with status 'Converted'
-    #fetch the name of the category
+    
+    # Count statistics
+    total_leads = leads.count()
+    
+    # Get non-staff users (salesmen) using CustomUser
+    total_salesmen = CustomUser.objects.filter(is_staff=False).count()
+    
+    # Get all users (using CustomUser)
+    users = CustomUser.objects.all()
+    
+    # Status counts - optimized to use the same base queryset when possible
+    status_filters = {
+        'new_leads': 'New',
+        'contacted_leads': 'Contacted',
+        'in_discussion_leads': 'In Discussion',
+        'not_interested_leads': 'Not Interested',
+        'converted_leads': 'Converted'
+    }
+    
+    status_counts = {}
+    for key, status in status_filters.items():
+        if category_id:
+            status_counts[key] = Lead.objects.filter(
+                status=status,
+                category_id=category_id
+            ).count()
+        else:
+            status_counts[key] = Lead.objects.filter(status=status).count()
+    
+    # Get the selected category if specified
     selected_category = None
     if category_id:
         selected_category = category.objects.filter(id=category_id).first()
+    
     context = {
         'total_leads': total_leads,
         'total_salesmen': total_salesmen,
         'leads': leads,
         'users': users,
-        'new_leads': new_leads,
-        'contacted_leads': contacted_leads,
-        'in_discussion_leads': in_discussion_leads,
-        'not_interested_leads': not_interested_leads,
-        'converted_leads': converted_leads,
         'selected_category': selected_category,
-        'category_id': category_id,  # Pass the category ID to the template
+        'category_id': category_id,
+        **status_counts  # Unpack all status counts into the context
     }
+    
     return render(request, 'salesmanPortal/adminDashboard.html', context)
 
 
@@ -168,24 +197,60 @@ def uploadLeads(request,category_id=None):
 
 
 
-@csrf_exempt  # OR use @require_POST with CSRF token if you prefer security
+@csrf_exempt  # Consider using @require_POST with proper CSRF protection in production
 def assign_lead_ajax(request):
     if request.method == "POST":
         try:
+            # Parse JSON data
             data = json.loads(request.body)
             lead_id = data.get("lead_id")
             user_id = data.get("user_id")
 
-            lead = Lead.objects.get(id=lead_id)
-            user = User.objects.get(id=user_id)
+            if not lead_id or not user_id:
+                return JsonResponse({
+                    "success": False,
+                    "error": "Missing lead_id or user_id"
+                }, status=400)
 
+            # Get objects with error handling
+            try:
+                lead = Lead.objects.get(id=lead_id)
+                user = CustomUser.objects.get(id=user_id)  # Changed to CustomUser
+            except Lead.DoesNotExist:
+                return JsonResponse({
+                    "success": False,
+                    "error": "Lead not found"
+                }, status=404)
+            except CustomUser.DoesNotExist:  # Changed to CustomUser
+                return JsonResponse({
+                    "success": False,
+                    "error": "User not found"
+                }, status=404)
+
+            # Update lead assignment
             lead.assigned_to = user
             lead.save()
 
-            return JsonResponse({"success": True})
+            return JsonResponse({
+                "success": True,
+                "message": f"Lead successfully assigned to {user.username}"
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "success": False,
+                "error": "Invalid JSON data"
+            }, status=400)
         except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)})
-    return JsonResponse({"success": False, "error": "Invalid method"})
+            return JsonResponse({
+                "success": False,
+                "error": str(e)
+            }, status=500)
+    
+    return JsonResponse({
+        "success": False,
+        "error": "Only POST method is allowed"
+    }, status=405)
 
 def editLead(request, lead_id):
     if not request.user.is_authenticated:
@@ -255,8 +320,12 @@ def deleteLead(request, lead_id):
 def viewCategory(request):
     if not request.user.is_authenticated:
         return redirect('loginSalesman')  # Redirect to login if user is not authenticated
-    categories = category.objects.all() # Get distinct categories from leads
-    context = {'categories': categories}  # Pass the categories to the template
+
+    categories = category.objects.all()
+    # Exclude users where is_superuser is True
+    salesman = CustomUser.objects.filter(is_superuser=False) # Filter out superusers
+    context = {'categories': categories,
+               'salesman' : salesman}  # Pass the categories to the template
     return render(request, 'salesmanPortal/viewCategory.html', context)  # Render the view category template
 
 def addCategory(request):
@@ -291,3 +360,24 @@ def logOutAdmin(request):
         return response
 
     return render(request, 'salesmanPortal/confirm_logout_admin.html')  # Render the logout confirmation template for admin
+
+def viewSalesman(request, email):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return redirect('loginAdmin')  # Redirect to login if user is not authenticated or not an admin
+
+    try:
+        salesman = CustomUser.objects.get(email=email, is_superuser=False)  # Get the salesman by email
+    except CustomUser.DoesNotExist:
+        messages.error(request, "Salesman does not exist")
+        return redirect('viewCategory')  # Redirect if salesman not found
+
+    # Get the leads assigned to this salesman
+    assigned_leads = Lead.objects.filter(assigned_to=salesman)
+    assigned_leads_count = assigned_leads.count()
+
+    context = {
+        'selected_salesman': salesman,
+        'assigned_leads_count': assigned_leads_count,
+        'assigned_leads': assigned_leads,  # Pass the leads to the template
+    }
+    return render(request, 'salesmanPortal/viewSalesman.html', context)  # Render the view salesman template

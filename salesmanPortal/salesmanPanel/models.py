@@ -4,7 +4,7 @@ from django.db import models
 
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.conf import settings 
 class Lead(models.Model):
     STATUS_CHOICES = [
         ('New', 'New'),
@@ -32,7 +32,7 @@ class Lead(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='New')
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Warm')
     notes = models.TextField(blank=True)
-    assigned_to = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, blank=True)
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     category = models.ForeignKey('category', on_delete=models.SET_NULL, null=True, blank=True)
@@ -64,3 +64,16 @@ class category(models.Model):
 
 #     def __str__(self):
 #         return self.user.username
+
+# models.py in your app
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=15)
+    address = models.TextField(blank=True)
+    region = models.CharField(max_length=100)
+    # You can also add more fields like role (e.g., salesman, manager)
+
+    def __str__(self):
+        return self.username
