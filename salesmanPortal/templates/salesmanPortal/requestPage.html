@@ -1,0 +1,200 @@
+{% load static %}  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/request_page.css' %}"> {# Load Bootstrap CSS #}
+</head>
+<body>
+
+{% block content %}
+<div class="content-wrapper"> {# A wrapper for main content, possibly adds padding #}
+    <div class="container py-5"> {# Bootstrap-like container for centering content, py-5 for padding #}
+        <div class="card shadow-sm border-0 rounded-lg"> {# Mimics card style from KripaluInnovations #}
+            <div class="card-body p-4 p-md-5"> {# Padding inside the card #}
+                <div class="section-header mb-4 text-center">
+                    <h2 class="section-title text-primary fw-bold mb-3">Pending User Approvals</h2>
+                    <p class="text-muted lead-text">Review and manage new user registrations awaiting your approval.</p>
+                </div>
+
+                {% if messages %}
+                    <div class="messages-container mb-4">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if pending_users %}
+                <div class="table-responsive">
+                    <table class="table users-table table-hover table-borderless align-middle"> {# Bootstrap-like table classes #}
+                        <thead class="bg-light"> {# Light background for header #}
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Region</th>
+                                <th scope="col">Joined Date</th>
+                                <th scope="col" class="text-center">Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in pending_users %}
+                            {# IMPORTANT: Use data-email-row and pass user.email here #}
+                            <tr data-email-row="{{ user.email }}">
+                                <td data-label="Username">{{ user.username }}</td>
+                                <td data-label="Email">{{ user.email }}</td>
+                                <td data-label="Full Name">{{ user.first_name }} {{ user.last_name }}</td>
+                                <td data-label="Phone">{{ user.phone }}</td> {# CustomUser field #}
+                                <td data-label="Region">{{ user.region }}</td> {# CustomUser field #}
+                                <td data-label="Joined Date">{{ user.date_joined|date:"M d, Y" }}</td>
+                                <td data-label="Approve" class="text-center">
+                                    {# IMPORTANT: Use data-email-id and pass user.email here #}
+                                    <input type="checkbox" class="form-check-input approve-checkbox" data-email-id="{{ user.email }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <button id="approveSelectedBtn" class="btn btn-primary d-none">
+                        <i class="bi bi-check-circle-fill me-2"></i> Click check to approve
+                    </button>
+                </div>
+                {% else %}
+                <div class="no-pending-users text-center p-5">
+                    <i class="bi bi-person-check-fill display-4 text-muted mb-3"></i>
+                    <p class="lead text-muted">No pending user accounts requiring approval at the moment.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('.approve-checkbox');
+    const approveSelectedBtn = document.getElementById('approveSelectedBtn');
+
+    function updateApproveButtonVisibility() {
+        const checkedCount = document.querySelectorAll('.approve-checkbox:checked').length;
+        if (checkedCount > 0) {
+            approveSelectedBtn.classList.remove('d-none');
+        } else {
+            approveSelectedBtn.classList.add('d-none');
+        }
+    }
+
+    // Initial check for button visibility on page load
+    updateApproveButtonVisibility();
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            updateApproveButtonVisibility(); // Update visibility whenever a checkbox changes
+
+            // Optional: Auto-approve on single click (as per your original logic)
+            // If you want a "batch approve" button, remove this block and rely solely on the button.
+            const email = this.getAttribute('data-email-id');
+            if (this.checked) {
+                sendApprovalRequest([email], this); // Pass the checkbox itself to handle UI feedback
+            }
+        });
+    });
+
+    approveSelectedBtn.addEventListener('click', function() {
+        const selectedEmails = [];
+        document.querySelectorAll('.approve-checkbox:checked').forEach(checkbox => {
+            selectedEmails.push(checkbox.getAttribute('data-email-id'));
+        });
+
+        if (selectedEmails.length > 0) {
+            // Optional: Add a confirmation dialog for batch approval
+            if (confirm(`Are you sure you want to approve ${selectedEmails.length} user(s)?`)) {
+                sendApprovalRequest(selectedEmails, null); // Null for checkbox as it's batch
+            } else {
+                // If user cancels, uncheck all selected boxes
+                document.querySelectorAll('.approve-checkbox:checked').forEach(cb => cb.checked = false);
+                updateApproveButtonVisibility();
+            }
+        } else {
+            alert('No users selected for approval.');
+        }
+    });
+
+    function sendApprovalRequest(emails, singleCheckbox = null) {
+        // Disable the checkbox/button to prevent double-clicks
+        if (singleCheckbox) singleCheckbox.disabled = true;
+        approveSelectedBtn.disabled = true;
+        
+        fetch('/approve-users/', { // Changed URL to handle plural 'users' for batch
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ emails: emails }) // Send an array of emails
+        })
+        .then(response => {
+            if (!response.ok) { // Check for HTTP errors (e.g., 403, 500)
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove approved rows from the UI
+                emails.forEach(email => {
+                    const row = document.querySelector(`tr[data-email-row="${email}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+                });
+                // Check if any pending users remain, if not, show the 'no pending users' message
+                if (document.querySelectorAll('.approve-checkbox').length === 0) {
+                    const pendingUsersSection = document.querySelector('.pending-users-section');
+                    if (pendingUsersSection) {
+                        pendingUsersSection.innerHTML = `
+                            <div class="section-header mb-4 text-center">
+                                <h2 class="section-title text-primary fw-bold mb-3">Pending User Approvals</h2>
+                                <p class="text-muted lead-text">Review and manage new user registrations awaiting your approval.</p>
+                            </div>
+                            <div class="no-pending-users text-center p-5">
+                                <i class="bi bi-person-check-fill display-4 text-muted mb-3"></i>
+                                <p class="lead text-muted">No pending user accounts requiring approval at the moment.</p>
+                            </div>
+                        `;
+                    }
+                }
+                updateApproveButtonVisibility(); // Re-evaluate button visibility
+                // Optional: Show a success message to the user
+                // alert('User(s) approved successfully!'); // Use Django messages instead for better UX
+            } else {
+                alert('Error approving user(s): ' + (data.error || 'An unknown error occurred.'));
+                if (singleCheckbox) singleCheckbox.checked = false; // Revert checkbox state
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Network error or server unreachable. Please try again. Check console for details.');
+            if (singleCheckbox) singleCheckbox.checked = false; // Revert checkbox state
+        })
+        .finally(() => { // Re-enable checkbox/button regardless of success/failure
+            if (singleCheckbox) singleCheckbox.disabled = false;
+            approveSelectedBtn.disabled = false;
+        });
+    }
+});
+</script>
+{% endblock %}
+</body>
+</html>

@@ -1,4 +1,5 @@
-from django.shortcuts import render,redirect
+from venv import logger
+from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -12,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
 import json
 from .forms import CustomUserCreationForm
+from django.views.decorators.http import require_POST
+from django.db import transaction
+
 def loginSalesman(request):
     page = 'login'
     
@@ -23,6 +27,11 @@ def loginSalesman(request):
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
             messages.error(request, "User does not exist")
+            return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
+
+        # Check if user is approved before authenticating
+        if not getattr(user, 'is_approved', False):
+            messages.error(request, "Your account is not approved yet. Please contact the administrator.")
             return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
 
         # Authenticate using email instead of username
@@ -42,27 +51,39 @@ def registerUser(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            messages.success(request, 'Registration successful!')
-            return redirect('loginSalesman')  # Redirect to login page after successful registration
+            user = form.save(commit=False)
+            user.is_approved = False  # Mark user as not approved
+            user.save()
+            messages.success(request, 'Registration successful! Please wait for admin approval before logging in.')
+            return redirect('loginSalesman')  # Redirect to login page after registration
         else:
-            # Print form errors to console for debugging
             print(form.errors)
             messages.error(request, 'Registration failed. Please correct the errors below.')
     else:
         form = CustomUserCreationForm()
-    return render(request, 'salesmanPortal/salesmanRegister.html', {'form': form}) # Render the registration template with the form
+    return render(request, 'salesmanPortal/salesmanRegister.html', {'form': form})  # Render the registration template with the form
 
 def salesmanDashboard(request):
     if not request.user.is_authenticated:
         return redirect('loginSalesman')  # Redirect to login if user is not authenticated
-    lead = Lead.objects.filter(assigned_to=request.user)  # Get leads assigned to the logged-in user
-    total_leads = lead.count()  # Count the total number of leads assigned to the user
+
+    # Leads assigned to the logged-in user
+    assigned_leads = Lead.objects.filter(assigned_to=request.user)
+    total_leads = assigned_leads.count()
+
+    # Contacted leads assigned to the user
+    contacted_leads = assigned_leads.filter(status='Contacted').count()
+
+    # Leads that are assigned to the user but not contacted
+    not_contacted_leads = assigned_leads.exclude(status='Contacted').count()
+
     context = {
-        'leads': lead,  # Pass the leads to the template
-        'total_leads': total_leads,  # Pass the total leads count to the template
+        'leads': assigned_leads,
+        'total_leads': total_leads,
+        'contacted_leads': contacted_leads,
+        'not_contacted_leads': not_contacted_leads,
     }
-    return render(request, 'salesmanPortal/salesmanDashboard.html', context)  # Render the dashboard template
+    return render(request, 'salesmanPortal/salesmanDashboard.html', context)
 
 def loginAdmin(request):
     if request.method == 'POST':
@@ -85,66 +106,50 @@ def loginAdmin(request):
 from django.db.models import F
 
 def adminDashboard(request, category_id=None):
-    if not request.user.is_authenticated or not request.user.is_superuser:
-        return redirect('loginAdmin')
+    leads_queryset = Lead.objects.filter(category_id=category_id)  # Filter by category first
+    selected_category = category.objects.filter(id=category_id).first() if category_id else None
+    created_on_date_str = request.GET.get('created_on_date')
 
-    # Get leads that were actually updated after creation
-    leads = Lead.objects.exclude(updated_at=F('created_at')).order_by('-updated_at')
-    
-    # Apply category filter if specified
-    if category_id:
-        leads = leads.filter(category_id=category_id)
-    else:
-        leads = leads.filter(category__isnull=False)
-    
-    # Count statistics
+    # Apply single-day date filter if present
+    if created_on_date_str:
+        try:
+            selected_date = datetime.strptime(created_on_date_str, '%Y-%m-%d').date()
+            # Filter leads created specifically on this date (compare only the date part)
+            leads_queryset = leads_queryset.filter(created_at__date=selected_date)
+        except ValueError:
+            created_on_date_str = None  # Reset to not pre-fill if invalid
+
+    leads = leads_queryset.order_by('-updated_at')
+
     total_leads = leads.count()
-    
-    # Get non-staff users (salesmen) using CustomUser
-    total_salesmen = CustomUser.objects.filter(is_staff=False).count()
-    
-    # Get all users (using CustomUser)
-    users = CustomUser.objects.all()
-    
-    # Status counts - optimized to use the same base queryset when possible
-    status_filters = {
-        'new_leads': 'New',
-        'contacted_leads': 'Contacted',
-        'in_discussion_leads': 'In Discussion',
-        'not_interested_leads': 'Not Interested',
-        'converted_leads': 'Converted'
-    }
-    
-    status_counts = {}
-    for key, status in status_filters.items():
-        if category_id:
-            status_counts[key] = Lead.objects.filter(
-                status=status,
-                category_id=category_id
-            ).count()
-        else:
-            status_counts[key] = Lead.objects.filter(status=status).count()
-    
-    # Get the selected category if specified
-    selected_category = None
-    if category_id:
-        selected_category = category.objects.filter(id=category_id).first()
-    
+    new_leads = leads.filter(status='New').count()
+    contacted_leads = leads.filter(status='Contacted').count()
+    qualified_leads = leads.filter(status='Converted').count()  # Or 'Won' based on your model/logic
+
+    converted_leads = qualified_leads  # Using 'Qualified' as a proxy for converted, adjust as needed
+
+    salesmen = CustomUser.objects.filter(is_staff=False)  # Assuming non-staff are salesmen
+    total_salesmen = salesmen.count()
+
     context = {
+        'selected_category': selected_category,  # Pass the category name for the header
+        'category_id': category_id,
         'total_leads': total_leads,
         'total_salesmen': total_salesmen,
+        'new_leads': new_leads,
+        'contacted_leads': contacted_leads,
+        'converted_leads': converted_leads,
         'leads': leads,
-        'users': users,
-        'selected_category': selected_category,
-        'category_id': category_id,
-        **status_counts  # Unpack all status counts into the context
+        'users': salesmen,  # Pass salesmen (non-staff users) for assignment dropdown
+        'current_created_on_date': created_on_date_str,  # Pass back to template for pre-filling
     }
-    
     return render(request, 'salesmanPortal/adminDashboard.html', context)
 
 
 import pandas as pd
 from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import localdate
 from .models import Lead  # Ensure Lead model is imported
 
 def uploadLeads(request,category_id=None):
@@ -381,3 +386,94 @@ def viewSalesman(request, email):
         'assigned_leads': assigned_leads,  # Pass the leads to the template
     }
     return render(request, 'salesmanPortal/viewSalesman.html', context)  # Render the view salesman template
+
+def contactUs(request):
+    return render(request, 'salesmanPortal/terms_contact.html')  # Render the contact us template
+
+def requestPage(request):
+    #get all the custom users with the is_approved field set to False
+    if not request.user.is_authenticated:
+        return redirect('loginSalesman')  # Redirect to login if user is not authenticated
+    pending_users = CustomUser.objects.filter(is_superuser = False,is_approved=False)
+    context = {
+        'pending_users': pending_users,  # Pass the pending users to the template
+    }
+    return render(request, 'salesmanPortal/requestPage.html',context) 
+
+def is_admin(user):
+    return user.is_staff 
+ # Render the request page template # type: ignore # Keep your access control
+@csrf_exempt
+def approve_users_view(request): # Handles batch approval
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            emails_to_approve = data.get('emails') # Expecting an array of emails
+
+            if not emails_to_approve or not isinstance(emails_to_approve, list):
+                logger.warning("Invalid or empty list of emails provided for approval.")
+                return JsonResponse({'success': False, 'error': 'Invalid or empty list of emails provided.'}, status=400)
+
+            approved_count = 0
+            errors = []
+
+            with transaction.atomic(): # Ensure all or none are approved for data integrity
+                for email in emails_to_approve:
+                    try:
+                        # Find the user by email and ensure they are NOT already approved
+                        user = CustomUser.objects.get(email=email, is_approved=False)
+                        user.is_approved = True
+                        # If you also use is_active for login control, set it here:
+                        user.is_active = True # IMPORTANT: Set is_active to True so they can log in
+                        user.save()
+                        approved_count += 1
+                    except CustomUser.DoesNotExist:
+                        errors.append(f"User with email '{email}' not found or already approved.")
+                        logger.info(f"User with email '{email}' not found or already approved for approval request.")
+                    except Exception as e:
+                        errors.append(f"Error approving user '{email}': {str(e)}")
+                        logger.error(f"Error approving user {email}: {e}")
+            
+            if approved_count > 0:
+                messages.success(request, f"{approved_count} user(s) approved successfully.")
+            if errors:
+                # Use messages for errors too, which will show on page reload/next request
+                messages.error(request, "Some users could not be approved: " + "; ".join(errors))
+                # For AJAX, you might also want to send back detailed errors in the JSON response
+                # return JsonResponse({'success': False, 'approved_count': approved_count, 'errors': errors}, status=200)
+
+            return JsonResponse({'success': True, 'approved_count': approved_count, 'errors': errors})
+
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON in approve_users_view request body.")
+            return JsonResponse({'success': False, 'error': 'Invalid JSON in request body.'}, status=400)
+        except Exception as e:
+            logger.exception("Unexpected error in approve_users_view:") # Logs full traceback
+            return JsonResponse({'success': False, 'error': 'Server error during approval process. Please check logs.'}, status=500)
+    
+    # If it's not a POST request to this endpoint
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+def todayLeads(request):
+    if not request.user.is_authenticated:
+        return redirect('loginSalesman')  # Redirect to login if user is not authenticated
+    today = localdate()  # Get the current date (timezone-aware)
+    # Filter leads where updated_at's date matches today
+    today_leads = Lead.objects.filter(updated_at__date=today)
+    context = {
+        'today_leads': today_leads,  # Pass the leads updated today to the template
+    }
+    return render(request, 'salesmanPortal/todayLeads.html', context)  # Render the today leads template
+
+def deleteSalesman(request, email):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return redirect('loginAdmin')  # Redirect to login if user is not authenticated or not an admin
+
+    try:
+        salesman = CustomUser.objects.get(email=email, is_superuser=False)  # Get the salesman by email
+        salesman.delete()  # Delete the salesman
+        messages.success(request, f"Salesman with email '{email}' deleted successfully")
+    except CustomUser.DoesNotExist:
+        messages.error(request, "Salesman does not exist")
+    
+    return redirect('viewCategory')  # Redirect to view categories after deletion

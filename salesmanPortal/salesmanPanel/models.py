@@ -73,6 +73,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=15)
     address = models.TextField(blank=True)
     region = models.CharField(max_length=100)
+    is_approved = models.BooleanField(default=False)
     # You can also add more fields like role (e.g., salesman, manager)
 
     def __str__(self):

@@ -1,0 +1,307 @@
+/* --- Base Styling (ensure these are defined in your main CSS) --- */
+:root {
+    /* These colors should ideally match your kripaluinnovations.com actual site colors */
+    --ki-primary-blue: #0A2E5B; /* A common dark blue used on their site for strong accents and text */
+    --ki-secondary-gold: #FFD700; /* A nice, vibrant golden yellow for accents */
+    --ki-orange-accent: #FF8C00; /* Orange for calls to action - can be used as an alternative or complementary to gold */
+    --ki-text-dark: #333;
+    --ki-text-medium: #6c757d;
+    --ki-background-light: #f8f9fa; /* Lighter gray for background, emphasizing white content */
+    --ki-card-background: #ffffff; /* Pure white for cards */
+    --ki-border-color: #e9ecef; /* Light, subtle border */
+    --ki-shadow: rgba(0, 0, 0, 0.05); /* Even softer shadow for a clean white look */
+
+    /* Generic theme colors for Bootstrap classes if not already mapped */
+    --theme-primary: var(--ki-primary-blue);
+    --theme-secondary: var(--ki-secondary-gold); /* Using gold as secondary theme color */
+    --theme-success: #28a745;
+    --theme-danger: #dc3545;
+    --theme-info: #17a2b8;
+    --theme-light: var(--ki-background-light);
+    --theme-dark: var(--ki-text-dark); /* Using KI dark text as dark theme color */
+
+    /* New/Adjusted Golden specific variables for softer touches */
+    --golden-fade-light: rgba(255, 215, 0, 0.08); /* Very subtle gold for backgrounds */
+    --golden-border-light: rgba(255, 215, 0, 0.3); /* Lighter gold for borders */
+    --golden-hover-glow: rgba(255, 215, 0, 0.15); /* A subtle golden glow on hover */
+}
+
+body {
+    font-family: 'Inter', sans-serif, 'Arial', sans-serif;
+    background-color: var(--ki-background-light); /* Keeps the light background */
+    color: var(--ki-text-dark);
+    line-height: 1.6;
+}
+
+.content-wrapper {
+    min-height: calc(100vh - (header_height + footer_height));
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* --- Card Styling (for the main content area) --- */
+.card {
+    background-color: var(--ki-card-background); /* White background */
+    border-radius: 12px;
+    box-shadow: 0 0.25rem 0.75rem var(--ki-shadow); /* Softer, slightly diffused shadow */
+    overflow: hidden;
+    border: 1px solid var(--ki-border-color); /* Add a very light border for definition */
+}
+
+.card-body {
+    padding: 2.5rem;
+}
+
+/* --- Section Header --- */
+.section-header {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ki-primary-blue); /* Strong, professional blue for main titles */
+}
+
+.lead-text {
+    font-size: 1.15rem;
+    color: var(--ki-text-medium);
+}
+
+/* --- Leads Grid (for displaying individual lead cards) --- */
+.leads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.lead-card {
+    background-color: var(--ki-card-background); /* White background */
+    border: 1px solid var(--ki-border-color); /* Light border */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px var(--ki-shadow); /* Softer shadow */
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lead-card:hover {
+    transform: translateY(-3px); /* Slightly less lift for subtlety */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), 0 0 15px var(--golden-hover-glow); /* More pronounced on hover with golden glow */
+    border-color: var(--golden-border-light); /* **Golden border on hover** */
+}
+
+.lead-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--ki-border-color); /* Subtle dashed line */
+}
+
+.lead-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ki-primary-blue);
+    margin-bottom: 0;
+}
+
+.lead-status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* Generic status styling for a softer look, emphasizing gold */
+    background-color: var(--golden-fade-light); /* Default to light golden tint */
+    color: var(--ki-secondary-gold); /* Default to gold text */
+    border: 1px solid var(--golden-border-light); /* Subtle golden border */
+}
+
+/* Status specific colors - maintain distinct visual cues with softer tones */
+.status-new {
+    background-color: var(--golden-fade-light); /* Emphasize golden for 'new' */
+    color: var(--ki-secondary-gold);
+    border-color: var(--golden-border-light);
+}
+.status-contacted {
+    background-color: rgba(0, 123, 255, 0.08); /* Softer blue */
+    color: var(--theme-info);
+    border-color: rgba(0, 123, 255, 0.2);
+}
+.status-qualified {
+    background-color: rgba(40, 167, 69, 0.08); /* Softer green */
+    color: var(--theme-success);
+    border-color: rgba(40, 167, 69, 0.2);
+}
+.status-unqualified, .status-lost {
+    background-color: rgba(220, 53, 69, 0.08); /* Softer red */
+    color: var(--theme-danger);
+    border-color: rgba(220, 53, 69, 0.2);
+}
+.status-pending {
+    background-color: rgba(255, 140, 0, 0.08); /* Softer orange */
+    color: var(--ki-orange-accent);
+    border-color: rgba(255, 140, 0, 0.2);
+}
+
+.lead-status .bi {
+    font-size: 0.7em;
+}
+
+.lead-body {
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.lead-detail {
+    font-size: 0.95rem;
+    color: var(--ki-text-dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.lead-detail .bi {
+    margin-right: 10px;
+    color: var(--ki-secondary-gold); /* **Make icons golden** */
+    font-size: 1.1em;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.lead-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px dashed var(--ki-border-color);
+}
+
+.lead-actions .btn {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.lead-actions .btn-primary {
+    background-color: var(--ki-primary-blue); /* Keep primary action blue for strong contrast */
+    border-color: var(--ki-primary-blue);
+    color: #fff;
+}
+
+.lead-actions .btn-primary:hover {
+    background-color: #08244a; /* Darker blue on hover */
+    border-color: #08244a;
+}
+
+.lead-actions .btn-outline-primary {
+    border-color: var(--ki-primary-blue);
+    color: var(--ki-primary-blue);
+}
+
+.lead-actions .btn-outline-primary:hover {
+    background-color: var(--ki-primary-blue);
+    color: #fff;
+}
+
+/* Introducing a dedicated golden button style for actions that should truly stand out */
+.btn-golden {
+    background-color: var(--ki-secondary-gold);
+    border-color: var(--ki-secondary-gold);
+    color: var(--ki-primary-blue); /* Dark blue text on gold for strong contrast */
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(255, 215, 0, 0.2); /* Subtle golden shadow */
+}
+
+.btn-golden:hover {
+    background-color: #e6c200; /* Slightly darker gold on hover */
+    border-color: #e6c200;
+    color: var(--ki-primary-blue);
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* --- No Leads Message --- */
+.no-leads {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--golden-fade-light); /* **Golden tint background for empty state** */
+    border-radius: 8px;
+    border: 1px dashed var(--golden-border-light); /* **Golden dashed border** */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-leads .display-4 {
+    font-size: 3.5rem;
+    color: var(--ki-secondary-gold); /* **Golden icon for empty state** */
+}
+
+.no-leads p.lead {
+    font-size: 1.25rem;
+    color: var(--ki-text-dark);
+}
+
+/* --- Django Messages Styling --- */
+.messages-container {
+    padding: 0;
+}
+.alert {
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+/* Keep specific alert colors for functionality, they override the theme */
+.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+.alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* --- Responsive adjustments for smaller screens --- */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+    .leads-grid {
+        grid-template-columns: 1fr;
+    }
+    .lead-card {
+        padding: 15px;
+    }
+    .lead-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .lead-name {
+        margin-bottom: 5px;
+    }
+    .lead-status {
+        width: fit-content;
+    }
+    .lead-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .lead-actions .btn {
+        width: 100%;
+    }
+}

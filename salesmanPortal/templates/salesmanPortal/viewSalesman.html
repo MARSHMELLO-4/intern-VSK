@@ -3,78 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesman Profile</title>
+    <title>Salesman Profile | Kripalu Innovations</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> {# Added Bootstrap Icons #}
+    <link rel="preconnect" href="https://fonts.googleapis.com"> {# Google Fonts Preconnect #}
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> {# Google Fonts Preconnect #}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"> {# Inter Font #}
     <style>
-        :root { /* Added for color variables to be available */
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --light-bg: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #343a40;
-            --light-text: #6c757d;
+        /* --- Kripalu Innovations White & Golden Theme Variables --- */
+        :root {
+            --ki-primary-blue: #0A2E5B; /* The strong, professional blue from KI */
+            --ki-secondary-gold: #FFD700; /* A rich, vibrant gold for accents */
+            --ki-orange-accent: #FF8C00; /* A complementary orange for calls to action, if needed */
+
+            --primary: var(--ki-primary-blue); 
+            --primary-light: #1A477A;
+            --primary-dark: #08244A;
+            
+            --secondary: var(--ki-secondary-gold);
+            --accent: #FFC107;
+
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            
+            --light-bg: #f8f9fa; /* Very light grey for main background */
+            --card-bg: #ffffff; /* Pure white for all cards and panels */
+            --text-dark: #212529; /* Darker text for readability */
+            --text-muted: #6c757d; /* Standard muted text color */
+            --border-color: #e9ecef; /* Light, subtle border color */
+            
+            --border-radius: 12px;
+            --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05); /* Softer, more elegant shadow */
+            --card-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.08), 0 0 15px rgba(255, 215, 0, 0.15); /* Adds a golden glow on hover */
+            --transition-speed: 0.3s;
+
+            /* Specific golden tints */
+            --golden-fade-light: rgba(255, 215, 0, 0.08); /* Very subtle gold tint */
+            --golden-border-light: rgba(255, 215, 0, 0.3); /* Lighter golden border */
         }
 
-        body { padding: 20px; background-color: var(--light-bg); color: var(--text-color); }
-        .container { max-width: 800px; background-color: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        h1 { color: var(--primary-color); margin-bottom: 25px; }
-        .card { border: none; box-shadow: none; }
-        .card-header { background-color: var(--light-bg); font-weight: bold; } /* Adjusted color */
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 20px; 
+            background-color: var(--light-bg); 
+            color: var(--text-dark); 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align content to the top */
+        }
+        .container { 
+            max-width: 800px; 
+            background-color: var(--card-bg); 
+            padding: 30px; 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--card-shadow); 
+            margin-top: 50px; /* Add some space from the top */
+        }
+        h1 { 
+            color: var(--ki-primary-blue); 
+            margin-bottom: 25px; 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        h1 i {
+            color: var(--ki-secondary-gold);
+        }
+        .card { 
+            border: 1px solid var(--border-color); /* Add a subtle border */
+            box-shadow: none; /* Already handled by container */
+            border-radius: var(--border-radius);
+            overflow: hidden; /* For rounded corners */
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .card-title {
+            color: var(--ki-primary-blue) !important; /* Important to override bootstrap .text-primary */
+            font-weight: 600;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title i {
+            color: var(--ki-secondary-gold);
+            font-size: 1.5em;
+        }
+
         .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #eee;
+            padding: 12px 0; /* More padding */
+            border-bottom: 1px dashed var(--border-color); /* Lighter dashed line */
+            font-size: 1rem;
         }
-        .detail-row:last-of-type { /* Use last-of-type for robustness */
+        .detail-row:last-of-type { 
             border-bottom: none;
         }
         .detail-row strong {
-            color: var(--secondary-color);
+            color: var(--text-dark); /* Label text in dark */
+            font-weight: 500;
         }
-        .leads-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
+        .detail-row span:last-child { /* The value itself */
+            color: var(--text-dark);
+            font-weight: 400;
         }
-        .lead-item {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px 15px;
-            margin-bottom: 10px;
+        .detail-row span.text-success { /* For 'Active' status */
+            font-weight: 600;
+        }
+
+        /* Delete Button Styling */
+        .btn-delete-salesman {
+            background-color: var(--danger); /* Standard red for delete */
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-delete-salesman:hover {
+            background-color: #c82333; /* Darker red on hover */
+            transform: translateY(-2px);
+            color: white; /* Ensure text remains white on hover */
+        }
+
+        .actions-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 25px;
+            gap: 15px; /* Space between buttons */
         }
+        .actions-row .btn-secondary {
+            background-color: #6c757d; /* Bootstrap secondary for consistency */
+            border-color: #6c757d;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .actions-row .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .leads-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .leads-section h4 {
+            color: var(--ki-primary-blue);
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .leads-section h4 i {
+            color: var(--ki-secondary-gold);
+        }
+
+        .lead-item {
+            background-color: var(--light-bg); /* Light background for lead items */
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius); /* Rounded corners */
+            padding: 15px 20px; /* More padding */
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease; /* Smooth hover effect */
+        }
+        .lead-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-color: var(--golden-border-light); /* Subtle golden border on hover */
+        }
+
         .lead-item strong {
-            color: var(--primary-color);
+            color: var(--ki-primary-blue); /* Lead name in KI blue */
+            font-size: 1.1em;
+        }
+        .lead-item small.text-muted {
+            font-size: 0.85em;
         }
         .lead-status {
-            font-size: 0.9em;
-            padding: 4px 8px;
-            border-radius: 15px;
+            font-size: 0.8em; /* Slightly smaller for badges */
+            padding: 6px 12px; /* More padding */
+            border-radius: 20px; /* More rounded */
             color: white;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase; /* Uppercase status */
+            letter-spacing: 0.5px;
         }
-        .status-new { background-color: #0d6efd; } /* Bootstrap primary */
-        .status-contacted { background-color: #6f42c1; } /* Bootstrap purple */
-        .status-qualified { background-color: #20c997; } /* Bootstrap teal */
-        .status-lost { background-color: #dc3545; } /* Bootstrap danger */
-        .status-won { background-color: #198754; } /* Bootstrap success */
-        .status-default { background-color: #6c757d; } /* Bootstrap secondary */
+        /* Status colors - aligned with Bootstrap colors but can be customized */
+        .status-new { background-color: var(--primary-color); } 
+        .status-contacted { background-color: #6c757d; } /* Grey */
+        .status-qualified { background-color: var(--success); }
+        .status-lost { background-color: var(--danger); }
+        .status-won { background-color: #198754; } /* A green, could be --success */
+        .status-default { background-color: #6c757d; } 
 
+        .alert-danger, .alert-info {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-info i {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         {% if selected_salesman %}
-            <h1 class="text-center">Salesman Profile</h1>
-            <p>Details are :- </p>
+            <h1 class="text-center"><i class="bi bi-person-badge"></i> Salesman Profile</h1>
+            
+            <div class="actions-row">
+                <a href="{% url 'viewCategory' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Salesmen
+                </a>
+                <a href="#" class="btn btn-delete-salesman" id="deleteSalesmanBtn" 
+                   data-salesman-email="{{ selected_salesman.email }}">
+                    <i class="bi bi-trash"></i> Delete Salesman
+                </a>
+            </div>
+
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">{{ selected_salesman.first_name }} {{ selected_salesman.last_name }}</h5>
+                    <h5 class="card-title"><i class="bi bi-person-circle"></i> {{ selected_salesman.first_name }} {{ selected_salesman.last_name }}</h5>
 
                     <div class="detail-row">
                         <span><strong>Username:</strong></span>
@@ -126,7 +302,7 @@
             </div>
 
             <div class="leads-section">
-                <h4>Assigned Leads</h4>
+                <h4><i class="bi bi-person-lines-fill"></i> Assigned Leads</h4>
                 {% if assigned_leads %}
                     {% for lead in assigned_leads %}
                         <div class="lead-item">
@@ -134,7 +310,7 @@
                                 <strong>{{ lead.name }}</strong>
                                 <small class="text-muted d-block">{{ lead.description|truncatechars:70 }}</small>
                             </div>
-                            {% comment %} Dynamically add status class based on lead.status {% endcomment %}
+                            {# Dynamically add status class based on lead.status #}
                             <span class="lead-status status-{{ lead.status|lower|cut:' ' }}">
                                 {{ lead.status }}
                             </span>
@@ -142,18 +318,42 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-info" role="alert">
-                        No leads currently assigned to this salesman.
+                        <i class="bi bi-info-circle-fill"></i> No leads currently assigned to this salesman.
                     </div>
                 {% endif %}
             </div>
 
-            <a href="{% url 'viewCategory' %}" class="btn btn-secondary mt-4">Back to Salesmen List</a>
         {% else %}
             <div class="alert alert-danger" role="alert">
-                Salesman details could not be loaded.
+                <i class="bi bi-exclamation-triangle-fill"></i> Salesman details could not be loaded.
             </div>
-            <a href="{% url 'viewCategory' %}" class="btn btn-secondary mt-4">Back to Salesmen List</a>
+            <div class="text-center mt-4"> {# Center the back button #}
+                <a href="{% url 'viewCategory' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Salesmen List
+                </a>
+            </div>
         {% endif %}
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButton = document.getElementById('deleteSalesmanBtn');
+
+            if (deleteButton) {
+                deleteButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent the default link behavior
+                    
+                    const salesmanEmail = this.dataset.salesmanEmail; // Get email from data attribute
+                    const confirmDelete = confirm(`Are you sure you want to delete the salesman with email: ${salesmanEmail}? This action cannot be undone.`);
+
+                    if (confirmDelete) {
+                        // If confirmed, redirect to the delete URL
+                        window.location.href = `{% url 'deleteSalesman' 'PLACEHOLDER_EMAIL' %}`.replace('PLACEHOLDER_EMAIL', salesmanEmail);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

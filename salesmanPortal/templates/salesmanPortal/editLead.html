@@ -3,50 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Lead</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Edit Lead | Kripalu Innovations</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --success-color: #4cc9f0;
-            --warning-color: #f8961e;
-            --danger-color: #f72585;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --primary-color: #D4AF37; /* Classic gold color */
+            --primary-hover: #B7950B; /* Darker gold for hover */
+            --primary-light: #FFE8A1; /* Light gold for accents */
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --white: #ffffff;
+            --gray-light: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
         }
         
         body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-color);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .portal-header {
+            padding: 1rem 0;
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
             align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .brand-logo img {
+            height: 60px;
+        }
+
+        /* Main Content */
+        .portal-main {
+            flex: 1;
+            padding: 3rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-color);
         }
         
-        .edit-lead-container {
-            max-width: 800px;
+        .edit-lead-wrapper {
+            max-width: 900px;
             width: 100%;
             margin: 0 auto;
-            padding: 2rem;
         }
         
         .edit-lead-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
-            padding: 0;
+            border: 1px solid var(--gray-light);
         }
         
         .form-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 1.5rem 2rem;
-            margin-bottom: 1.5rem;
+            background: var(--white);
+            color: var(--dark-color);
+            padding: 1.75rem 2rem;
+            border-bottom: 1px solid var(--gray-light);
+            position: relative;
         }
         
         .form-title {
@@ -55,10 +100,61 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-size: 1.8rem;
+            color: var(--primary-color); /* Gold title */
         }
         
         .form-title i {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .lead-info-summary {
+            background: var(--white);
+            padding: 1.5rem 2rem 0;
+            margin-bottom: 0;
+        }
+        
+        .lead-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            border: 1px solid var(--gray-light);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--secondary-color);
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            margin: 0;
+            word-break: break-word;
+        }
+        
+        .info-value.email, .info-value.phone {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .info-value.email:hover, .info-value.phone:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
         }
         
         .lead-form {
@@ -80,27 +176,30 @@
             display: block;
             font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #495057;
+            color: var(--dark-color);
+            font-size: 0.95rem;
         }
         
-        .form-input, .form-select, .form-textarea {
+        .form-control, .form-select, .form-textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
             font-size: 0.95rem;
             transition: all 0.3s ease;
+            background-color: var(--white);
+            color: var(--dark-color);
         }
         
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .form-control:focus, .form-select:focus, .form-textarea:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
             outline: none;
         }
         
         .form-select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234361ee' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23D4AF37' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 16px 12px;
@@ -111,172 +210,350 @@
             resize: vertical;
         }
         
+        .input-group-text {
+            background-color: var(--light-color);
+            border-color: var(--gray-light);
+            color: var(--secondary-color);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        }
+        
         .form-actions {
             display: flex;
             justify-content: flex-end;
             margin-top: 2rem;
+            gap: 1rem;
         }
         
-        .submit-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: var(--white);
             border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
+            padding: 0.85rem 2.2rem;
+            border-radius: var(--border-radius);
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.15);
         }
         
-        .submit-btn:hover {
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
         }
         
-        .priority-badge {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-        
-        .priority-Hot {
-            background-color: rgba(247, 37, 133, 0.1);
-            color: var(--danger-color);
-        }
-        
-        .priority-Warm {
-            background-color: rgba(248, 150, 30, 0.1);
-            color: var(--warning-color);
-        }
-        
-        .priority-Cold {
-            background-color: rgba(76, 201, 240, 0.1);
-            color: var(--success-color);
-        }
-        
-        .lead-info-summary {
-            background: rgba(67, 97, 238, 0.05);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .lead-info-row {
-            display: flex;
-            margin-bottom: 0.5rem;
-        }
-        
-        .lead-info-label {
+        .btn-cancel {
+            background: var(--white);
+            color: var(--secondary-color);
+            border: 1px solid var(--gray-light);
+            padding: 0.85rem 1.8rem;
+            border-radius: var(--border-radius);
             font-weight: 500;
-            color: #6c757d;
-            min-width: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
         }
         
-        .lead-info-value {
-            color: #212529;
+        .btn-cancel:hover {
+            background: var(--light-color);
+            border-color: var(--secondary-color);
+            color: var(--dark-color);
         }
         
+        /* Priority tags */
+        .priority-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        
+        .priority-high {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+        
+        .priority-medium {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+        
+        .priority-low {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-new { background-color: var(--info-color); }
+        .status-contacted { background-color: var(--warning); }
+        .status-discussion { background-color: #8b5cf6; }
+        .status-not-interested { background-color: var(--danger); }
+        .status-converted { background-color: var(--success); }
+
+        /* Footer Styles */
+        .portal-footer {
+            padding: 1.5rem 0;
+            background-color: var(--white);
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-content p {
+            margin-bottom: 0;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Responsive Styles */
         @media (max-width: 768px) {
-            .edit-lead-container {
-                padding: 1rem;
-            }
-            
-            .lead-form {
-                padding: 0 1rem 1rem;
+            .portal-main {
+                padding: 2rem 0;
             }
             
             .form-header {
-                padding: 1rem;
+                padding: 1.5rem;
             }
             
-            .form-grid {
+            .form-title {
+                font-size: 1.4rem;
+            }
+            .form-title i {
+                font-size: 1.4rem;
+            }
+            
+            .lead-info-summary {
+                padding: 1.5rem 1.5rem 0;
+            }
+            
+            .lead-info-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .lead-form {
+                padding: 0 1.5rem 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 0.75rem;
+            }
+            
+            .btn-submit, .btn-cancel {
+                width: 100%;
+                justify-content: center;
+                padding: 0.75rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-header {
+                padding: 1rem;
+            }
+            .form-title {
+                font-size: 1.2rem;
+            }
+            .form-title i {
+                font-size: 1.2rem;
+            }
+            .lead-info-summary, .lead-form {
+                padding: 1rem 1rem 1rem;
+            }
+            .info-item {
+                padding: 0.8rem;
+            }
+            .info-label {
+                font-size: 0.7rem;
+            }
+            .info-value {
+                font-size: 0.9rem;
+            }
+            .form-control, .form-select, .form-textarea {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .btn-submit, .btn-cancel {
+                padding: 0.6rem 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="edit-lead-container">
-        <div class="edit-lead-card">
-            <div class="form-header">
-                <h2 class="form-title">
-                    <i class="bi bi-pencil-square"></i> Edit Lead
-                </h2>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="portal-header">
+            <div class="container d-flex justify-content-start align-items-center">
+                <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
+                    {% load static %}
+                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo">
+                </a>
             </div>
-            
-            <div class="lead-info-summary">
-                <div class="lead-info-row">
-                    <span class="lead-info-label">Lead Name:</span>
-                    <span class="lead-info-value">{{ lead.name }}</span>
-                </div>
-                <div class="lead-info-row">
-                    <span class="lead-info-label">Company:</span>
-                    <span class="lead-info-value">{{ lead.company }}</span>
-                </div>
-                <div class="lead-info-row">
-                    <span class="lead-info-label">Mail:</span>
-                    <span class="lead-info-value">{{ lead.email }}</span>
-                </div>
-                <div class="lead-info-row">
-                    <span class="lead-info-label">Phone:</span>
-                    <span class="lead-info-value">{{ lead.phone }}</span>
-                </div>
-            </div>
-            
-            <form method="post" action="{% url 'editLead' lead.id %}" class="lead-form">
-                {% csrf_token %}
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="budget" class="form-label">Budget</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="text" id="budget" name="budget" value="{{ lead.budget }}" class="form-input" placeholder="Enter budget">
+        </header>
+
+        <!-- Main Content -->
+        <main class="portal-main">
+            <div class="edit-lead-wrapper">
+                <div class="edit-lead-card">
+                    <div class="form-header">
+                        <h1 class="form-title">
+                            <i class="bi bi-pencil-square"></i> Edit Lead
+                        </h1>
+                    </div>
+                    
+                    <div class="lead-info-summary">
+                        <div class="lead-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Lead Name</div>
+                                <p class="info-value">{{ lead.name }}</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Company</div>
+                                <p class="info-value">{{ lead.company|default:"—" }}</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <p class="info-value email"><a href="mailto:{{ lead.email }}">{{ lead.email|default:"—" }}</a></p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <p class="info-value phone"><a href="tel:{{ lead.phone }}">{{ lead.phone|default:"—" }}</a></p>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="status" class="form-label">Status</label>
-                        <select id="status" name="status" class="form-select">
-                            <option value="New" {% if lead.status == "New" %}selected{% endif %}>New</option>
-                            <option value="Contacted" {% if lead.status == "Contacted" %}selected{% endif %}>Contacted</option>
-                            <option value="In Discussion" {% if lead.status == "In Discussion" %}selected{% endif %}>In Discussion</option>
-                            <option value="Not Interested" {% if lead.status == "Not Interested" %}selected{% endif %}>Not Interested</option>
-                            <option value="Converted" {% if lead.status == "Converted" %}selected{% endif %}>Converted</option>
-                        </select>
+                    <form method="post" action="{% url 'editLead' lead.id %}" class="lead-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="budget" class="form-label">Budget</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="text" id="budget" name="budget" value="{{ lead.budget }}" class="form-control" placeholder="Estimated budget">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="status" class="form-control form-select">
+                                    <option value="New" {% if lead.status == "New" %}selected{% endif %}>New</option>
+                                    <option value="Contacted" {% if lead.status == "Contacted" %}selected{% endif %}>Contacted</option>
+                                    <option value="In Discussion" {% if lead.status == "In Discussion" %}selected{% endif %}>In Discussion</option>
+                                    <option value="Not Interested" {% if lead.status == "Not Interested" %}selected{% endif %}>Not Interested</option>
+                                    <option value="Converted" {% if lead.status == "Converted" %}selected{% endif %}>Converted</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select id="priority" name="priority" class="form-control form-select">
+                                    <option value="Hot" {% if lead.priority == "Hot" %}selected{% endif %}>Hot</option>
+                                    <option value="Warm" {% if lead.priority == "Warm" %}selected{% endif %}>Warm</option>
+                                    <option value="Cold" {% if lead.priority == "Cold" %}selected{% endif %}>Cold</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea id="notes" name="notes" class="form-control form-textarea" placeholder="Add meeting notes, next steps, or important details...">{{ lead.notes }}</textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <a href="{% url 'salesmanDashboard' %}" class="btn-cancel">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn-submit">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="portal-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Contact Support</a>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select id="priority" name="priority" class="form-select">
-                            <option value="Hot" {% if lead.priority == "Hot" %}selected{% endif %}>Hot</option>
-                            <option value="Warm" {% if lead.priority == "Warm" %}selected{% endif %}>Warm</option>
-                            <option value="Cold" {% if lead.priority == "Cold" %}selected{% endif %}>Cold</option>
-                        </select>
-                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="notes" class="form-label">Notes</label>
-                    <textarea id="notes" name="notes" class="form-textarea" placeholder="Add any additional notes about this lead...">{{ lead.notes }}</textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="submit-btn">
-                        <i class="bi bi-check-circle-fill"></i> Update Lead
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+        </footer>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format budget input
+            const budgetInput = document.getElementById('budget');
+            if (budgetInput) {
+                // Initial format on load
+                if (budgetInput.value && !isNaN(budgetInput.value)) {
+                    budgetInput.value = parseFloat(budgetInput.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                }
+
+                budgetInput.addEventListener('blur', function() {
+                    if (this.value) {
+                        const parsedValue = parseFloat(this.value.replace(/,/g, ''));
+                        if (!isNaN(parsedValue)) {
+                            this.value = parsedValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                        } else {
+                            this.value = ''; // Clear if not a valid number
+                        }
+                    }
+                });
+                
+                budgetInput.addEventListener('focus', function() {
+                    if (this.value) {
+                        this.value = this.value.replace(/,/g, '');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

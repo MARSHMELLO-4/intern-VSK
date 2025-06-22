@@ -5,24 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assign Leads</title>
     {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static '/css/assign_leads.css' %}">
 </head>
 <body>
     <div class="container">
-        <h1>Assign Leads</h1>
+        <h1 class="page-header">Assign Leads</h1>
         
-        <h2>Current Category: {{ selected_category }}</h2>
+        <h2 class="category-display">Current Category: <span class="category-name">{{ selected_category }}</span></h2>
         
-        <div class="upload-form">
-            <form action="" method="POST" enctype="multipart/form-data">
+        <div class="upload-form-section">
+            <form action="" method="POST" enctype="multipart/form-data" class="upload-form">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="excel_file">Upload Excel File</label>
+                    <label for="excel_file" class="file-label">Upload Excel File</label>
                     <div class="file-input-wrapper">
-                        <input type="file" name="excel_file" id="excel_file" accept=".xlsx,.xls" required>
+                        <input type="file" name="excel_file" id="excel_file" accept=".xlsx,.xls" required class="input-file">
+                        <span class="file-custom" data-placeholder="No file chosen"></span>
                     </div>
                 </div>
-                <button type="submit">Upload File</button>
+                <button type="submit" class="submit-btn">Upload File</button>
             </form>
         </div>
     </div>

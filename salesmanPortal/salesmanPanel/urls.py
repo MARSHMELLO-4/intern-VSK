@@ -19,4 +19,9 @@ urlpatterns = [
     path('addCategory/', views.addCategory, name='addCategory'),
     path('logoutAdmin/', views.logOutAdmin, name='logoutAdmin'),
     path('viewSalesman/<str:email>/', views.viewSalesman, name='viewSalesman'),
+    path('contactUs/', views.contactUs, name='term_contact'),
+    path('requestPage/', views.requestPage, name='requestPage'),
+    path('approve-users/', views.approve_users_view, name='approve_users'),
+    path('todayLeads/', views.todayLeads, name='todayLeads'),
+    path('deleteSalesman/<str:email>/', views.deleteSalesman, name='deleteSalesman'),
 ]

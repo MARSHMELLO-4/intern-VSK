@@ -3,86 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesman Portal</title>
+    <title>Salesman Portal | Kripalu Innovations</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/salesman_login.css' %}">
-    <!-- Add Bootstrap for alert styling -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+    --primary-color: #A67C52; /* A warm golden brown */
+    --primary-hover: #8C6A43; /* A darker shade for hover */
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --white: #ffffff;
+    --gray-light: #e9ecef;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--white); /* White background */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+.portal-header {
+    padding: 1.5rem 0;
+    background-color: var(--white);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.portal-header .container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.brand-logo img {
+    height: 80px;
+}
+
+/* Main Content Styles */
+.portal-main {
+    flex: 1;
+    padding: 3rem 0;
+}
+
+.auth-card {
+    display: flex;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    min-height: 600px;
+}
+
+.auth-graphic {
+    flex: 1;
+    /* Use a gradient with golden hues, slightly muted for professionalism */
+    background: linear-gradient(135deg, #D4AF37, #A67C52); /* Gold to Golden Brown */
+    color: var(--white);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.graphic-content {
+    max-width: 100%;
+}
+
+.auth-graphic .illustration {
+    max-width: 70%;
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2)); /* Subtle shadow for illustration */
+}
+
+.auth-graphic h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.auth-graphic p {
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.features {
+    margin-top: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Form Styles */
+.auth-form-container {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.form-subtitle {
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.input-group {
+    margin-bottom: 0.5rem;
+}
+
+.input-group-text {
+    background-color: var(--gray-light); /* Keep it light for contrast */
+    border-right: none;
+    border: 1px solid #ced4da;
+    border-right: none;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.form-control {
+    height: 48px;
+    border-left: none;
+    padding-left: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--primary-color); /* Golden border on focus */
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.forgot-password {
+    color: var(--primary-color); /* Golden link for forgot password */
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.submit-btn {
+    width: 100%;
+    height: 48px;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    border: none;
+    transition: var(--transition);
+    color: var(--white); /* White text on golden button */
+}
+
+.submit-btn:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 15px rgba(166, 124, 82, 0.4); /* Subtle golden shadow on hover */
+}
+
+/* Form Footer */
+.form-footer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.register-text {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.register-link {
+    color: var(--primary-color); /* Golden link for registration */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+.admin-login {
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.admin-login:hover {
+    color: var(--primary-color); /* Golden link for admin login */
+}
+
+/* Footer Styles */
+.portal-footer {
+    padding: 1.5rem 0;
+    background-color: var(--white);
+    border-top: 1px solid var(--gray-light);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-links a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color); /* Golden links in footer on hover */
+}
+
+/* Message/Alerts */
+.message-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    border-radius: var(--border-radius);
+    padding: 1rem;
+}
+
+/* Custom alert styles for golden theme */
+.alert-success {
+    background-color: #E6F3E6; /* Light green */
+    color: #28a745;
+    border-color: #c3e6cb;
+}
+
+.alert-error, .alert-danger {
+    background-color: #F8E6E6; /* Light red */
+    color: #dc3545;
+    border-color: #f5c6cb;
+}
+
+.alert-info {
+    background-color: #E6F0F4; /* Light blue */
+    color: #17a2b8;
+    border-color: #bee5eb;
+}
+
+.alert-warning {
+    background-color: #FFF3E6; /* Light orange */
+    color: #ffc107;
+    border-color: #ffeeba;
+}
+
+/* Icon colors within alerts */
+.alert .bi {
+    color: inherit; /* Inherit color from parent alert */
+}
+
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .auth-card {
+        flex-direction: column;
+    }
+    
+    .auth-graphic {
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .auth-form-container {
+        padding: 2rem;
+    }
+    
+    .features {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-links {
+        margin-top: 1rem;
+    }
+    
+    .footer-links a {
+        margin: 0 0.75rem;
+    }
+}
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Messages Section -->
-        {% if messages %}
-        <div class="message-container">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <div class="d-flex align-items-center">
-                    {% if message.tags == 'success' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                        </svg>
-                    {% elif message.tags == 'error' or message.tags == 'danger' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
-                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                        </svg>
-                    {% elif message.tags == 'info' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
-                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                        </svg>
-                    {% elif message.tags == 'warning' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-circle-fill me-2" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>
-                    {% endif %}
-                    <div>{{ message }}</div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+    <div class="main-container">
+        <!-- Header -->
 
         <!-- Main Content -->
-        <div class="auth-container">
-            <!-- Left Panel (Branding) -->
-            <div class="brand-panel">
-                <div class="brand-content">
-                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Sales Portal Illustration" class="brand-logo">
-                    <h1 class="brand-title">Salesman Portal</h1>
-                    <p class="brand-description">Access your sales dashboard to manage leads and connect with customers.</p>
-                </div>
-            </div>
+        <main class="portal-main">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="auth-card">
+                            <!-- Left Panel (Graphic) -->
+                            <div class="auth-graphic">
+                                <div class="graphic-content">
+                                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Sales Portal Illustration" class="illustration">
+                                    <h2>BDA Sales Portal</h2>
+                                    <p>Streamline your sales process and manage customer relationships efficiently.</p>
+                                    <div class="features">
+                                        <div class="feature-item">
+                                            <i class="bi bi-graph-up"></i>
+                                            <span>Real-time analytics</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="bi bi-people-fill"></i>
+                                            <span>Customer management</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="bi bi-file-earmark-text"></i>
+                                            <span>Sales reporting</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-            <!-- Right Panel (Form) -->
-            <div class="form-panel">
-                <div class="form-wrapper">
-                    <h2 class="form-title">Sign In</h2>
-                    
-                    <form action="" method="POST" class="auth-form">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="username">Email</label>
-                            <input type="text" id="email" name="email" placeholder="Enter you Email" required>
+                            <!-- Right Panel (Form) -->
+                            <div class="auth-form-container">
+                                <div class="form-wrapper">
+                                    <!-- Messages Section -->
+                                    {% if messages %}
+                                    <div class="message-container">
+                                        {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                            <div class="d-flex align-items-center">
+                                                {% if message.tags == 'success' %}
+                                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                {% elif message.tags == 'info' %}
+                                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                                {% elif message.tags == 'warning' %}
+                                                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                                {% endif %}
+                                                <div>{{ message }}</div>
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    <h1 class="form-title">Welcome Back</h1>
+                                    <p class="form-subtitle">Sign in to access your sales dashboard</p>
+                                    
+                                    <form action="" method="POST" class="auth-form">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="email">Email Address</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary submit-btn">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                                        </button>
+                                    </form>
+                                    
+                                    <div class="form-footer">
+                                        <p class="register-text">
+                                            Don't have an account? <a href="{% url 'register' %}" class="register-link">Sign up here</a>
+                                        </p>
+                                        <a href="{% url 'loginAdmin' %}" class="admin-login">
+                                            <i class="bi bi-shield-lock me-1"></i> Admin login
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                        </div>
-                        <button type="submit" class="submit-btn">Login</button>
-                    </form>
-                    
-                    <div class="form-footer">
-                        <p class="switch-text">
-                            Don't have an account? <a href="{% url 'register' %}" class="switch-link">Sign up</a>
-                        </p>
-                        <a href="{% url 'loginAdmin' %}" class="admin-link">Admin login</a>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="portal-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="{% url 'term_contact' %}">Privacy Policy</a>
+                        <a href="{% url 'term_contact' %}">Terms of Service</a>
+                        <a href="{% url 'term_contact' %}">Contact Support</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- Bootstrap JS for alert functionality -->
+    <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Auto-dismiss alerts after 5 seconds -->
     <script>

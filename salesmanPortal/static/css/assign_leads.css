@@ -1,92 +1,256 @@
+/* --- Golden-White Theme Variables --- */
+:root {
+    --ki-primary-blue: #0A2E5B; /* Deep Blue for primary brand elements */
+    --ki-secondary-gold: #FFD700; /* Vibrant Gold for accents */
+    --ki-dark-gold: #D4AF37; /* Slightly darker gold for subtle contrasts */
+    --ki-light-gold-bg: #FFFBE6; /* Very light gold for subtle highlights */
+
+    --body-bg: #F8F9FA; /* Very light gray/off-white for body background */
+    --card-bg: #FFFFFF; /* Pure white for the main container */
+    --text-dark: #212529; /* Dark text for headings and main content */
+    --text-muted: #6c757d; /* Muted grey for subtitles and labels */
+    --border-color-light: #e9ecef; /* Light grey for subtle borders */
+    --border-color-medium: #dee2e6; /* Medium grey for section breaks */
+
+    --box-shadow-subtle: 0 8px 24px rgba(0, 0, 0, 0.08); /* Softer, wider shadow */
+    --transition-speed: 0.3s ease-in-out;
+    --border-radius-lg: 12px;
+    --border-radius-md: 8px;
+
+    /* Specific for assign leads page */
+    --button-bg: var(--ki-primary-blue);
+    --button-hover-bg: #072244; /* Darker blue */
+    --file-input-border: var(--border-color-medium);
+    --file-input-text: var(--text-dark);
+}
+
+html,
 body {
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background-color: #f5f9ff;
-margin: 0;
-padding: 0;
-color: #333;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto; /* Allow scrolling if content exceeds viewport height */
 }
 
 .container {
-max-width: 800px;
-margin: 40px auto;
-padding: 30px;
-background-color: white;
-border-radius: 10px;
-box-shadow: 0 4px 12px rgba(0, 119, 204, 0.1);
+    max-width: 600px;
+    width: 90%;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow-subtle);
+    padding: 40px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color-light);
+    text-align: center;
+    margin: 40px auto; /* Add margin for spacing when content is short */
 }
 
-h1 {
-color: #0077cc;
-text-align: center;
-margin-bottom: 30px;
-font-size: 28px;
-border-bottom: 2px solid #e1f0fa;
-padding-bottom: 15px;
+.page-header {
+    color: var(--ki-primary-blue);
+    border-bottom: 2px solid var(--border-color-medium);
+    padding-bottom: 18px;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 700;
 }
 
-h2 {
-color: #005999;
-font-size: 20px;
-margin-bottom: 25px;
-text-align: center;
-background-color: #e1f0fa;
-padding: 10px;
-border-radius: 5px;
+.category-display {
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.category-name {
+    color: var(--ki-primary-blue); /* Highlight the category name */
+    font-weight: 600;
+}
+
+.upload-form-section {
+    background-color: var(--detail-value-bg); /* Light blue-grey background */
+    padding: 30px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color-light);
 }
 
 .upload-form {
-background-color: #f0f8ff;
-padding: 25px;
-border-radius: 8px;
-border: 1px dashed #0077cc;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center; /* Center items within the form */
 }
 
 .form-group {
-margin-bottom: 20px;
+    width: 100%;
+    text-align: left; /* Align label to the left within its group */
 }
 
-label {
-display: block;
-margin-bottom: 8px;
-color: #0077cc;
-font-weight: 600;
-}
-
-input[type="file"] {
-width: 100%;
-padding: 12px;
-border: 1px solid #b3d9ff;
-border-radius: 5px;
-background-color: white;
-box-sizing: border-box;
-}
-
-input[type="file"]:focus {
-outline: none;
-border-color: #0077cc;
-box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.2);
-}
-
-button {
-background-color: #0077cc;
-color: white;
-border: none;
-padding: 12px 25px;
-border-radius: 5px;
-cursor: pointer;
-font-size: 16px;
-font-weight: 600;
-transition: background-color 0.3s;
-display: block;
-margin: 0 auto;
-width: 200px;
-text-align: center;
-}
-
-button:hover {
-background-color: #005999;
+.file-label {
+    display: block;
+    font-weight: 600;
+    color: var(--ki-primary-blue);
+    margin-bottom: 10px;
+    font-size: 1.05em;
 }
 
 .file-input-wrapper {
-margin-bottom: 20px;
+    position: relative;
+    display: inline-block; /* Or block, depending on desired layout */
+    width: 100%;
+    max-width: 350px; /* Limit width of file input for better appearance */
+}
+
+.input-file {
+    opacity: 0; /* Hide default file input */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2; /* Make it clickable */
+}
+
+.file-custom {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--file-input-border);
+    border-radius: var(--border-radius-md);
+    background-color: var(--card-bg);
+    color: var(--file-input-text);
+    font-size: 16px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: border-color var(--transition-speed);
+}
+
+.file-custom:hover {
+    border-color: var(--ki-primary-blue);
+}
+
+.input-file:focus + .file-custom {
+    outline: 2px solid var(--ki-primary-blue);
+    outline-offset: 2px;
+}
+
+/* Pseudo-element for placeholder text */
+.file-custom::after {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+}
+
+/* Style for when a file is selected */
+.input-file:not([value=""]) + .file-custom::after {
+    content: attr(data-file-name); /* Set by JS */
+    color: var(--text-dark);
+}
+
+
+.submit-btn {
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-speed);
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 180px; /* Ensure a decent size */
+}
+
+.submit-btn:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 30px 25px;
+        margin: 25px auto;
+    }
+
+    .page-header {
+        font-size: 28px;
+        margin-bottom: 25px;
+    }
+
+    .category-display {
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+
+    .upload-form-section {
+        padding: 25px;
+    }
+
+    .file-label {
+        font-size: 1em;
+    }
+
+    .file-input-wrapper {
+        max-width: 100%; /* Allow full width on smaller screens */
+    }
+
+    .file-custom, .input-file {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+
+    .submit-btn {
+        padding: 12px 25px;
+        font-size: 16px;
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 25px 20px;
+        margin: 15px auto;
+    }
+
+    .page-header {
+        font-size: 24px;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    .category-display {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .upload-form-section {
+        padding: 20px;
+    }
+
+    .file-label {
+        font-size: 0.95em;
+    }
+
+    .file-custom, .input-file {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .submit-btn {
+        padding: 10px 20px;
+        font-size: 15px;
+        min-width: 120px;
+    }
 }

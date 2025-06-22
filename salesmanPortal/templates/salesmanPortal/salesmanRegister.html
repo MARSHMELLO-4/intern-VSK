@@ -3,28 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salesman Signup</title>
+    <title>Sales Professional Signup | Elevate CRM</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/salesman_register.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/salesman_register.css' %}">
+    <style>
+        /* --- Golden-White Theme Variables --- */
+        :root {
+            --ki-primary-blue: #0A2E5B; /* Deep Blue for primary brand elements */
+            --ki-secondary-gold: #FFD700; /* Vibrant Gold for accents */
+            --ki-dark-gold: #D4AF37; /* Slightly darker gold for subtle contrasts */
+            --ki-light-gold-bg: #FFFBE6; /* Very light gold for subtle highlights */
+
+            --primary: var(--ki-primary-blue);
+            --secondary: var(--ki-secondary-gold);
+            
+            --body-bg: #F8F9FA; /* Very light gray/off-white for body background */
+            --card-bg: #FFFFFF; /* Pure white for the main form container */
+            --text-dark: #212529; /* Dark text for headings and main content */
+            --text-muted: #6c757d; /* Muted grey for subtitles and labels */
+            --border-color: #e9ecef; /* Light grey for subtle borders */
+            --input-border-focus: var(--ki-secondary-gold); /* Gold border on input focus */
+            
+            --success-light: #d4edda; /* Lighter background for success alerts */
+            --success-dark: #155724; /* Darker text for success alerts */
+            --danger-light: #f8d7da; /* Lighter background for danger alerts */
+            --danger-dark: #721c24; /* Darker text for danger alerts */
+
+            --box-shadow-subtle: 0 8px 24px rgba(0, 0, 0, 0.08); /* Softer, wider shadow */
+            --box-shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.12); /* Slightly more pronounced on hover */
+            --transition-speed: 0.3s ease-in-out;
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+        }
+        
+        body {
+            background: var(--body-bg); /* Use new body background variable */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark); /* Use dark text variable */
+            line-height: 1.6;
+        }
+        
+        .auth-wrapper {
+            width: 100%;
+            max-width: 1200px; /* Keep max-width for overall wrapper */
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center vertically within wrapper if space allows */
+        }
+        
+        .auth-container {
+            background-color: var(--card-bg); /* Pure white background for container */
+            padding: 3rem;
+            border-radius: var(--border-radius-lg); /* Larger border-radius */
+            box-shadow: var(--box-shadow-subtle); /* Softer shadow */
+            width: 100%;
+            max-width: 600px; /* Max-width for the form itself */
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: 1px solid var(--border-color); /* Subtle border */
+        }
+        
+        .auth-container:hover {
+            transform: translateY(-8px); /* More noticeable lift */
+            box-shadow: var(--box-shadow-hover); /* More pronounced shadow on hover */
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .auth-logo {
+            width: 70px; /* Slightly larger logo */
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); /* Primary blue to gold gradient */
+            color: white;
+            border-radius: 50%; /* Make it round */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem; /* More space below logo */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow for logo */
+            animation: bounceIn 0.8s ease-out; /* Simple entry animation */
+        }
+        
+        .auth-logo i {
+            font-size: 2rem; /* Larger icon inside logo */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            60% { opacity: 1; transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .auth-title {
+            font-weight: 700;
+            font-size: 2rem; /* Larger title */
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .auth-subtitle {
+            color: var(--text-muted); /* Muted subtitle */
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 1.75rem; /* Slightly more space between form groups */
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.6rem; /* Slightly more space below label */
+            font-weight: 600; /* Bolder label */
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            border-radius: var(--border-radius-md); /* Consistent border-radius */
+            padding: 0.9rem 1.25rem; /* More vertical padding */
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed);
+            background-color: var(--card-bg);
+            width: 100%;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+        
+        .form-control:focus {
+            border-color: var(--input-border-focus); /* Golden border on focus */
+            box-shadow: 0 0 0 4px rgba(var(--secondary-rgb), 0.15); /* Soft golden shadow on focus */
+            outline: none;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-muted); /* Muted icon color */
+            font-size: 1.1rem;
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 3rem; /* More space for icon */
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1.1rem; /* More padding for a bolder button */
+            border-radius: var(--border-radius-md);
+            font-size: 1.05rem; /* Slightly larger font */
+            font-weight: 700; /* Bolder text */
+            margin-top: 2rem; /* More space above button */
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); /* Stronger gradient */
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.3); /* Stronger button shadow */
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px); /* More pronounced lift */
+            box-shadow: 0 10px 30px rgba(var(--primary-rgb), 0.4); /* Enhanced shadow on hover */
+            background: linear-gradient(135deg, var(--ki-primary-blue), var(--ki-dark-gold)); /* Blend primary blue with dark gold on hover */
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 2.5rem; /* More space below button */
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        
+        .auth-link {
+            color: var(--primary); /* Link in primary blue */
+            text-decoration: none;
+            font-weight: 700; /* Bolder link */
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+        
+        .auth-link:hover {
+            color: var(--ki-dark-gold); /* Gold on hover */
+            text-decoration: underline;
+        }
+        
+        /* Two-column layout for larger screens */
+        .form-row {
+            display: flex;
+            gap: 2rem; /* Increased gap */
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        /* Alert styling */
+        .alert {
+            border-radius: var(--border-radius-md);
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+            border: 1px solid; /* Add a subtle border to alerts */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            display: flex; /* Use flex for alignment */
+            align-items: center;
+        }
+        
+        .alert-success {
+            background-color: var(--success-light);
+            color: var(--success-dark);
+            border-color: #a3e6b2; /* Subtle border for success */
+        }
+        
+        .alert-danger, .alert-error {
+            background-color: var(--danger-light);
+            color: var(--danger-dark);
+            border-color: #f5c6cb; /* Subtle border for danger */
+        }
+
+        .alert .bi {
+            font-size: 1.25rem; /* Slightly larger icons in alerts */
+            margin-right: 0.75rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .auth-wrapper {
+                padding: 1rem;
+            }
+            
+            .auth-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0; /* Remove gap when stacking */
+            }
+            
+            .auth-title {
+                font-size: 1.6rem;
+            }
+
+            .auth-logo {
+                width: 55px;
+                height: 55px;
+            }
+
+            .auth-logo i {
+                font-size: 1.7rem;
+            }
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 0.6rem; /* More space */
+            height: 5px; /* Thicker bar */
+            background-color: var(--border-color); /* Light grey base */
+            border-radius: 2.5px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Inner shadow for depth */
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        
+        /* Region select styling */
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 14px; /* Slightly larger icon for dropdown */
+            padding-right: 2.5rem; /* Ensure space for arrow */
+        }
+
+        /* Define RGB for rgba colors (needed for shadows) */
+        :root {
+            --primary-rgb: 10, 46, 91; /* RGB for #0A2E5B */
+            --secondary-rgb: 255, 215, 0; /* RGB for #FFD700 */
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="auth-wrapper">
         <div class="auth-container">
-            <!-- Messages Section -->
             {% if messages %}
             <div class="mb-4">
                 {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     <div class="d-flex align-items-center">
                         {% if message.tags == 'success' %}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                            </svg>
+                            <i class="bi bi-check-circle-fill me-2"></i>
                         {% elif message.tags == 'error' or message.tags == 'danger' %}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
-                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                            </svg>
+                            <i class="bi bi-exclamation-octagon-fill me-2"></i>
                         {% endif %}
                         <div>{{ message }}</div>
                     </div>
@@ -34,91 +329,171 @@
             </div>
             {% endif %}
 
-            <h1 class="auth-title">Salesman Signup</h1>
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="bi bi-person-badge" style="font-size: 1.5rem;"></i>
+                </div>
+                <h1 class="auth-title">Join Our Sales Team</h1>
+                <p class="auth-subtitle">Create your account to get started</p>
+            </div>
 
-            <form method="POST" action="">
+            <form method="POST" action="" class="needs-validation" novalidate>
                 {% csrf_token %}
                 
-                <!-- Basic Information -->
-                {% comment %} <div class="row">
-                    <div class="col-md-6">
+                <div class="form-row">
+                    <div class="form-col">
                         <div class="form-group">
-                            <label for="id_first_name">First Name</label>
-                            <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+                            <label for="id_username" class="form-label">Username</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-person input-icon"></i>
+                                <input type="text" name="username" id="id_username" class="form-control" required>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="form-col">
                         <div class="form-group">
-                            <label for="id_last_name">Last Name</label>
-                            <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+                            <label for="id_email" class="form-label">Email</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-envelope input-icon"></i>
+                                <input type="email" name="email" id="id_email" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-control">
                         </div>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_username">Username</label>
-                    <input type="text" name="username" id="id_username" class="form-control" required>
+                    <label for="id_phone" class="form-label">Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-telephone input-icon"></i>
+                        <input type="tel" name="phone" id="id_phone" class="form-control" required>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_email">Email</label>
-                    <input type="email" name="email" id="id_email" class="form-control" required>
+                    <label for="id_region" class="form-label">Region</label>
+                    <select name="region" id="id_region" class="form-control" required>
+                        <option value="" selected disabled>Select your region</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                        <option value="East">East</option>
+                        <option value="West">West</option>
+                        <option value="Central">Central</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_phone">Phone Number</label>
-                    <input type="tel" name="phone" id="id_phone" class="form-control" required>
-                </div>
-                
-                <!-- Address Information -->
-                <div class="form-group">
-                    <label for="id_address">Address</label>
+                    <label for="id_address" class="form-label">Address</label>
                     <textarea name="address" id="id_address" class="form-control" rows="3"></textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label for="id_region">Region</label>
-                    <input type="text" name="region" id="id_region" class="form-control" required>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_password1" class="form-label">Password</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-lock input-icon"></i>
+                                <input type="password" name="password1" id="id_password1" class="form-control" required>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-meter" id="password-strength-meter"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_password2" class="form-label">Confirm Password</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-shield-lock input-icon"></i>
+                                <input type="password" name="password2" id="id_password2" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Password Fields -->
-                <div class="form-group">
-                    <label for="id_password1">Password</label>
-                    <input type="password" name="password1" id="id_password1" class="form-control" required>
-                    <small class="form-text text-muted">
-                        Your password must contain at least 8 characters.
-                    </small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="id_password2">Password Confirmation</label>
-                    <input type="password" name="password2" id="id_password2" class="form-control" required>
-                    <small class="form-text text-muted">
-                        Enter the same password as before, for verification.
-                    </small>
-                </div> {% endcomment %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary submit-btn">Sign Up</button>
+                <button type="submit" class="btn submit-btn">
+                    <i class="bi bi-person-plus me-2"></i> Create Account
+                </button>
             </form>
 
             <div class="auth-footer">
-                Already have an account? <a href="{% url 'loginSalesman' %}" class="auth-link">Sign In</a>
+                Already have an account? <a href="{% url 'loginSalesman' %}" class="auth-link">Sign in here</a>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Auto-dismiss alerts after 5 seconds -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss alerts after 5 seconds
             setTimeout(function() {
-                var alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function(alert) {
-                    var bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
             }, 5000);
+            
+            // Form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+            });
+            
+            // Password strength indicator
+            const passwordInput = document.getElementById('id_password1');
+            const strengthMeter = document.getElementById('password-strength-meter');
+            
+            passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // Character variety checks
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update meter
+            const width = Math.min(strength * 20, 100);
+            let color = '#ef4444'; // red
+            
+            if (strength >= 4) color = '#10b981'; // green
+            else if (strength >= 2) color = '#f59e0b'; // yellow
+            
+            strengthMeter.style.width = width + '%';
+            strengthMeter.style.backgroundColor = color;
+            });
+
+            // Phone number: allow only 10 digits, no formatting
+            const phoneInput = document.getElementById('id_phone');
+            phoneInput.addEventListener('input', function(e) {
+            let digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+            e.target.value = digits;
+            });
         });
     </script>
 </body>

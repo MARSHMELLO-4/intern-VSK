@@ -3,352 +3,738 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDA Dashboard</title>
+    <title>BDA Dashboard - Kripalu Innovations</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     {% load static %}
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --success-color: #4cc9f0;
-            --warning-color: #f8961e;
-            --danger-color: #f72585;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .salesman-dashboard {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .dashboard-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .dashboard-title i {
-            font-size: 1.5rem;
-        }
-        
-        .logout-btn {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            background-color: var(--danger-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background-color: #d11a6b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(247, 37, 133, 0.2);
-        }
-        
-        .stats-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-            margin-bottom: 2rem;
-            border-left: 5px solid var(--primary-color);
-        }
-        
-        .stats-label {
-            display: block;
-            font-size: 1rem;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stats-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .leads-container {
-            margin-top: 2rem;
-        }
-        
-        .leads-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .lead-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .lead-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .lead-header {
-            padding: 1.25rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .lead-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0;
-            color: #212529;
-        }
-        
-        .lead-priority {
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .badge-high {
-            background-color: rgba(247, 37, 133, 0.1);
-            color: var(--danger-color);
-        }
-        
-        .badge-medium {
-            background-color: rgba(248, 150, 30, 0.1);
-            color: var(--warning-color);
-        }
-        
-        .badge-low {
-            background-color: rgba(76, 201, 240, 0.1);
-            color: var(--success-color);
-        }
-        
-        .lead-section {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .detail-row {
-            display: flex;
-            margin-bottom: 0.5rem;
-        }
-        
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-        
-        .detail-label {
-            font-weight: 500;
-            color: #6c757d;
-            min-width: 80px;
-            font-size: 0.85rem;
-        }
-        
-        .detail-value {
-            flex: 1;
-            color: #212529;
-            font-size: 0.9rem;
-        }
-        
-        .lead-footer {
-            padding: 1rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .timestamps {
-            font-size: 0.75rem;
-            color: #6c757d;
-        }
-        
-        .timestamp {
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-        
-        .edit-btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .edit-btn:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
-        }
-        
-        .no-leads {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-        }
-        
-        .no-leads p {
-            font-size: 1.25rem;
-            color: #6c757d;
-            margin-bottom: 1.5rem;
-        }
-        
-        .no-leads-icon {
-            font-size: 3rem;
-            color: #dee2e6;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .leads-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .salesman-dashboard {
-                padding: 1rem;
-            }
-            
-            .logout-btn {
-                position: static;
-                margin-bottom: 1rem;
-                display: inline-block;
-            }
-        }
+/* CSS Variables for White and Golden Theme */
+:root {
+    --golden-primary: #FFD700; /* Gold (e.g., for accents, primary buttons) */
+    --golden-dark: #DAA520;    /* Darker Gold (e.g., for hover states, stronger accents) */
+    --golden-light: #FFF8DC;   /* Light Gold/Cream (subtle backgrounds, light elements) */
+
+    --theme-text-dark: #333333; /* Darker text for good contrast */
+    --theme-text-medium: #666666; /* Medium gray for labels, secondary text */
+    --theme-text-light: #AAAAAA; /* Very light gray for subtle elements */
+
+    --theme-background-light: #FDFDFD; /* Off-white for main backgrounds */
+    --theme-background-card: #FFFFFF; /* Pure white for cards */
+    --theme-border: #EEEEEE; /* Light border color */
+    --theme-shadow: rgba(0, 0, 0, 0.08); /* Subtle shadow */
+
+    /* --- Status Colors (Aligned with your STATUS_CHOICES) --- */
+    --status-new: var(--golden-dark);          /* Gold for new, stands out */
+    --status-contacted: #4CAF50;               /* Strong Green for Contacted (Success) */
+    --status-in-discussion: #2196F3;           /* Bright Blue for In Discussion (Active) */
+    --status-not-interested: #F44336;          /* Red for Not Interested (Negative) */
+    --status-converted: #009688;               /* Teal/Dark Green for Converted (Major Success) */
+
+    /* --- Priority Colors (Aligned with your PRIORITY_CHOICES) --- */
+    --priority-hot: #DC3545;                   /* Red for Hot (High urgency) */
+    --priority-warm: #FFC107;                  /* Amber/Orange for Warm (Medium urgency) */
+    --priority-cold: #607D8B;                  /* Blue-Gray for Cold (Low urgency) */
+
+    /* Font variables */
+    --font-family-primary: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-family-primary);
+    margin: 0;
+    padding: 0;
+    background-color: var(--theme-background-light);
+    color: var(--theme-text-dark);
+    line-height: 1.6;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+.portal-header {
+    background-color: var(--theme-background-card);
+    border-bottom: 1px solid var(--theme-border);
+    padding: 15px 0;
+    box-shadow: 0 2px 4px var(--theme-shadow);
+}
+
+.portal-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.brand-logo img {
+    height: 45px; /* Slightly larger logo */
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.brand-logo img:hover {
+    transform: scale(1.03);
+}
+
+.header-title-wrapper {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.header-main-title {
+    margin: 0;
+    color: var(--golden-dark); /* Deeper gold for main title */
+    font-size: 2em; /* Larger, more impactful title */
+    font-weight: 700;
+}
+
+.user-controls {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    background-color: transparent; /* Transparent button */
+    color: var(--theme-text-medium); /* Gray text */
+    border: 1px solid var(--theme-border); /* Subtle border */
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: var(--golden-primary); /* Gold background on hover */
+    color: var(--theme-background-card); /* White text on hover */
+    border-color: var(--golden-primary);
+}
+
+/* Main Content */
+.portal-main {
+    flex-grow: 1;
+    padding: 30px 0;
+}
+
+.salesman-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Stats Container */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stats-card {
+    background-color: var(--theme-background-card);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 8px var(--theme-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid var(--golden-primary); /* Accent border in gold */
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stats-icon {
+    font-size: 2.8em; /* Slightly larger icons */
+    color: var(--golden-primary);
+    margin-bottom: 10px;
+}
+
+.stats-label {
+    font-size: 1.15em; /* Larger label */
+    color: var(--theme-text-medium);
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.stats-value {
+    font-size: 2.5em; /* More prominent value */
+    font-weight: 700;
+    color: var(--theme-text-dark);
+    margin: 0;
+}
+
+/* Leads Section */
+.leads-container {
+    background-color: var(--theme-background-card);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--theme-shadow);
+    padding: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--theme-text-dark);
+    font-weight: 600;
+}
+
+/* Dropdown Styling */
+.sort-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background-color: var(--golden-primary);
+    color: var(--theme-background-card);
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+    background-color: var(--golden-dark);
+}
+
+.sort-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--theme-background-card);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px var(--theme-shadow);
+    z-index: 10; /* Ensure it's above other content */
+    border-radius: 5px;
+    overflow: hidden;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    border: 1px solid var(--theme-border);
+}
+
+.sort-dropdown-content a {
+    color: var(--theme-text-dark);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+.sort-dropdown-content a:hover {
+    background-color: var(--golden-light); /* Light gold hover */
+    color: var(--golden-dark);
+}
+
+.sort-dropdown.active .sort-dropdown-content {
+    display: block;
+}
+
+/* Leads Table Styling */
+.leads-table-responsive {
+    overflow-x: auto;
+    border-radius: 8px; /* Match container border-radius */
+    overflow: hidden; /* Ensure border-radius applies */
+}
+
+.leads-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+
+.leads-table th,
+.leads-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--theme-border);
+}
+
+.leads-table th {
+    background-color: var(--golden-light); /* Light gold for table header */
+    color: var(--theme-text-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.leads-table tbody tr:hover {
+    background-color: var(--golden-light); /* Light golden hover for rows */
+}
+
+/* Status Indicators */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.status-new { background-color: var(--status-new); }
+.status-contacted { background-color: var(--status-contacted); }
+.status-in-discussion { background-color: var(--status-in-discussion); }
+.status-not-interested { background-color: var(--status-not-interested); }
+.status-converted { background-color: var(--status-converted); }
+
+/* Status Text Colors */
+.status-text-new { color: var(--status-new); font-weight: 500; }
+.status-text-contacted { color: var(--status-contacted); font-weight: 500; }
+.status-text-in-discussion { color: var(--status-in-discussion); font-weight: 500; }
+.status-text-not-interested { color: var(--status-not-interested); font-weight: 500; }
+.status-text-converted { color: var(--status-converted); font-weight: 500; }
+
+
+/* Priority Badges */
+[class^="badge-"] {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    /* Removed fixed white text color to allow for better contrast on different badge colors */
+}
+
+.badge-hot { 
+    background-color: var(--priority-hot); 
+    color: var(--theme-background-card); /* White text for hot */
+}
+.badge-warm { 
+    background-color: var(--priority-warm); 
+    color: var(--theme-text-dark); /* Dark text for warm for better contrast */
+} 
+.badge-cold { 
+    background-color: var(--priority-cold); 
+    color: var(--theme-background-card); /* White text for cold */
+}
+
+/* Contact Links (Icons) */
+.contact-link {
+    color: var(--golden-primary);
+    font-size: 1.3em; /* Slightly larger for better tap targets */
+    margin-right: 10px;
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-link:hover {
+    color: var(--golden-dark);
+    transform: translateY(-2px);
+}
+
+/* Small Edit Button */
+.edit-btn-small {
+    background-color: var(--golden-primary);
+    color: var(--theme-background-card);
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-btn-small:hover {
+    background-color: var(--golden-dark);
+    transform: translateY(-1px);
+}
+
+/* No Leads Section */
+.no-leads {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--theme-text-medium);
+}
+
+.no-leads-icon {
+    font-size: 4.5em;
+    color: var(--theme-border);
+    margin-bottom: 20px;
+}
+
+.no-leads p {
+    font-size: 1.2em;
+    margin-bottom: 25px;
+    color: var(--theme-text-dark);
+}
+
+.request-btn {
+    background-color: var(--status-contacted); /* Green for "Request New Leads" action */
+    color: var(--theme-background-card);
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.request-btn:hover {
+    background-color: #218838; /* Darker green */
+    transform: translateY(-2px);
+}
+
+/* Footer Styles */
+.portal-footer {
+    background-color: var(--theme-text-dark); /* Dark footer, provides good contrast with golden accents */
+    color: var(--theme-background-card);
+    padding: 20px 0;
+    text-align: center;
+    font-size: 0.9em;
+    border-top: 1px solid #444;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+.footer-links a {
+    color: var(--theme-background-card);
+    text-decoration: none;
+    margin-left: 20px;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--golden-primary);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .header-main-title {
+        font-size: 1.6em;
+    }
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    .salesman-dashboard {
+        padding: 0 15px;
+    }
+    .leads-container {
+        padding: 20px;
+    }
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .sort-dropdown {
+        width: 100%;
+    }
+    .dropdown-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .sort-dropdown-content {
+        width: 100%;
+        left: 0;
+        right: auto;
+    }
+    .leads-table th, .leads-table td {
+        padding: 10px;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-links a {
+        margin: 5px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .portal-header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .header-main-title {
+        font-size: 1.5em;
+    }
+    .brand-logo img {
+        height: 40px;
+    }
+    .user-controls {
+        width: 100%;
+        justify-content: center;
+    }
+    .stats-card {
+        border-left-width: 3px; /* Smaller accent border on mobile */
+    }
+    .stats-icon {
+        font-size: 2.5em;
+    }
+    .stats-value {
+        font-size: 2em;
+    }
+    .leads-table thead {
+        display: none;
+    }
+    .leads-table, .leads-table tbody, .leads-table tr, .leads-table td {
+        display: block;
+        width: 100%;
+    }
+    .leads-table tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--theme-border);
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 2px 4px var(--theme-shadow);
+    }
+    .leads-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    .leads-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: calc(50% - 30px);
+        text-align: left;
+        font-weight: 600;
+        color: var(--theme-text-medium);
+    }
+}
     </style>
 </head>
 <body>
-    <div class="salesman-dashboard">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="dashboard-title">
-                <i class="bi bi-speedometer2"></i> BDA Dashboard
-            </h5>
-            <a href="{% url 'logoutUser' %}" class="logout-btn">
-                <i class="bi bi-box-arrow-right me-1"></i> Logout
-            </a>
-        </div>
-        
-        <div class="stats-card">
-            <span class="stats-label">Total Leads Assigned</span>
-            <span class="stats-value">{{ total_leads }}</span>
-        </div>
-        
-        <div class="leads-container">
-            {% if leads %}
-            <div class="leads-grid">
-                {% for lead in leads %}
-                <div class="lead-card">
-                    <div class="lead-header">
-                        <h3 class="lead-name">{{ lead.name|default:"—" }}</h3>
-                        <span class="lead-priority badge-{{ lead.priority|lower|default:'medium' }}">
-                            {{ lead.priority|default:"—" }}
-                        </span>
-                    </div>
-                    
-                    <div class="lead-section">
-                        <div class="detail-row">
-                            <span class="detail-label">Company:</span>
-                            <span class="detail-value">{{ lead.company|default:"—" }}</span>
+    <div class="main-container">
+        <header class="portal-header">
+            <div class="container">
+                <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener noreferrer">
+                    {% load static %}
+                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo">
+                </a>
+                <div class="header-title-wrapper">
+                    <h1 class="header-main-title">BDA Dashboard</h1>
+                </div>
+                <div class="user-controls">
+                    <a href="{% url 'logoutUser' %}" class="logout-btn">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="portal-main">
+            <div class="container">
+                <div class="salesman-dashboard">
+                    <div class="stats-container">
+                        <div class="stats-card">
+                            <i class="bi bi-people stats-icon"></i>
+                            <span class="stats-label">Total Leads Assigned</span>
+                            <p class="stats-value">{{ total_leads }}</p>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Role:</span>
-                            <span class="detail-value">{{ lead.role|default:"—" }}</span>
+                        
+                        <div class="stats-card">
+                            <i class="bi bi-phone-fill stats-icon"></i>
+                            <span class="stats-label">Contacted Leads</span>
+                            <p class="stats-value">{{ contacted_leads|default:"0" }}</p>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Status:</span>
-                            <span class="detail-value">{{ lead.status|default:"—" }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="lead-section">
-                        <div class="detail-row">
-                            <span class="detail-label">Email:</span>
-                            <span class="detail-value">{{ lead.email|default:"—" }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Phone:</span>
-                            <span class="detail-value">{{ lead.phone|default:"—" }}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">City:</span>
-                            <span class="detail-value">{{ lead.city|default:"—" }}</span>
+                        
+                        <div class="stats-card">
+                            <i class="bi bi-person-x-fill stats-icon"></i>
+                            <span class="stats-label">Not Contacted Leads</span>
+                            <p class="stats-value">{{ not_contacted_leads|default:"0" }}</p>
                         </div>
                     </div>
                     
-                    <div class="lead-section">
-                        <div class="detail-row">
-                            <span class="detail-label">Interest:</span>
-                            <span class="detail-value">{{ lead.interest|default:"—" }}</span>
+                    <div class="leads-container">
+                        <div class="section-header">
+                            <h2 class="section-title">Your Leads</h2>
+                            <div class="leads-filter">
+                                <div class="sort-dropdown">
+                                    <button class="dropdown-toggle" type="button" id="sortDropdownButton" aria-haspopup="true" aria-expanded="false">
+                                        Sort by Date <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                    <div class="sort-dropdown-content" aria-labelledby="sortDropdownButton">
+                                        <a href="#" data-sort="newest">Newest First</a>
+                                        <a href="#" data-sort="oldest">Oldest First</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Budget:</span>
-                            <span class="detail-value">{{ lead.budget|default:"—" }}</span>
+                        
+                        {% if leads %}
+                        <div class="leads-table-responsive">
+                            <table class="leads-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Company</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Contact</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadsTableBody">
+                                    {% for lead in leads %}
+                                    <tr class="lead-row" data-created-at="{{ lead.created_at|date:'Y-m-d H:i:s' }}">
+                                        <td data-label="Name">{{ lead.name|default:"—" }}</td>
+                                        <td data-label="Company">{{ lead.company|default:"—" }}</td>
+                                        <td data-label="Status">
+                                            <span class="status-indicator status-{{ lead.status|lower|default:'new' }}"></span>
+                                            <span class="status-text-{{ lead.status|lower|default:'new' }}">{{ lead.status|default:"New" }}</span>
+                                        </td>
+                                        <td data-label="Priority">
+                                            <span class="badge-{{ lead.priority|lower|default:'medium' }}">
+                                                {{ lead.priority|default:"Medium" }}
+                                            </span>
+                                        </td>
+                                        <td data-label="Contact">
+                                            {% if lead.email %}
+                                            <a href="mailto:{{ lead.email }}" class="contact-link" aria-label="Email {{ lead.name }}"><i class="bi bi-envelope-fill"></i></a>
+                                            {% endif %}
+                                            {% if lead.phone %}
+                                            <a href="tel:{{ lead.phone }}" class="contact-link" aria-label="Call {{ lead.name }}"><i class="bi bi-phone-fill"></i></a>
+                                            {% endif %}
+                                            {% if not lead.email and not lead.phone %}
+                                            —
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Created">{{ lead.created_at|date:"M d, Y" }}</td>
+                                        <td data-label="Actions">
+                                            <a href="{% url 'editLead' lead.id %}" class="edit-btn-small" aria-label="Manage lead {{ lead.name }}">
+                                                <i class="bi bi-pencil-square"></i> Manage
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Source:</span>
-                            <span class="detail-value">{{ lead.lead_source|default:"—" }}</span>
+                        {% else %}
+                        <div class="no-leads">
+                            <i class="bi bi-people no-leads-icon"></i>
+                            <p>No leads assigned to you yet</p>
+                            <a href="#" class="request-btn">
+                                <i class="bi bi-plus-circle"></i> Request New Leads
+                            </a>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Category:</span>
-                            <span class="detail-value">{{ lead.category|default:"—" }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="lead-footer">
-                        <div class="timestamps">
-                            <span class="timestamp">Created: {{ lead.created_at|date:"M d, Y" }}</span>
-                            <span class="timestamp">Assigned: {{ lead.updated_at|date:"M d, Y" }}</span>
-                        </div>
-                        <a href="{% url 'editLead' lead.id %}" class="edit-btn">
-                            <i class="bi bi-pencil-square me-1"></i> Edit
-                        </a>
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
             </div>
-            {% else %}
-            <div class="no-leads">
-                <i class="bi bi-people no-leads-icon"></i>
-                <p>No leads assigned to you yet</p>
-                <a href="#" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-1"></i> Request Leads
-                </a>
+        </main>
+
+        <footer class="portal-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Contact Support</a>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-        </div>
+        </footer>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dropdown Toggle Logic
+            const sortDropdownButton = document.getElementById('sortDropdownButton');
+            const sortDropdown = document.querySelector('.sort-dropdown');
+
+            if (sortDropdownButton && sortDropdown) {
+                sortDropdownButton.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    sortDropdown.classList.toggle('active');
+                });
+
+                // Close dropdown if clicked outside
+                document.addEventListener('click', function(event) {
+                    if (!sortDropdown.contains(event.target) && !sortDropdownButton.contains(event.target)) {
+                        sortDropdown.classList.remove('active');
+                        sortDropdownButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            // Sorting logic (client-side demonstration for table rows)
+            const sortDropdownContent = document.querySelector('.sort-dropdown-content');
+            const leadsTableBody = document.getElementById('leadsTableBody'); // Target the tbody
+
+            if (sortDropdownContent && leadsTableBody) {
+                sortDropdownContent.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent default link behavior
+                        const sortType = this.dataset.sort;
+                        const leadRows = Array.from(leadsTableBody.children); // Get all table rows
+
+                        leadRows.sort((a, b) => {
+                            const dateA = new Date(a.dataset.createdAt);
+                            const dateB = new Date(b.dataset.createdAt);
+
+                            if (sortType === 'newest') {
+                                return dateB - dateA; // Newest first (descending)
+                            } else { // 'oldest'
+                                return dateA - dateB; // Oldest first (ascending)
+                            }
+                        });
+
+                        // Re-append sorted rows to the tbody
+                        leadsTableBody.innerHTML = ''; // Clear existing rows
+                        leadRows.forEach(row => leadsTableBody.appendChild(row));
+
+                        // Close dropdown after sorting
+                        sortDropdown.classList.remove('active');
+                        sortDropdownButton.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

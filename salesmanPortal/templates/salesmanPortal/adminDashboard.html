@@ -6,316 +6,488 @@
     <title>Leads Management Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    {# Assuming admin_dashboard.css exists and provides core styling, if not, move relevant styles here #}
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> {# Added Bootstrap Icons #}
     <style>
-        :root {
-            --primary: #4361ee;
-            --primary-light: #eef2ff;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --info: #4895ef;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --gray-light: #e9ecef;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        /* Main container */
-        .container {
-            padding: 24px;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Header */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        
-        .dashboard-header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 16px;
-            border-radius: var(--border-radius);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            border: none;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--secondary);
-            transform: translateY(-1px);
-            box-shadow: var(--box-shadow);
-        }
-        
-        /* Stats cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .stat-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--gray);
-        }
-        
-        .stat-card p {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        /* Table container */
-        .table-container {
-            flex: 1;
-            overflow: auto;
-            position: relative;
-            border-radius: var(--border-radius);
-            background: white;
-            box-shadow: var(--box-shadow);
-        }
-        
-        /* Table styles */
-        .leads-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 14px;
-        }
-        
-        .leads-table th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background-color: white;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--gray);
-            border-bottom: 1px solid var(--gray-light);
-            white-space: nowrap;
-        }
-        
-        .leads-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--gray-light);
-            vertical-align: middle;
-        }
-        
-        .leads-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        /* Clickable rows */
-        .clickable-row {
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .clickable-row:hover {
-            background-color: var(--primary-light);
-        }
-        
-        /* Status and Priority badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: capitalize;
-        }
-        
-        .status-new { background-color: #e3f2fd; color: #1976d2; }
-        .status-contact { background-color: #fff8e1; color: #ff8f00; }
-        .status-qualified { background-color: #e8f5e9; color: #388e3c; }
-        .status-lost { background-color: #ffebee; color: #d32f2f; }
-        
-        .priority-high { background-color: #ffebee; color: #d32f2f; }
-        .priority-medium { background-color: #fff8e1; color: #ff8f00; }
-        .priority-low { background-color: #e8f5e9; color: #388e3c; }
-        
-        /* Select dropdown */
-        .select-dropdown {
-            padding: 6px 12px;
-            font-size: 13px;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            background-color: white;
-            color: var(--dark);
-            cursor: pointer;
-            transition: var(--transition);
-            max-width: 160px;
-        }
-        
-        .select-dropdown:hover {
-            border-color: var(--primary);
-        }
-        
-        /* Time indicator */
-        .time-ago {
-            font-size: 12px;
-            color: var(--gray);
-            white-space: nowrap;
-        }
-        
-        /* Empty state */
-        .empty-state {
-            padding: 40px;
-            text-align: center;
-            color: var(--gray);
-        }
-        
-        /* Loading state */
-        .loading {
-            color: var(--gray);
-            font-size: 12px;
-            padding: 8px;
-            display: inline-block;
-        }
-        
-        /* Section header */
-        .section-header {
-            margin: 24px 0 16px;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        /* Contact info styling */
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .contact-info div {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* Name with role */
-        .contact-name {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .contact-role {
-            font-size: 12px;
-            color: var(--gray);
-        }
-        
-        /* Sort indicator */
-        .sort-indicator {
-            margin-left: 4px;
-            color: var(--primary);
-        }
-        
-        /* No-click area */
-        .no-click {
-            pointer-events: auto;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-            
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .leads-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
+/* --- Kripalu Innovations Theme Variables (adjust to match your admin_dashboard.css if needed) --- */
+:root {
+    --ki-primary-blue: #0A2E5B; /* Retain the strong primary blue */
+    --ki-secondary-gold: #FFD700; /* Bright, vibrant gold */
+    --ki-dark-gold: #CCAA00; /* A darker shade of gold for hover/active */
+    --ki-light-gold: #FFFBE6; /* Very light, almost white gold tint for backgrounds */
+
+    --primary: var(--ki-primary-blue);
+    --primary-light: #eef2ff; /* Keeping original light blue for some elements for contrast */
+    --secondary: var(--ki-secondary-gold); /* Now the prominent gold */
+    
+    --success: #28a745; /* Bootstrap success green */
+    --danger: #dc3545; /* Bootstrap danger red */
+    --warning: #ffc107; /* Bootstrap warning yellow */
+    --info: #17a2b8; /* Bootstrap info cyan */
+    --dark: #212529; /* Dark grey for text */
+    --light: #FDFDFD; /* Very subtle off-white for body background - almost white */
+    --card-background: #FFFFFF; /* Pure white for cards and main panels */
+    --gray: #6c757d; /* Standard muted text */
+    --gray-light: #e0e0e0; /* Slightly lighter grey for subtle borders */
+    --border-radius: 8px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Even softer shadow */
+    --transition: all 0.3s ease;
+
+    /* Define RGB for rgba colors */
+    --primary-rgb: 10, 46, 91;
+    --secondary-rgb: 255, 215, 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light); /* Subtle off-white body background */
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+/* Main container */
+.container {
+    padding: 24px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 1600px; /* Increased max-width */
+    margin: 0 auto;
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.dashboard-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary); /* Retain primary blue for main heading */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dashboard-header h1 i {
+    color: var(--secondary); /* Golden icon for main heading */
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    border: none;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary); /* Primary blue for main actions */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #08244e; /* Slightly darker blue on hover */
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+.btn-secondary {
+    background-color: var(--gray); /* Grey for less prominent actions */
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+/* Date Filter Bar */
+.date-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 24px;
+    background: var(--card-background); /* White background */
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--gray-light); /* Light border */
+    flex-wrap: wrap;
+}
+.date-filter-bar label {
+    font-weight: 500;
+    color: var(--dark);
+    margin-right: 5px;
+    white-space: nowrap;
+}
+.date-filter-bar input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-light);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    color: var(--dark);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow to transition */
+    flex-grow: 1;
+    max-width: 180px;
+    background-color: var(--card-background); /* Ensure input background is white */
+}
+.date-filter-bar input[type="date"]:focus {
+    outline: none;
+    border-color: var(--secondary); /* Golden border on focus */
+    box-shadow: 0 0 0 3px rgba(var(--secondary-rgb), 0.2); /* Soft golden focus ring */
+}
+.date-filter-bar .btn {
+    height: fit-content;
+}
+
+/* Stats cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: var(--card-background); /* White background */
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    border: 1px solid var(--gray-light); /* Light border */
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    /* Soft golden glow on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 0 15px rgba(var(--secondary-rgb), 0.2); 
+    border-color: var(--secondary); /* Golden border on hover */
+}
+
+.stat-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray);
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary); /* Numbers in primary blue for emphasis */
+}
+
+/* Table container */
+.table-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    border-radius: var(--border-radius);
+    background: var(--card-background); /* White background */
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--gray-light); /* Light border */
+}
+
+/* Table styles */
+.leads-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+.leads-table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--light); /* Very subtle off-white for sticky header */
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray);
+    border-bottom: 1px solid var(--gray-light);
+    white-space: nowrap;
+}
+
+.leads-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-light);
+    vertical-align: middle;
+}
+
+.leads-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Clickable rows */
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Only background color for smoother flash */
+}
+
+.clickable-row:hover {
+    background-color: var(--ki-light-gold); /* Very subtle golden tint on hover */
+}
+
+/* Status and Priority badges */
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    /* Removed specific border-radius here to avoid overriding if desired */
+}
+
+/* Status colors - keep them descriptive but adjust lightness if needed */
+.status-new { background-color: #e3f2fd; color: #1976d2; } 
+.status-contacted { background-color: #fff8e1; color: #ff8f00; } 
+.status-qualified { background-color: #e8f5e9; color: #388e3c; } 
+.status-lost { background-color: #ffebee; color: #d32f2f; } 
+.status-won { background-color: #e8f5e9; color: #198754; } 
+
+/* Priority colors - consistent with status */
+.priority-high { background-color: #ffebee; color: #d32f2f; }
+.priority-medium { background-color: #fff8e1; color: #ff8f00; }
+.priority-low { background-color: #e8f5e9; color: #388e3c; }
+
+/* Select dropdown */
+.select-dropdown {
+    padding: 8px 14px;
+    font-size: 14px;
+    border: 1px solid var(--gray-light);
+    border-radius: var(--border-radius);
+    background-color: var(--card-background); /* White background */
+    color: var(--dark);
+    cursor: pointer;
+    transition: var(--transition);
+    max-width: 180px;
+}
+
+.select-dropdown:hover {
+    border-color: var(--secondary); /* Golden border on hover */
+}
+.select-dropdown:focus {
+    outline: none;
+    border-color: var(--secondary); /* Golden border on focus */
+    box-shadow: 0 0 0 3px rgba(var(--secondary-rgb), 0.2);
+}
+
+/* Time indicator */
+.time-ago {
+    font-size: 13px;
+    color: var(--gray);
+    white-space: nowrap;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 40px;
+    text-align: center;
+    color: var(--gray);
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* Loading state */
+.loading {
+    color: var(--primary); /* Primary blue for loading text */
+    font-size: 13px;
+    padding: 8px;
+    display: inline-block;
+}
+
+/* Section header */
+.section-header {
+    margin: 24px 0 16px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary); /* Primary blue for section headers */
+}
+
+/* Contact info styling */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-info div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Name with role */
+.contact-name {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.contact-role {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+/* Sort indicator */
+.sort-indicator {
+    margin-left: 4px;
+    color: var(--secondary); /* Golden sort indicator */
+}
+
+/* No-click area */
+.no-click {
+    pointer-events: auto;
+}
+
+/* Responsive adjustments - unchanged from previous */
+@media (max-width: 992px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .dashboard-header .btn {
+        width: 100%;
+    }
+    .date-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .date-filter-bar label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .date-filter-bar input[type="date"],
+    .date-filter-bar .btn {
+        max-width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    .leads-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .leads-table thead, .leads-table tbody, .leads-table th, .leads-table td, .leads-table tr { 
+        display: block;
+    }
+    .leads-table thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .leads-table tr { 
+        border: 1px solid var(--gray-light);
+        margin-bottom: 15px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+    .leads-table td { 
+        border-bottom: 1px solid var(--gray-light);
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    .leads-table td:last-child {
+        border-bottom: none;
+    }
+    .leads-table td:before { 
+        position: absolute;
+        top: 0;
+        left: 6px;
+        width: 45%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: var(--gray);
+    }
+    .leads-table td:nth-of-type(1):before { content: "Lead ID:"; }
+    .leads-table td:nth-of-type(2):before { content: "Contact Name:"; }
+    .leads-table td:nth-of-type(3):before { content: "Company:"; }
+    .leads-table td:nth-of-type(4):before { content: "Contact Info:"; }
+    .leads-table td:nth-of-type(5):before { content: "Assigned To:"; }
+    .leads-table td:nth-of-type(6):before { content: "Status:"; }
+    .leads-table td:nth-of-type(7):before { content: "Priority:"; }
+    .leads-table td:nth-of-type(8):before { content: "Last Updated:"; }
+    .leads-table td:nth-of-type(9):before { content: "Created At:"; }
+
+    .contact-info { text-align: right; }
+    .contact-info div { text-align: right; }
+    .select-dropdown { max-width: 100%; text-align: right; }
+    .select-dropdown option { text-align: left; }
+    .badge { float: right; margin-left: 10px; }
+    .time-ago { float: right; margin-left: 10px; }
+}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="dashboard-header">
             <h1>
+                <i class="bi bi-speedometer2"></i>
                 {% if selected_category %}
                     {{ selected_category }} Management Dashboard
                 {% else %}
                     Leads Management Dashboard
                 {% endif %}
             </h1>
-            <div style="display: flex; gap: 12px;">
-                <a href="{% url 'logoutAdmin' %}" class="btn btn-primary">
-                    <span>🚪</span> Logout
-                </a>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <a href="{% url 'uploadLeads' category_id %}" class="btn btn-primary">
-                    <span>📤</span> Upload Leads
+                    <i class="bi bi-cloud-upload"></i> Upload Leads
+                </a>
+                <a href="{% url 'viewCategory' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Categories
                 </a>
             </div>
         </div>
         
+        <div class="date-filter-bar">
+            <form id="dateFilterForm" method="GET" action="{% url 'adminDashboard' category_id %}" class="d-flex align-items-center gap-3 flex-wrap">
+                <label for="createdOnDate">Created On:</label>
+                <input type="date" id="createdOnDate" name="created_on_date" value="{{ current_created_on_date|default:'' }}">
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-filter"></i> Filter
+                </button>
+                <button type="button" class="btn btn-secondary" id="showAllLeads">
+                    <i class="bi bi-arrow-clockwise"></i> All Leads
+                </button>
+            </form>
+        </div>
+
         <div class="stats-container">
             <div class="stat-card">
                 <h3>Total Leads</h3>
@@ -327,18 +499,18 @@
             </div>
             <div class="stat-card">
                 <h3>New Leads</h3>
-                <p>{% if new_leads %}{{ new_leads }}{% else %}—{% endif %}</p>
+                <p>{% if new_leads is not None %}{{ new_leads }}{% else %}—{% endif %}</p>
             </div>
             <div class="stat-card">
                 <h3>Contacted Leads</h3>
-                <p>{% if contacted_leads %}{{ contacted_leads }}{% else %}—{% endif %}</p>
+                <p>{% if contacted_leads is not None %}{{ contacted_leads }}{% else %}—{% endif %}</p>
             </div>
             <div class="stat-card">
                 <h3>Converted Leads</h3>
-                <p>{% if converted_leads %}{{ converted_leads }}{% else %}—{% endif %}</p>
+                <p>{% if converted_leads is not None %}{{ converted_leads }}{% else %}—{% endif %}</p>
             </div>
-            
         </div>
+
         <h2 class="section-header">Recent Leads</h2>
         <div class="table-container">
             <table class="leads-table">
@@ -354,10 +526,13 @@
                         <th>
                             Last Updated <span class="sort-indicator">▼</span>
                         </th>
+                        <th>
+                            Created At <span class="sort-indicator">▼</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% if leads|length > 0 %}
+                    {% if leads %} {# Check if leads iterable is not empty #}
                         {% for lead in leads %}
                         <tr class="clickable-row" data-href="{% url 'viewLead' lead.id %}">
                             <td>{{ lead.id }}</td>
@@ -393,19 +568,20 @@
                                 </span>
                             </td>
                             <td class="time-ago" title="{{ lead.updated_at|date:'Y-m-d H:i' }}">
-                                {% with updated=lead.updated_at|timesince %}
+                                {% with updated=lead.updated_at %}
                                     {{ updated }} ago
                                 {% endwith %}
                             </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="empty-state">No leads available</td>
+                            <td class="time-ago" title="{{ lead.created_at|date:'Y-m-d H:i' }}">
+                                {% with created=lead.created_at %}
+                                    {{ created }} ago
+                                {% endwith %}
+                            </td>
                         </tr>
                         {% endfor %}
-                        {% else %}
+                    {% else %}
                     <tr>
-                        <td colspan="8" class="empty-state">No leads available</td>
+                        <td colspan="8" class="empty-state">No leads available for the selected date.</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -414,6 +590,49 @@
     </div>
 
     <script>
+    // Make rows clickable except for the select dropdown area
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.clickable-row');
+        rows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Check if the clicked element or any of its parents is part of the 'no-click' area (the select dropdown)
+                if (e.target.closest('.no-click')) {
+                    return; // Do nothing if the click originated from the select dropdown
+                }
+                // Otherwise, navigate to the data-href URL
+                window.location.href = this.dataset.href;
+            });
+        });
+        
+        // Add subtle animation to table rows
+        const tableRows = document.querySelectorAll('.leads-table tbody tr');
+        tableRows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(10px)';
+            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            
+            setTimeout(() => {
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, 100 + (index * 50));
+        });
+
+        // Date Filter Logic
+        const showAllLeadsBtn = document.getElementById('showAllLeads');
+        const createdOnDateInput = document.getElementById('createdOnDate');
+        const dateFilterForm = document.getElementById('dateFilterForm');
+
+        if (showAllLeadsBtn) {
+            showAllLeadsBtn.addEventListener('click', function() {
+                // Clear the date input
+                createdOnDateInput.value = '';
+                // Submit the form to remove date filter
+                dateFilterForm.submit();
+            });
+        }
+    });
+
+    // AJAX function to assign leads (existing functionality)
     function assignLead(selectElem, leadId) {
         const userId = selectElem.value;
         const row = selectElem.closest('tr');
@@ -457,7 +676,7 @@
                     row.style.backgroundColor = '';
                 }, 1000);
             } else {
-                alert("Failed: " + data.error);
+                alert("Failed to assign lead: " + data.error);
                 // Restore original select
                 cell.innerHTML = '';
                 cell.appendChild(originalSelect);
@@ -466,40 +685,13 @@
         .catch(error => {
             loadingSpan.remove();
             selectElem.style.display = '';
-            console.error("Error:", error);
-            alert("Something went wrong.");
+            console.error("Error during lead assignment:", error);
+            alert("Something went wrong during lead assignment.");
             // Restore original select
             cell.innerHTML = '';
             cell.appendChild(originalSelect);
         });
     }
-
-    // Make rows clickable
-    document.addEventListener('DOMContentLoaded', function() {
-        const rows = document.querySelectorAll('.clickable-row');
-        rows.forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Check if the clicked element is the select or inside the no-click area
-                if (e.target.closest('.no-click')) {
-                    return;
-                }
-                window.location.href = this.dataset.href;
-            });
-        });
-        
-        // Add subtle animation to table rows
-        const tableRows = document.querySelectorAll('.leads-table tbody tr');
-        tableRows.forEach((row, index) => {
-            row.style.opacity = '0';
-            row.style.transform = 'translateY(10px)';
-            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            
-            setTimeout(() => {
-                row.style.opacity = '1';
-                row.style.transform = 'translateY(0)';
-            }, 100 + (index * 50));
-        });
-    });
     </script>
 </body>
 </html>
