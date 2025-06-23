@@ -60,6 +60,8 @@
 
         .brand-logo img {
             height: 60px;
+            max-width: 100%; /* Ensure image scales down */
+            object-fit: contain;
         }
 
         /* Main Content */
@@ -76,6 +78,8 @@
             max-width: 900px;
             width: 100%;
             margin: 0 auto;
+            padding: 0 20px; /* Default horizontal padding for larger screens */
+            box-sizing: border-box; /* Include padding in width calculation */
         }
         
         .edit-lead-card {
@@ -137,6 +141,7 @@
             color: var(--secondary-color);
             margin-bottom: 0.4rem;
             font-weight: 600;
+            white-space: normal; /* Allow text to wrap */
         }
         
         .info-value {
@@ -144,7 +149,8 @@
             font-weight: 500;
             color: var(--dark-color);
             margin: 0;
-            word-break: break-word;
+            word-break: break-all; /* Ensure long words break */
+            white-space: normal; /* Allow text to wrap */
         }
         
         .info-value.email, .info-value.phone {
@@ -189,6 +195,7 @@
             transition: all 0.3s ease;
             background-color: var(--white);
             color: var(--dark-color);
+            box-sizing: border-box; /* Include padding in width */
         }
         
         .form-control:focus, .form-select:focus, .form-textarea:focus {
@@ -279,12 +286,12 @@
         
         .priority-high {
             background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger);
+            color: var(--danger-color); /* Corrected variable name */
         }
         
         .priority-medium {
             background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning);
+            color: var(--warning-color); /* Corrected variable name */
         }
         
         .priority-low {
@@ -302,10 +309,10 @@
         }
         
         .status-new { background-color: var(--info-color); }
-        .status-contacted { background-color: var(--warning); }
+        .status-contacted { background-color: var(--warning-color); } /* Corrected variable name */
         .status-discussion { background-color: #8b5cf6; }
-        .status-not-interested { background-color: var(--danger); }
-        .status-converted { background-color: var(--success); }
+        .status-not-interested { background-color: var(--danger-color); } /* Corrected variable name */
+        .status-converted { background-color: var(--success-color); } /* Corrected variable name */
 
         /* Footer Styles */
         .portal-footer {
@@ -319,6 +326,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            padding: 0 20px; /* Default horizontal padding */
         }
 
         .footer-content p {
@@ -345,6 +353,10 @@
                 padding: 2rem 0;
             }
             
+            .edit-lead-wrapper {
+                padding: 0 15px; /* Added horizontal padding for smaller screens */
+            }
+            
             .form-header {
                 padding: 1.5rem;
             }
@@ -361,7 +373,7 @@
             }
             
             .lead-info-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Stack items vertically */
             }
             
             .lead-form {
@@ -369,7 +381,7 @@
             }
             
             .form-actions {
-                flex-direction: column-reverse;
+                flex-direction: column-reverse; /* Stack buttons vertically */
                 gap: 0.75rem;
             }
             
@@ -378,9 +390,24 @@
                 justify-content: center;
                 padding: 0.75rem 1.5rem;
             }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            .footer-links a {
+                margin: 5px 10px; /* Adjust spacing for stacked links */
+            }
         }
 
         @media (max-width: 576px) {
+            .portal-header {
+                padding: 0.75rem 0; /* Smaller header padding */
+            }
+            .brand-logo img {
+                height: 45px; /* Smaller logo on smallest screens */
+            }
             .form-header {
                 padding: 1rem;
             }
@@ -409,6 +436,9 @@
             .btn-submit, .btn-cancel {
                 padding: 0.6rem 1rem;
             }
+            .form-grid {
+                grid-template-columns: 1fr; /* Explicitly force single column on very small screens */
+            }
         }
     </style>
 </head>
@@ -419,7 +449,7 @@
             <div class="container d-flex justify-content-start align-items-center">
                 <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
                     {% load static %}
-                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo">
+                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x45/D4AF37/343a40?text=Kripalu';">
                 </a>
             </div>
         </header>
@@ -515,9 +545,9 @@
                 <div class="footer-content">
                     <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
                     <div class="footer-links">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Contact Support</a>
+                       <a href="{% url 'term_contact' %}">Privacy Policy</a>
+                        <a href="{% url 'term_contact' %}">Terms of Service</a>
+                        <a href="{% url 'term_contact' %}">Contact Support</a>
                     </div>
                 </div>
             </div>

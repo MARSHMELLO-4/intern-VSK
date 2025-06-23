@@ -8,21 +8,177 @@
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <title>Admin Logout</title>
+    
+    <!-- Google Fonts Preconnect & Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Admin Logout | Kripalu Innovations</title>
+    <style>
+        /* --- Kripalu Innovations White & Golden Theme Variables --- */
+        :root {
+            --ki-primary-blue: #0A2E5B; /* The strong, professional blue from KI */
+            --ki-secondary-gold: #FFD700; /* A rich, vibrant gold for accents */
+            --ki-orange-accent: #FF8C00; /* A complementary orange for calls to action, if needed */
+
+            --primary: var(--ki-primary-blue); 
+            --primary-light: #1A477A;
+            --primary-dark: #08244A;
+            
+            --secondary: var(--ki-secondary-gold);
+            --accent: #FFC107;
+
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545; /* Standard red for logout/delete */
+            
+            --light-bg: #f8f9fa; /* Very light grey for main background */
+            --card-bg: #ffffff; /* Pure white for all cards and panels */
+            --text-dark: #212529; /* Darker text for readability */
+            --text-muted: #6c757d; /* Standard muted text color */
+            --border-color: #e9ecef; /* Light, subtle border color */
+            
+            --border-radius: 12px;
+            --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05); /* Softer, more elegant shadow */
+            --card-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.08), 0 0 15px rgba(255, 215, 0, 0.15); /* Adds a golden glow on hover */
+            --transition-speed: 0.3s;
+
+            /* Specific golden tints */
+            --golden-fade-light: rgba(255, 215, 0, 0.08); /* Very subtle gold tint */
+            --golden-border-light: rgba(255, 215, 0, 0.3); /* Lighter golden border */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg); /* Use theme variable */
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center vertically for full page */
+        }
+
+        .logout-form-wrapper {
+            width: 100%;
+            max-width: 450px; /* Increased max-width slightly for better appearance */
+            margin: 20px; /* Add margin for mobile responsiveness */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        .card {
+            border: none; /* Remove default Bootstrap border as we'll use shadow */
+            border-radius: var(--border-radius); /* Use theme variable */
+            box-shadow: var(--card-shadow); /* Use theme variable */
+            background-color: var(--card-bg); /* Use theme variable */
+            padding: 25px; /* Adjust padding for better look */
+        }
+
+        .card-title {
+            font-size: 1.8rem; /* Slightly larger title */
+            font-weight: 700;
+            color: var(--danger); /* Red for confirm logout */
+            margin-bottom: 20px;
+        }
+
+        .card-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 30px; /* More space before buttons */
+        }
+
+        .btn-lg { /* Custom styling for large buttons */
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px; /* Consistent rounded corners */
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
+            border-color: #c82333;
+            transform: translateY(-2px); /* Subtle lift effect */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-muted); /* Muted text for outline secondary */
+            border-color: var(--text-muted);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--text-muted);
+            color: white;
+            border-color: var(--text-muted);
+            transform: translateY(-2px); /* Subtle lift effect */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .logout-form-wrapper {
+                margin: 15px; /* Reduce margin on smaller screens */
+            }
+            .card {
+                padding: 20px; /* Reduce card padding */
+            }
+            .card-title {
+                font-size: 1.6rem; /* Smaller title font */
+                margin-bottom: 15px;
+            }
+            .card-text {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+            .btn-lg {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .logout-form-wrapper {
+                margin: 10px;
+            }
+            .card {
+                padding: 15px;
+            }
+            .card-title {
+                font-size: 1.4rem;
+            }
+            .card-text {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <form action="" method="POST" class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    {% csrf_token %}
-    <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 1rem;">
-        <div class="card-body text-center">
-            <h2 class="card-title mb-3 text-danger">Confirm Logout</h2>
-            <p class="card-text mb-4">Are you sure you want to log out?</p>
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-danger btn-lg">Logout</button>
-                <a href="{% url 'viewCategory' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    <form action="" method="POST" class="d-flex justify-content-center align-items-center vh-100">
+        {% csrf_token %}
+        <div class="logout-form-wrapper">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">Confirm Logout</h2>
+                    <p class="card-text mb-4">Are you sure you want to log out?</p>
+                    <div class="d-grid gap-3"> {# Increased gap for better button separation #}
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </button>
+                        <a href="{% url 'viewCategory' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</form>    
+    </form>    
 </body>
 </html>

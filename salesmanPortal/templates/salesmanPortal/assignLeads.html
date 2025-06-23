@@ -7,6 +7,244 @@
     {% load static %}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static '/css/assign_leads.css' %}">
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6; /* Light background */
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for longer content */
+            min-height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            background-color: #ffffff; /* White background for the form container */
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer, larger shadow */
+            padding: 30px;
+            width: 100%;
+            max-width: 600px; /* Max width for readability on larger screens */
+            margin: 30px auto; /* Centered with top/bottom margin */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Header Styles */
+        .page-header {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0A2E5B; /* Primary blue */
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        /* Category Display */
+        .category-display {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #0A2E5B;
+        }
+
+        /* Upload Form Section */
+        .upload-form-section {
+            background-color: #f9fbfb; /* Slightly different background for section */
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Spacing between form groups */
+        }
+
+        .form-group {
+            margin-bottom: 0; /* Managed by gap in .upload-form */
+        }
+
+        .file-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: flex; /* Use flex to align custom button and text */
+            align-items: center;
+            border: 2px dashed #a0a0a0; /* Dashed border for file drop area feel */
+            border-radius: 8px;
+            background-color: #ffffff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            height: 50px; /* Fixed height for consistency */
+        }
+
+        .file-input-wrapper:hover {
+            border-color: #0A2E5B; /* Hover on dashed border */
+            box-shadow: 0 0 0 3px rgba(10, 46, 91, 0.1);
+        }
+
+        .input-file {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0; /* Hide default input */
+            cursor: pointer;
+            z-index: 2; /* Ensure it's clickable */
+        }
+
+        .file-custom {
+            flex-grow: 1; /* Take remaining space */
+            padding: 0 15px;
+            color: #666;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Ellipsis for long file names */
+            line-height: 50px; /* Vertically center placeholder text */
+            height: 100%;
+            box-sizing: border-box;
+            background-color: transparent; /* Ensure no background interference */
+        }
+
+        .file-custom::after {
+            content: "Choose File"; /* Default button text */
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            padding: 0 20px;
+            background-color: #0A2E5B; /* Primary blue button */
+            color: white;
+            display: flex;
+            align-items: center;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            z-index: 1; /* Below the actual input but above placeholder */
+        }
+
+        .file-input-wrapper:hover .file-custom::after {
+            background-color: #08244e; /* Darker blue on hover */
+        }
+
+        .submit-btn {
+            background-color: #28a745; /* Success green for submit */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%; /* Full width button */
+            margin-top: 15px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 25px;
+            }
+
+            .page-header {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .category-display {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+
+            .upload-form-section {
+                padding: 20px;
+            }
+
+            .submit-btn {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                margin: 15px auto;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            }
+
+            .page-header {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .category-display {
+                font-size: 15px;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+
+            .upload-form-section {
+                padding: 15px;
+            }
+
+            .file-label {
+                font-size: 15px;
+                margin-bottom: 8px;
+            }
+
+            .file-input-wrapper {
+                height: 45px; /* Slightly smaller height on small phones */
+            }
+
+            .file-custom {
+                font-size: 14px;
+                line-height: 45px;
+            }
+
+            .file-custom::after {
+                padding: 0 15px; /* Smaller button padding */
+                font-size: 14px;
+            }
+
+            .submit-btn {
+                font-size: 15px;
+                padding: 10px;
+                margin-top: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -28,5 +266,21 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputFile = document.getElementById('excel_file');
+            const fileCustom = document.querySelector('.file-custom');
+            const initialPlaceholder = fileCustom.getAttribute('data-placeholder');
+
+            inputFile.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileCustom.textContent = this.files[0].name;
+                } else {
+                    fileCustom.textContent = initialPlaceholder;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

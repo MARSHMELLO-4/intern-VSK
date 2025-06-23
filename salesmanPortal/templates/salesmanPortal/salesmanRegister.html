@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Professional Signup | Elevate CRM</title>
+    <title>Sales Professional Signup | Kripalu Innovations</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    {% load static %}
-    <link rel="stylesheet" href="{% static '/css/salesman_register.css' %}">
+    
     <style>
         /* --- Golden-White Theme Variables --- */
         :root {
@@ -38,6 +37,10 @@
             --transition-speed: 0.3s ease-in-out;
             --border-radius-lg: 12px;
             --border-radius-md: 8px;
+
+            /* Define RGB for rgba colors (needed for shadows) */
+            --primary-rgb: 10, 46, 91; /* RGB for #0A2E5B */
+            --secondary-rgb: 255, 215, 0; /* RGB for #FFD700 */
         }
         
         body {
@@ -50,12 +53,14 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text-dark); /* Use dark text variable */
             line-height: 1.6;
+            padding: 20px; /* Add overall padding for smaller screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
         
         .auth-wrapper {
             width: 100%;
             max-width: 1200px; /* Keep max-width for overall wrapper */
-            padding: 2rem;
+            /* Removed extra padding here as body has it */
             display: flex;
             justify-content: center;
             align-items: center; /* Center vertically within wrapper if space allows */
@@ -70,6 +75,7 @@
             max-width: 600px; /* Max-width for the form itself */
             transition: transform var(--transition-speed), box-shadow var(--transition-speed);
             border: 1px solid var(--border-color); /* Subtle border */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
         
         .auth-container:hover {
@@ -246,35 +252,6 @@
             margin-right: 0.75rem;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .auth-wrapper {
-                padding: 1rem;
-            }
-            
-            .auth-container {
-                padding: 2rem 1.5rem;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0; /* Remove gap when stacking */
-            }
-            
-            .auth-title {
-                font-size: 1.6rem;
-            }
-
-            .auth-logo {
-                width: 55px;
-                height: 55px;
-            }
-
-            .auth-logo i {
-                font-size: 1.7rem;
-            }
-        }
-        
         /* Password strength indicator */
         .password-strength {
             margin-top: 0.6rem; /* More space */
@@ -301,10 +278,152 @@
             padding-right: 2.5rem; /* Ensure space for arrow */
         }
 
-        /* Define RGB for rgba colors (needed for shadows) */
-        :root {
-            --primary-rgb: 10, 46, 91; /* RGB for #0A2E5B */
-            --secondary-rgb: 255, 215, 0; /* RGB for #FFD700 */
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px; /* Reduce overall body padding */
+            }
+            .auth-wrapper {
+                padding: 0; /* Remove padding from wrapper on small screens */
+            }
+            .auth-container {
+                padding: 2rem 1.5rem; /* Adjust padding for the container */
+                border-radius: var(--border-radius-md); /* Smaller border-radius on mobile */
+            }
+            
+            .form-row {
+                flex-direction: column; /* Stack columns vertically */
+                gap: 0; /* Remove gap when stacking */
+            }
+            
+            .auth-header {
+                margin-bottom: 2rem; /* Adjust header margin */
+            }
+
+            .auth-title {
+                font-size: 1.8rem; /* Slightly smaller title */
+            }
+
+            .auth-subtitle {
+                font-size: 0.95rem; /* Slightly smaller subtitle */
+            }
+            
+            .auth-logo {
+                width: 60px; /* Smaller logo on tablets */
+                height: 60px;
+                margin-bottom: 1rem;
+            }
+
+            .auth-logo i {
+                font-size: 1.8rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem; /* Adjust form group spacing */
+            }
+            
+            .form-label {
+                font-size: 0.85rem; /* Smaller labels */
+            }
+
+            .form-control {
+                padding: 0.75rem 1rem; /* Adjust input padding */
+                font-size: 0.9rem; /* Smaller input font */
+            }
+
+            .input-with-icon .form-control {
+                padding-left: 2.5rem; /* Adjust space for icon */
+            }
+            
+            .input-icon {
+                left: 0.75rem; /* Adjust icon position */
+                font-size: 1rem; /* Smaller icon */
+            }
+
+            .submit-btn {
+                padding: 1rem; /* Adjust button padding */
+                font-size: 1rem; /* Adjust button font size */
+                margin-top: 1.5rem; /* Adjust margin above button */
+            }
+
+            .auth-footer {
+                margin-top: 2rem; /* Adjust footer margin */
+                font-size: 0.9rem;
+            }
+
+            .alert {
+                padding: 0.75rem 1rem; /* Adjust alert padding */
+                font-size: 0.9rem;
+            }
+            .alert .bi {
+                font-size: 1.1rem; /* Adjust alert icon size */
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 10px; /* Minimal padding for smallest screens */
+            }
+            .auth-container {
+                padding: 1.5rem; /* Even smaller padding for container */
+                border-radius: var(--border-radius-md); /* Consistent small border-radius */
+                box-shadow: var(--box-shadow-subtle); /* Keep subtle shadow */
+            }
+            
+            .auth-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .auth-logo {
+                width: 50px; /* Smallest logo size */
+                height: 50px;
+                margin-bottom: 0.75rem;
+            }
+
+            .auth-logo i {
+                font-size: 1.5rem;
+            }
+
+            .auth-title {
+                font-size: 1.5rem;
+            }
+            .auth-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-label {
+                font-size: 0.8rem;
+            }
+            .form-control {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.85rem;
+            }
+            .input-with-icon .form-control {
+                padding-left: 2.25rem; /* Smaller padding for icon */
+            }
+            .input-icon {
+                left: 0.6rem;
+                font-size: 0.95rem;
+            }
+            .submit-btn {
+                padding: 0.8rem;
+                font-size: 0.95rem;
+                margin-top: 1.25rem;
+            }
+            .auth-footer {
+                margin-top: 1.5rem;
+                font-size: 0.85rem;
+            }
+            .alert {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .alert .bi {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -331,7 +450,7 @@
 
             <div class="auth-header">
                 <div class="auth-logo">
-                    <i class="bi bi-person-badge" style="font-size: 1.5rem;"></i>
+                    <i class="bi bi-person-badge"></i>
                 </div>
                 <h1 class="auth-title">Join Our Sales Team</h1>
                 <p class="auth-subtitle">Create your account to get started</p>
@@ -441,23 +560,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-dismiss alerts after 5 seconds
             setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            });
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
             }, 5000);
             
             // Form validation
             const forms = document.querySelectorAll('.needs-validation');
             Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
             });
             
             // Password strength indicator
@@ -465,34 +584,34 @@
             const strengthMeter = document.getElementById('password-strength-meter');
             
             passwordInput.addEventListener('input', function() {
-            const password = this.value;
-            let strength = 0;
-            
-            // Length check
-            if (password.length >= 8) strength += 1;
-            if (password.length >= 12) strength += 1;
-            
-            // Character variety checks
-            if (/[A-Z]/.test(password)) strength += 1;
-            if (/[0-9]/.test(password)) strength += 1;
-            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-            
-            // Update meter
-            const width = Math.min(strength * 20, 100);
-            let color = '#ef4444'; // red
-            
-            if (strength >= 4) color = '#10b981'; // green
-            else if (strength >= 2) color = '#f59e0b'; // yellow
-            
-            strengthMeter.style.width = width + '%';
-            strengthMeter.style.backgroundColor = color;
+                const password = this.value;
+                let strength = 0;
+                
+                // Length check
+                if (password.length >= 8) strength += 1;
+                if (password.length >= 12) strength += 1;
+                
+                // Character variety checks
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/[0-9]/.test(password)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+                
+                // Update meter
+                const width = Math.min(strength * 20, 100);
+                let color = '#ef4444'; // red
+                
+                if (strength >= 4) color = '#10b981'; // green
+                else if (strength >= 2) color = '#f59e0b'; // yellow
+                
+                strengthMeter.style.width = width + '%';
+                strengthMeter.style.backgroundColor = color;
             });
 
             // Phone number: allow only 10 digits, no formatting
             const phoneInput = document.getElementById('id_phone');
             phoneInput.addEventListener('input', function(e) {
-            let digits = e.target.value.replace(/\D/g, '').slice(0, 10);
-            e.target.value = digits;
+                let digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                e.target.value = digits;
             });
         });
     </script>

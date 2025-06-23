@@ -71,7 +71,7 @@
             flex-direction: column;
             z-index: 1000;
             border-right: 1px solid var(--border-color);
-            transition: width var(--transition-speed) ease;
+            transition: width var(--transition-speed) ease, transform var(--transition-speed) ease; /* Add transform for mobile slide */
             overflow: hidden;
         }
 
@@ -119,6 +119,34 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
+        /* New button for closing mobile drawer */
+        .close-mobile-drawer-btn {
+            position: absolute;
+            top: 1.25rem; /* Adjust position relative to header padding */
+            right: 1.25rem; /* Adjust position relative to header padding */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem; /* Slightly larger for easier tap target */
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed) ease, opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+            opacity: 0; /* Hidden by default */
+            visibility: hidden; /* Not interactive when hidden */
+            z-index: 10; /* Ensure it's above other header elements if needed */
+        }
+
+        .close-mobile-drawer-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-drawer.open .close-mobile-drawer-btn {
+            opacity: 1; /* Visible when drawer is open */
+            visibility: visible; /* Interactive when visible */
+        }
+
+
         .drawer-content {
             flex: 1;
             overflow-y: auto;
@@ -136,7 +164,8 @@
             margin-left: var(--drawer-width);
             flex: 1;
             min-height: 100vh;
-            transition: margin-left var(--transition-speed) ease;
+            transition: margin-left var(--transition-speed) ease, transform var(--transition-speed) ease, filter var(--transition-speed) ease; /* Added filter to transition */
+            position: relative; /* Needed for overlay */
         }
 
         .category-drawer.collapsed + .main-content {
@@ -194,6 +223,10 @@
             color: var(--text-dark);
             white-space: nowrap;
             overflow: hidden;
+            width: 100%; /* Ensure it fills parent width */
+            text-align: left; /* Align text to start */
+            background-color: transparent; /* For button background */
+            border: none; /* For button border */
         }
 
         .category-drawer.collapsed .category-item {
@@ -295,6 +328,9 @@
             transition: all var(--transition-speed) ease;
             cursor: pointer;
             border: 1px solid var(--border-color);
+            text-decoration: none; /* For link */
+            color: inherit; /* For link */
+            display: block; /* For link to take full card space */
         }
 
         .salesman-card:hover {
@@ -358,6 +394,7 @@
             transition: all var(--transition-speed) ease;
             white-space: nowrap;
             overflow: hidden;
+            text-decoration: none; /* For link */
         }
 
         .category-drawer.collapsed .btn-add {
@@ -387,12 +424,13 @@
             color: var(--ki-primary-blue); /* Logout button in KI blue border/text */
             border: 1px solid var(--ki-primary-blue);
             padding: 0.5rem 1.25rem;
-            border-radius: var(--border-radius);
+            border-radius: 8px; /* Consistent with other small buttons */
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             transition: all var(--transition-speed) ease;
+            text-decoration: none; /* For link */
         }
 
         .btn-logout:hover {
@@ -405,9 +443,11 @@
         .dashboard-header .btn-group {
             display: flex;
             gap: 1rem; /* Space out the buttons */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            justify-content: flex-end; /* Align to right on desktop */
         }
         .dashboard-header .btn-group .btn-logout {
-            border-radius: 8px; /* Slightly smaller radius for multiple buttons */
+            /* border-radius: 8px; Already set */
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
         }
@@ -421,25 +461,47 @@
             color: var(--ki-secondary-gold);
         }
 
+        /* Mobile Overlay for Drawer */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 999; /* Below drawer, above content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+        }
+
+        /* Adjusted class for overlay when drawer is open */
+        body.drawer-open .drawer-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
 
         /* Mobile Styles */
         @media (max-width: 992px) {
             .category-drawer {
-                transform: translateX(-100%);
+                transform: translateX(-100%); /* Off-canvas by default */
                 z-index: 1100;
             }
             
             .category-drawer.open {
-                transform: translateX(0);
+                transform: translateX(0); /* Slide in when open */
                 width: var(--drawer-width);
             }
             
             .main-content {
-                margin-left: 0;
+                margin-left: 0; /* No margin on mobile */
+                width: 100%; /* Ensure main content takes full width */
             }
-            
+
+            /* Show mobile toggle on small screens (hamburger icon) */
             .drawer-toggle {
-                display: flex !important;
+                display: flex !important; 
                 background: rgba(255, 255, 255, 0.2);
                 border: none;
                 color: white;
@@ -449,29 +511,65 @@
                 align-items: center;
                 justify-content: center;
                 margin-right: 1rem;
+                flex-shrink: 0; 
+            }
+            /* Hide the desktop drawer toggle (chevron) on small screens */
+            #drawerToggle {
+                display: none;
             }
 
             .dashboard-header {
-                flex-wrap: wrap; /* Allow items to wrap on small screens */
-                justify-content: flex-start;
+                flex-wrap: wrap; 
+                justify-content: space-between; 
                 padding: 1rem;
             }
             .dashboard-header .dashboard-title {
-                margin-left: 0; /* Remove margin from mobile toggle */
-                width: 100%;
-                text-align: center;
-                margin-bottom: 1rem;
+                margin-left: 0; 
+                flex-grow: 1; 
+                text-align: left; 
+                margin-bottom: 0; 
             }
             .dashboard-header .btn-group {
-                width: 100%;
-                justify-content: center;
+                width: 100%; 
+                justify-content: center; 
+                margin-top: 1rem; 
                 gap: 0.5rem;
             }
             .dashboard-header .btn-group .btn-logout {
-                flex-grow: 1; /* Allow buttons to expand */
+                flex-grow: 1; 
             }
             .content-container {
                 padding: 1rem;
+            }
+            /* When drawer is open, apply blur/dim to body, not just main-content */
+            body.drawer-open {
+                overflow: hidden; 
+            }
+            .main-content {
+                transition: transform var(--transition-speed) ease; 
+            }
+            body.drawer-open .main-content {
+                transform: translateX(var(--drawer-width)); 
+            }
+        }
+        /* Further adjustments for blur/dim effect */
+        body.drawer-open .main-content {
+            filter: blur(2px);
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .salesman-grid {
+                grid-template-columns: 1fr; /* Force single column on smaller tablets and phones */
+            }
+            .salesman-card {
+                padding: 1.5rem 1rem; /* Adjust card padding */
+            }
+            .salesman-card h5 {
+                font-size: 1.1rem; /* Smaller heading for cards */
+            }
+            .salesman-detail-label, .salesman-detail-value {
+                font-size: 0.8rem; /* Smaller detail text */
             }
         }
 
@@ -498,8 +596,11 @@
     <aside class="category-drawer">
         <div class="drawer-header">
             <h4><i class="bi bi-collection me-2"></i>Categories</h4>
-            <button class="toggle-btn" id="drawerToggle">
+            <button class="toggle-btn" id="drawerToggle"> {# Desktop toggle button #}
                 <i class="bi bi-chevron-double-left"></i>
+            </button>
+            <button class="close-mobile-drawer-btn d-lg-none" id="closeDrawerButton"> {# Mobile close button #}
+                <i class="bi bi-x-lg"></i>
             </button>
         </div>
         
@@ -507,15 +608,11 @@
             {% if categories %}
                 <div class="category-list">
                     {% for category_item in categories %}
-                        <form method="post" action="{% url 'adminDashboard' category_item.id %}" class="category-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="category_id" value="{{ category_item.id }}">
-                            <button type="submit" class="category-item w-100 text-start border-0 bg-transparent">
-                                <i class="bi bi-folder-fill"></i>
-                                <span>{{ category_item.name }}</span>
-                                <i class="bi bi-chevron-right ms-auto text-muted chevron"></i>
-                            </button>
-                        </form>
+                        <a href="{% url 'adminDashboard' category_item.id %}" class="category-item">
+                            <i class="bi bi-folder-fill"></i>
+                            <span>{{ category_item.name }}</span>
+                            <i class="bi bi-chevron-right ms-auto text-muted chevron"></i>
+                        </a>
                     {% endfor %}
                 </div>
             {% else %}
@@ -535,8 +632,12 @@
     </aside>
 
     <main class="main-content">
+        {# Overlay for mobile drawer #}
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+
         <header class="dashboard-header">
-            <button class="drawer-toggle d-none" type="button">
+            {# Mobile Hamburger menu button (visible only on small screens) #}
+            <button class="drawer-toggle d-flex d-lg-none" type="button" id="mobileDrawerToggle">
                 <i class="bi bi-list"></i>
             </button>
             
@@ -564,28 +665,24 @@
             {% if salesman %}
                 <div class="salesman-grid">
                     {% for s in salesman %}
-                        <form method="post" action="{% url 'viewSalesman' s.email %}" class="salesman-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="salesman_email" value="{{ s.email }}">
-                            <button type="submit" class="salesman-card w-100 text-start border-0 bg-transparent p-0">
-                                <h5><i class="bi bi-person-badge"></i> {{ s.first_name }} {{ s.last_name }}</h5>
-                                
-                                <div class="salesman-detail">
-                                    <span class="salesman-detail-label">Email:</span>
-                                    <span class="salesman-detail-value email">{{ s.email }}</span>
-                                </div>
-                                
-                                <div class="salesman-detail">
-                                    <span class="salesman-detail-label">Username:</span>
-                                    <span class="salesman-detail-value">{{ s.username }}</span>
-                                </div>
-                                
-                                <div class="salesman-detail">
-                                    <span class="salesman-detail-label">Status:</span>
-                                    <span class="salesman-detail-value text-success">Active</span>
-                                </div>
-                            </button>
-                        </form>
+                        <a href="{% url 'viewSalesman' s.email %}" class="salesman-card">
+                            <h5><i class="bi bi-person-badge"></i> {{ s.first_name }} {{ s.last_name }}</h5>
+                            
+                            <div class="salesman-detail">
+                                <span class="salesman-detail-label">Email:</span>
+                                <span class="salesman-detail-value email">{{ s.email }}</span>
+                            </div>
+                            
+                            <div class="salesman-detail">
+                                <span class="salesman-detail-label">Username:</span>
+                                <span class="salesman-detail-value">{{ s.username }}</span>
+                            </div>
+                            
+                            <div class="salesman-detail">
+                                <span class="salesman-detail-label">Status:</span>
+                                <span class="salesman-detail-value text-success">Active</span>
+                            </div>
+                        </a>
                     {% endfor %}
                 </div>
             {% else %}
@@ -600,11 +697,14 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle drawer collapse/expand
-            const drawerToggle = document.getElementById('drawerToggle');
+            // Get elements
+            const drawerToggle = document.getElementById('drawerToggle'); // Desktop chevron toggle
             const drawer = document.querySelector('.category-drawer');
-            const mobileDrawerToggle = document.querySelector('.drawer-toggle'); // Mobile toggle button
+            const mobileDrawerToggle = document.getElementById('mobileDrawerToggle'); // Mobile hamburger toggle
+            const closeDrawerButton = document.getElementById('closeDrawerButton'); // New mobile X close button
+            const drawerOverlay = document.getElementById('drawerOverlay'); // Overlay element
 
+            // Desktop drawer collapse/expand functionality
             if (drawerToggle) {
                 drawerToggle.addEventListener('click', function() {
                     drawer.classList.toggle('collapsed');
@@ -620,35 +720,65 @@
                 });
             }
             
-            // Apply stored drawer state on load
-            if (localStorage.getItem('drawerCollapsed') === 'true') {
+            // Apply stored drawer state on load for desktop view only
+            // This prevents the drawer from starting collapsed on mobile if it was collapsed on desktop previously
+            if (window.innerWidth > 992 && localStorage.getItem('drawerCollapsed') === 'true') {
                 drawer.classList.add('collapsed');
-                if (drawerToggle) { // Ensure toggle button exists before trying to update its icon
+                if (drawerToggle) { 
                     const icon = drawerToggle.querySelector('i');
                     icon.classList.remove('bi-chevron-double-left');
                     icon.classList.add('bi-chevron-double-right');
                 }
             }
 
-            // Mobile drawer toggle
+
+            // Mobile drawer toggle (hamburger icon in header)
             if (mobileDrawerToggle) {
                 mobileDrawerToggle.addEventListener('click', function() {
                     drawer.classList.toggle('open');
+                    document.body.classList.toggle('drawer-open'); // Add/remove class on body for blur/overflow
                 });
             }
-            
-            // Add click animation to cards
-            const cards = document.querySelectorAll('.salesman-card, .category-item');
-            cards.forEach(card => {
-                card.addEventListener('mousedown', function() {
+
+            // New: Close mobile drawer button (X icon inside drawer header)
+            if (closeDrawerButton) {
+                closeDrawerButton.addEventListener('click', function() {
+                    drawer.classList.remove('open');
+                    document.body.classList.remove('drawer-open');
+                });
+            }
+
+            // Close mobile drawer when clicking outside (on overlay)
+            if (drawerOverlay) {
+                drawerOverlay.addEventListener('click', function() {
+                    drawer.classList.remove('open');
+                    document.body.classList.remove('drawer-open');
+                });
+            }
+
+            // Close mobile drawer when a category item is clicked (only on mobile)
+            const categoryItems = document.querySelectorAll('.category-item');
+            categoryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) { // Apply only for mobile viewports
+                        drawer.classList.remove('open');
+                        document.body.classList.remove('drawer-open');
+                    }
+                });
+            });
+
+            // Add subtle click animation to cards and category items
+            const clickableElements = document.querySelectorAll('.salesman-card, .category-item');
+            clickableElements.forEach(element => {
+                element.addEventListener('mousedown', function() {
                     this.style.transform = 'translateY(2px)';
                 });
                 
-                card.addEventListener('mouseup', function() {
+                element.addEventListener('mouseup', function() {
                     this.style.transform = '';
                 });
                 
-                card.addEventListener('mouseleave', function() {
+                element.addEventListener('mouseleave', function() {
                     this.style.transform = '';
                 });
             });

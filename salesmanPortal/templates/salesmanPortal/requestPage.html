@@ -1,15 +1,337 @@
-{% load static %}  
+{% load static %} 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/request_page.css' %}"> {# Load Bootstrap CSS #}
+    <title>Pending User Approvals - BDA Dashboard</title> {# Updated descriptive title #}
+
+    {# 1. Bootstrap CSS #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    {# 2. Bootstrap Icons CSS #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    {# 3. Google Font (Inter) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {# 4. Your Custom CSS (now inline with golden theme) #}
+    <style>
+        /* CSS Variables for White and Golden Theme */
+        :root {
+            --golden-primary: #FFD700; /* Gold (e.g., for accents, primary buttons) */
+            --golden-dark: #DAA520;     /* Darker Gold (e.g., for hover states, stronger accents) */
+            --golden-light: #FFF8DC;    /* Light Gold/Cream (subtle backgrounds, light elements) */
+
+            --theme-text-dark: #333333; /* Darker text for good contrast */
+            --theme-text-medium: #666666; /* Medium gray for labels, secondary text */
+            --theme-text-light: #AAAAAA; /* Very light gray for subtle elements */
+
+            --theme-background-light: #FDFDFD; /* Off-white for main backgrounds */
+            --theme-background-card: #FFFFFF; /* Pure white for cards */
+            --theme-border: #EEEEEE; /* Light border color */
+            --theme-shadow: rgba(0, 0, 0, 0.08); /* Subtle shadow */
+
+            --font-family-primary: 'Inter', sans-serif;
+
+            /* Status Colors (aligned with previous dashboards for consistency) */
+            --status-approved: #4CAF50; /* Green for approved */
+            --status-pending: var(--golden-dark); /* Gold for pending */
+        }
+
+        body {
+            font-family: var(--font-family-primary);
+            background-color: var(--theme-background-light);
+            color: var(--theme-text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* General padding for wrapper */
+        }
+
+        .container {
+            max-width: 960px; /* Consistent max-width */
+            width: 100%;
+            padding: 0 15px; /* Responsive padding */
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px var(--theme-shadow);
+            background-color: var(--theme-background-card);
+            border: 1px solid var(--theme-border);
+            overflow: hidden; /* Ensure content respects border-radius */
+        }
+
+        .section-header {
+            background-color: var(--golden-light);
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--theme-border);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: var(--golden-dark);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .lead-text {
+            color: var(--theme-text-medium);
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .messages-container {
+            padding: 0 20px; /* Adjust padding for messages */
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-weight: 500;
+            word-break: break-word; /* Ensure messages break correctly */
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        .users-table thead {
+            background-color: var(--golden-light);
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--theme-border);
+        }
+
+        .users-table th {
+            color: var(--theme-text-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .users-table tbody tr:hover {
+            background-color: var(--golden-light);
+        }
+        
+        /* Checkbox styling */
+        .approve-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--golden-primary);
+            appearance: none; /* Hide default checkbox */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .approve-checkbox:checked {
+            background-color: var(--status-approved);
+            border-color: var(--status-approved);
+        }
+
+        .approve-checkbox:checked::before {
+            content: "\2713"; /* Checkmark symbol */
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .approve-checkbox:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--golden-primary);
+            border-color: var(--golden-primary);
+            color: var(--theme-background-card);
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--golden-dark);
+            border-color: var(--golden-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--theme-text-light);
+            border-color: var(--theme-text-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .no-pending-users {
+            background-color: var(--theme-background-card);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 40px 20px;
+            border: 1px solid var(--theme-border);
+            margin: 20px; /* Ensure some margin if not full width */
+        }
+
+        .no-pending-users i {
+            color: var(--theme-text-light);
+        }
+
+        .no-pending-users p {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+
+        /* --- Media Queries --- */
+
+        /* Tablets (portrait and landscape) and small desktops */
+        @media (max-width: 992px) {
+            .container {
+                padding: 0 10px;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+            .lead-text {
+                font-size: 1em;
+            }
+            .users-table th, .users-table td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Mobile phones (portrait) */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            .container {
+                padding: 0 5px;
+            }
+            .card-body {
+                padding: 20px 15px !important; /* Force smaller padding on card body */
+            }
+            .section-header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            .section-title {
+                font-size: 1.8em;
+            }
+            .lead-text {
+                font-size: 0.9em;
+            }
+            .messages-container {
+                padding: 0 15px;
+            }
+
+            .users-table thead {
+                display: none; /* Hide header on small screens for stacked table */
+            }
+            .users-table, .users-table tbody, .users-table tr, .users-table td {
+                display: block;
+                width: 100%;
+            }
+            .users-table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--theme-border);
+                border-radius: 8px;
+                padding: 10px;
+                box-shadow: 0 2px 4px var(--theme-shadow);
+            }
+            .users-table td {
+                text-align: right; /* Align value to the right */
+                padding-left: 50%; /* Make space for data-label */
+                position: relative;
+                word-break: break-all; /* Ensure long content breaks */
+            }
+            .users-table td::before {
+                content: attr(data-label); /* Display data-label as pseudo-element */
+                position: absolute;
+                left: 15px;
+                width: calc(50% - 30px); /* Adjust width for data-label */
+                text-align: left;
+                font-weight: 600;
+                color: var(--theme-text-medium);
+            }
+
+            .btn-primary {
+                width: 100%; /* Full width button */
+                justify-content: center;
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            .no-pending-users {
+                padding: 30px 15px;
+                margin: 10px;
+            }
+            .no-pending-users i {
+                font-size: 3em;
+            }
+            .no-pending-users p {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .section-title {
+                font-size: 1.5em;
+            }
+            .lead-text {
+                font-size: 0.85em;
+            }
+            .users-table td {
+                padding-left: 45%; /* Adjust for very small screens */
+            }
+            .users-table td::before {
+                width: calc(45% - 25px);
+                font-size: 0.8em;
+            }
+            .btn-primary {
+                font-size: 0.85em;
+            }
+        }
+    </style>
 </head>
 <body>
 
-{% block content %}
+{# The content block isn't strictly necessary if this is your entire page, but good practice if you expand later #}
 <div class="content-wrapper"> {# A wrapper for main content, possibly adds padding #}
     <div class="container py-5"> {# Bootstrap-like container for centering content, py-5 for padding #}
         <div class="card shadow-sm border-0 rounded-lg"> {# Mimics card style from KripaluInnovations #}
@@ -30,57 +352,60 @@
                     </div>
                 {% endif %}
 
-                {% if pending_users %}
-                <div class="table-responsive">
-                    <table class="table users-table table-hover table-borderless align-middle"> {# Bootstrap-like table classes #}
-                        <thead class="bg-light"> {# Light background for header #}
-                            <tr>
-                                <th scope="col">Username</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Full Name</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">Region</th>
-                                <th scope="col">Joined Date</th>
-                                <th scope="col" class="text-center">Approve</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in pending_users %}
-                            {# IMPORTANT: Use data-email-row and pass user.email here #}
-                            <tr data-email-row="{{ user.email }}">
-                                <td data-label="Username">{{ user.username }}</td>
-                                <td data-label="Email">{{ user.email }}</td>
-                                <td data-label="Full Name">{{ user.first_name }} {{ user.last_name }}</td>
-                                <td data-label="Phone">{{ user.phone }}</td> {# CustomUser field #}
-                                <td data-label="Region">{{ user.region }}</td> {# CustomUser field #}
-                                <td data-label="Joined Date">{{ user.date_joined|date:"M d, Y" }}</td>
-                                <td data-label="Approve" class="text-center">
-                                    {# IMPORTANT: Use data-email-id and pass user.email here #}
-                                    <input type="checkbox" class="form-check-input approve-checkbox" data-email-id="{{ user.email }}">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-end mt-4">
-                    <button id="approveSelectedBtn" class="btn btn-primary d-none">
-                        <i class="bi bi-check-circle-fill me-2"></i> Click check to approve
-                    </button>
-                </div>
-                {% else %}
-                <div class="no-pending-users text-center p-5">
-                    <i class="bi bi-person-check-fill display-4 text-muted mb-3"></i>
-                    <p class="lead text-muted">No pending user accounts requiring approval at the moment.</p>
-                </div>
-                {% endif %}
+                <div class="pending-users-section"> {# Added a wrapper for the users list/no users message #}
+                    {% if pending_users %}
+                    <div class="table-responsive">
+                        <table class="table users-table table-hover table-borderless align-middle"> {# Bootstrap-like table classes #}
+                            <thead class="bg-light"> {# Light background for header #}
+                                <tr>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Region</th>
+                                    <th scope="col">Joined Date</th>
+                                    <th scope="col" class="text-center">Approve</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in pending_users %}
+                                {# IMPORTANT: Use data-email-row and pass user.email here #}
+                                <tr data-email-row="{{ user.email }}">
+                                    <td data-label="Username">{{ user.username }}</td>
+                                    <td data-label="Email">{{ user.email }}</td>
+                                    <td data-label="Full Name">{{ user.first_name }} {{ user.last_name }}</td>
+                                    <td data-label="Phone">{{ user.phone }}</td> {# CustomUser field #}
+                                    <td data-label="Region">{{ user.region }}</td> {# CustomUser field #}
+                                    <td data-label="Joined Date">{{ user.date_joined|date:"M d, Y" }}</td>
+                                    <td data-label="Approve" class="text-center">
+                                        {# IMPORTANT: Use data-email-id and pass user.email here #}
+                                        <input type="checkbox" class="form-check-input approve-checkbox" data-email-id="{{ user.email }}">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-4">
+                        <button id="approveSelectedBtn" class="btn btn-primary d-none">
+                            <i class="bi bi-check-circle-fill me-2"></i> Click check to approve
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="no-pending-users text-center p-5">
+                        <i class="bi bi-person-check-fill display-4 text-muted mb-3"></i>
+                        <p class="lead text-muted">No pending user accounts requiring approval at the moment.</p>
+                    </div>
+                    {% endif %}
+                </div> {# End of pending-users-section #}
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+{# Add Bootstrap JS (optional, but good for dismissible alerts etc.) #}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.approve-checkbox');
@@ -140,7 +465,8 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
+                // Assuming {% csrf_token %} is available in the Django template context
+                'X-CSRFToken': '{{ csrf_token }}' 
             },
             body: JSON.stringify({ emails: emails }) // Send an array of emails
         })
@@ -195,6 +521,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
-{% endblock %}
 </body>
 </html>

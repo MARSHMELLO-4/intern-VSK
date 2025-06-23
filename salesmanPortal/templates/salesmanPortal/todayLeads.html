@@ -8,7 +8,7 @@
     <title>Today's Leads - BDA Dashboard</title> {# Set a more descriptive title #}
 
     {# 1. Bootstrap CSS #}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
     {# 2. Bootstrap Icons CSS #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -18,8 +18,346 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    {# 4. Your Custom CSS #}
-    <link rel="stylesheet" href="{% static 'css/today_leads.css' %}">
+    {# 4. Your Custom CSS (now inline) #}
+    <style>
+        /* CSS Variables for White and Golden Theme */
+        :root {
+            --golden-primary: #FFD700; /* Gold (e.g., for accents, primary buttons) */
+            --golden-dark: #DAA520;     /* Darker Gold (e.g., for hover states, stronger accents) */
+            --golden-light: #FFF8DC;    /* Light Gold/Cream (subtle backgrounds, light elements) */
+
+            --theme-text-dark: #333333; /* Darker text for good contrast */
+            --theme-text-medium: #666666; /* Medium gray for labels, secondary text */
+            --theme-text-light: #AAAAAA; /* Very light gray for subtle elements */
+
+            --theme-background-light: #FDFDFD; /* Off-white for main backgrounds */
+            --theme-background-card: #FFFFFF; /* Pure white for cards */
+            --theme-border: #EEEEEE; /* Light border color */
+            --theme-shadow: rgba(0, 0, 0, 0.08); /* Subtle shadow */
+
+            --font-family-primary: 'Inter', sans-serif;
+
+            /* Status Colors (Aligned with your STATUS_CHOICES) */
+            --status-new: var(--golden-dark);           /* Gold for new, stands out */
+            --status-contacted: #4CAF50;                /* Strong Green for Contacted (Success) */
+            --status-in-discussion: #2196F3;            /* Bright Blue for In Discussion (Active) */
+            --status-not-interested: #F44336;           /* Red for Not Interested (Negative) */
+            --status-converted: #009688;                /* Teal/Dark Green for Converted (Major Success) */
+        }
+
+        body {
+            font-family: var(--font-family-primary);
+            background-color: var(--theme-background-light);
+            color: var(--theme-text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* General padding for wrapper */
+        }
+
+        .container {
+            max-width: 960px; /* Slightly wider container for leads */
+            width: 100%;
+            padding: 0 15px; /* Responsive padding */
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px var(--theme-shadow);
+            background-color: var(--theme-background-card);
+            border: 1px solid var(--theme-border);
+            overflow: hidden; /* Ensure content respects border-radius */
+        }
+
+        .section-header {
+            background-color: var(--golden-light);
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--theme-border);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: var(--golden-dark);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .lead-text {
+            color: var(--theme-text-medium);
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .messages-container {
+            padding: 0 20px; /* Adjust padding for messages */
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-weight: 500;
+            word-break: break-word; /* Ensure messages break correctly */
+        }
+
+        .leads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 25px;
+            padding: 0 20px 30px; /* Padding for the grid section */
+        }
+
+        .lead-card {
+            background-color: var(--theme-background-card);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border: 1px solid var(--theme-border);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .lead-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* Allow wrapping for responsiveness */
+            gap: 10px; /* Space between name and status */
+        }
+
+        .lead-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--golden-dark);
+            margin: 0;
+            word-break: break-word; /* Ensure long names break */
+            flex-grow: 1; /* Allow name to take available space */
+        }
+
+        .lead-status {
+            font-size: 0.9em;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap; /* Prevent status text from breaking */
+        }
+        
+        .lead-status i {
+            font-size: 0.7em;
+        }
+
+        /* Status-specific background/text colors */
+        .status-new { background-color: var(--golden-light); color: var(--status-new); border: 1px solid var(--status-new); }
+        .status-contacted { background-color: rgba(76, 175, 80, 0.1); color: var(--status-contacted); border: 1px solid var(--status-contacted); }
+        .status-in-discussion { background-color: rgba(33, 150, 243, 0.1); color: var(--status-in-discussion); border: 1px solid var(--status-in-discussion); }
+        .status-not-interested { background-color: rgba(244, 67, 54, 0.1); color: var(--status-not-interested); border: 1px solid var(--status-not-interested); }
+        .status-converted { background-color: rgba(0, 150, 136, 0.1); color: var(--status-converted); border: 1px solid var(--status-converted); }
+
+        .lead-body {
+            margin-bottom: 20px;
+            flex-grow: 1; /* Allow body to take remaining space */
+        }
+
+        .lead-detail {
+            font-size: 0.95em;
+            color: var(--theme-text-medium);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            word-break: break-word; /* Ensure long details break */
+        }
+
+        .lead-detail i {
+            margin-right: 8px;
+            color: var(--golden-primary);
+            font-size: 1.1em;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .lead-actions {
+            text-align: right;
+            margin-top: auto; /* Push actions to the bottom */
+        }
+
+        .btn-primary {
+            background-color: var(--golden-primary);
+            border-color: var(--golden-primary);
+            color: var(--theme-background-card);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--golden-dark);
+            border-color: var(--golden-dark);
+            transform: translateY(-2px);
+        }
+
+        .no-leads {
+            background-color: var(--theme-background-card);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 40px 20px;
+            border: 1px solid var(--theme-border);
+            margin: 20px;
+        }
+
+        .no-leads i {
+            color: var(--theme-text-light);
+        }
+
+        .no-leads p {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        /* --- Media Queries --- */
+
+        /* Tablets (portrait and landscape) and small desktops */
+        @media (max-width: 992px) {
+            .container {
+                padding: 0 10px;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+            .lead-text {
+                font-size: 1em;
+            }
+            .leads-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                padding: 0 15px 25px;
+            }
+            .lead-card {
+                padding: 18px;
+            }
+            .lead-name {
+                font-size: 1.3em;
+            }
+            .lead-detail {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+        }
+
+        /* Mobile phones (portrait) */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            .content-wrapper {
+                padding: 10px;
+            }
+            .container {
+                padding: 0 5px;
+            }
+            .card-body {
+                padding: 20px 15px !important; /* Force smaller padding on card body */
+            }
+            .section-header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            .section-title {
+                font-size: 1.8em;
+            }
+            .lead-text {
+                font-size: 0.9em;
+            }
+            .messages-container {
+                padding: 0 15px;
+            }
+            .leads-grid {
+                grid-template-columns: 1fr; /* Stack cards vertically */
+                gap: 15px;
+                padding: 0 10px 20px;
+            }
+            .lead-card {
+                padding: 15px;
+            }
+            .lead-header {
+                flex-direction: column; /* Stack name and status */
+                align-items: flex-start;
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+            .lead-name {
+                font-size: 1.2em;
+                width: 100%; /* Take full width */
+            }
+            .lead-status {
+                width: auto; /* Adjust width based on content */
+                font-size: 0.85em;
+                padding: 4px 10px;
+            }
+            .lead-detail {
+                font-size: 0.85em;
+                margin-bottom: 5px;
+                flex-wrap: wrap; /* Allow detail text to wrap */
+            }
+            .lead-detail i {
+                font-size: 1em;
+                margin-right: 6px;
+            }
+            .btn-primary {
+                width: 100%; /* Full width button */
+                justify-content: center;
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            .no-leads {
+                padding: 30px 15px;
+                margin: 10px;
+            }
+            .no-leads i {
+                font-size: 3em;
+            }
+            .no-leads p {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .section-title {
+                font-size: 1.5em;
+            }
+            .lead-name {
+                font-size: 1.1em;
+            }
+            .lead-detail {
+                font-size: 0.8em;
+            }
+            .btn-primary {
+                font-size: 0.85em;
+            }
+        }
+    </style>
 </head>
 <body>
     {# The content block isn't strictly necessary if this is your entire page, but good practice if you expand later #}
@@ -29,7 +367,7 @@
                 <div class="card-body p-4 p-md-5">
                     <div class="section-header mb-4 text-center">
                         <h2 class="section-title text-primary fw-bold mb-3">Today's Assigned Leads</h2>
-                        <p class="text-muted lead-text">Here you can see all the leads assigned to you for today.</p>
+                        <p class="lead-text">Here you can see all the leads assigned to you for today.</p>
                     </div>
 
                     {% if messages %}
@@ -83,6 +421,6 @@
     </div>
 
     {# Add Bootstrap JS (optional, but good for dismissible alerts etc.) #}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -35,12 +35,14 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column; /* Ensure full page takes flex column layout */
+            min-height: 100vh;
         }
 
         .main-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            /* This div wraps header, main, and footer. Body itself now handles flex column. */
+            width: 100%; /* Ensure it spans full width */
         }
 
         /* Header Styles */
@@ -53,17 +55,26 @@
             justify-content: center;
         }
 
+        .portal-header .container {
+            display: flex;
+            justify-content: flex-end; /* Keep logo to the right on larger screens */
+            padding-right: 1.5rem; /* Ensure some padding on the right */
+            padding-left: 1.5rem; /* Ensure some padding on the left */
+        }
+
         .brand-logo img {
             height: 60px;
+            max-width: 100%; /* Ensure image is responsive */
+            height: auto; /* Maintain aspect ratio */
         }
 
         /* Main Content for Login */
         .portal-main {
-            flex: 1;
+            flex: 1; /* Allows main content to grow and push footer down */
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 3rem 0;
+            padding: 3rem 1.5rem; /* Added horizontal padding for mobile */
         }
 
         .login-card {
@@ -73,6 +84,7 @@
             padding: 3rem;
             width: 100%;
             max-width: 450px; /* Slightly wider card for better form layout */
+            box-sizing: border-box; /* Include padding in width */
         }
 
         .card-title {
@@ -152,6 +164,7 @@
             display: flex;
             align-items: center;
             font-weight: 500;
+            z-index: 10; /* Ensure it's above other content if overlapping */
         }
 
         .back-link:hover {
@@ -175,6 +188,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            padding: 0 1.5rem; /* Add horizontal padding to footer content */
         }
 
         .footer-content p {
@@ -194,32 +208,103 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
+            .portal-header .container {
+                justify-content: center; /* Center logo on smaller screens */
+                padding-right: 1rem; /* Adjust padding */
+                padding-left: 1rem; /* Adjust padding */
+            }
+            .brand-logo img {
+                height: 50px; /* Smaller logo on tablet */
+            }
+
             .login-card {
-                padding: 2rem;
-                margin: 0 1rem; /* Add some horizontal margin on smaller screens */
+                padding: 2.5rem 1.5rem; /* Reduce padding on smaller screens */
+                margin: 0 1.5rem; /* Add horizontal margin on smaller screens */
             }
 
             .card-title {
                 font-size: 1.6rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                font-size: 0.95rem;
+            }
+
+            .form-control {
+                height: 45px;
+                padding: 0.6rem 0.8rem;
+            }
+
+            .btn-golden {
+                padding: 0.7rem 1.5rem;
+                font-size: 1rem;
             }
 
             .back-link {
-                top: 1.5rem;
-                left: 1.5rem;
-                font-size: 0.9rem;
+                top: 1.25rem;
+                left: 1.25rem;
+                font-size: 0.85rem;
             }
 
             .footer-content {
                 flex-direction: column;
                 text-align: center;
+                padding: 0 1rem; /* Adjust footer padding */
             }
             
             .footer-links {
                 margin-top: 1rem;
+                width: 100%; /* Ensure links take full width */
             }
             
             .footer-links a {
                 margin: 0 0.75rem;
+                display: inline-block; /* Keep links in line, but allow wrap */
+                margin-bottom: 0.5rem; /* Add vertical space between wrapped links */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .portal-header {
+                padding: 0.75rem 0;
+            }
+            .brand-logo img {
+                height: 45px; /* Even smaller logo on mobile */
+            }
+            .portal-main {
+                padding: 2rem 1rem; /* More compact padding on very small screens */
+            }
+            .login-card {
+                padding: 2rem 1rem; /* More compact card padding */
+                margin: 0 1rem; /* Smallest horizontal margin */
+            }
+            .card-title {
+                font-size: 1.4rem;
+                margin-bottom: 1.2rem;
+            }
+            .card-text {
+                font-size: 0.9rem;
+            }
+            .form-control {
+                height: 40px;
+                font-size: 0.9rem;
+            }
+            .btn-golden {
+                padding: 0.6rem 1rem;
+                font-size: 0.95rem;
+            }
+            .back-link {
+                top: 1rem;
+                left: 1rem;
+                font-size: 0.8rem;
+            }
+            .footer-content p {
+                font-size: 0.85rem;
+            }
+            .footer-links a {
+                font-size: 0.8rem;
+                margin: 0 0.5rem;
             }
         }
     </style>
@@ -228,11 +313,11 @@
     <div class="main-container">
         <!-- Header -->
         <header class="portal-header">
-            <div class="container d-flex justify-content-end">
-          <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
-              {% load static %}
-              <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo">
-          </a>
+            <div class="container" style="justify-content: flex-end !important;">
+            <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
+                {% load static %}
+                <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x60/A67C52/ffffff?text=Kripalu+Logo';">
+            </a>
             </div>
         </header>
 

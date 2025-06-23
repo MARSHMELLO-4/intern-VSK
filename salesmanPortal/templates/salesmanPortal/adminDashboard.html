@@ -199,10 +199,24 @@ body {
     color: var(--primary); /* Numbers in primary blue for emphasis */
 }
 
+/* NEW: Specific colors for lead stats */
+.stat-new-leads {
+    color: #1976d2; /* A shade of blue for new */
+}
+
+.stat-contacted-leads {
+    color: #ff8f00; /* An orange for contacted */
+}
+
+.stat-converted-leads {
+    color: #198754; /* A green for converted */
+}
+
+
 /* Table container */
 .table-container {
     flex: 1;
-    overflow: auto;
+    overflow: auto; /* Allows horizontal scrolling for the table if content exceeds width */
     position: relative;
     border-radius: var(--border-radius);
     background: var(--card-background); /* White background */
@@ -251,29 +265,61 @@ body {
     background-color: var(--ki-light-gold); /* Very subtle golden tint on hover */
 }
 
-/* Status and Priority badges */
+/* --- ADJUSTED Status and Priority Badges for better highlight --- */
 .badge {
     display: inline-block;
     padding: 6px 12px;
-    border-radius: 25px;
+    border-radius: 25px; /* Fully rounded pill shape */
     font-size: 12px;
     font-weight: 600;
     text-transform: capitalize;
     letter-spacing: 0.5px;
-    /* Removed specific border-radius here to avoid overriding if desired */
+    min-width: 80px; /* Ensure a consistent minimum width */
+    text-align: center; /* Center the text within the badge */
+    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition for hover effects if added */
 }
 
-/* Status colors - keep them descriptive but adjust lightness if needed */
-.status-new { background-color: #e3f2fd; color: #1976d2; } 
-.status-contacted { background-color: #fff8e1; color: #ff8f00; } 
-.status-qualified { background-color: #e8f5e9; color: #388e3c; } 
-.status-lost { background-color: #ffebee; color: #d32f2f; } 
-.status-won { background-color: #e8f5e9; color: #198754; } 
+/* Status colors - Adjusted for more vibrancy and contrast */
+.status-new { 
+    background-color: #2196F3; /* Medium blue */
+    color: white; /* White text for contrast */
+} 
+.status-contacted { 
+    background-color: #FF9800; /* Bright orange */
+    color: white; /* White text for contrast */
+} 
+.status-qualified { 
+    background-color: #4CAF50; /* Green */
+    color: white; /* White text for contrast */
+} 
+.status-lost { 
+    background-color: #F44336; /* Red */
+    color: white; /* White text for contrast */
+} 
+.status-won { 
+    background-color: #4CAF50; /* Green (same as qualified, or a distinct success green) */
+    color: white; 
+} 
+/* Add a specific "pending" if you use it */
+.status-pending { 
+    background-color: #9E9E9E; /* Grey */
+    color: white; 
+}
 
-/* Priority colors - consistent with status */
-.priority-high { background-color: #ffebee; color: #d32f2f; }
-.priority-medium { background-color: #fff8e1; color: #ff8f00; }
-.priority-low { background-color: #e8f5e9; color: #388e3c; }
+/* Priority colors - Adjusted for more vibrancy and contrast */
+.priority-high { 
+    background-color: #E91E63; /* Pink-red for high urgency */
+    color: white; 
+}
+.priority-medium { 
+    background-color: #FFC107; /* Amber/Yellow for medium */
+    color: #333; /* Darker text for readability on yellow */
+}
+.priority-low { 
+    background-color: #8BC34A; /* Light green for low */
+    color: white; 
+}
+
 
 /* Select dropdown */
 .select-dropdown {
@@ -347,11 +393,6 @@ body {
     color: var(--dark);
 }
 
-.contact-role {
-    font-size: 12px;
-    color: var(--gray);
-}
-
 /* Sort indicator */
 .sort-indicator {
     margin-left: 4px;
@@ -363,7 +404,7 @@ body {
     pointer-events: auto;
 }
 
-/* Responsive adjustments - unchanged from previous */
+/* Responsive adjustments */
 @media (max-width: 992px) {
     .dashboard-header {
         flex-direction: column;
@@ -383,57 +424,80 @@ body {
     }
     .date-filter-bar input[type="date"],
     .date-filter-bar .btn {
-        max-width: 100%;
+        max-width: 100%; /* Ensure inputs and buttons take full width */
     }
 }
+
 @media (max-width: 768px) {
     .container {
-        padding: 16px;
+        padding: 16px; /* Slightly less padding on smaller screens */
     }
     .dashboard-header h1 {
-        font-size: 24px;
+        font-size: 24px; /* Adjust header font size */
     }
     .stats-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Stack stat cards vertically */
+        gap: 25px; /* Increased grid gap */
     }
+    /* Explicit margin-bottom for stat cards on mobile for more space */
+    .stat-card {
+        margin-bottom: 25px; /* Increased vertical space between stacked cards */
+    }
+    .stat-card:last-child {
+        margin-bottom: 0; /* Ensures no extra margin at the bottom of the last card */
+    }
+    
+    /* Table specific adjustments for small screens (cards-like display) */
     .leads-table {
         display: block;
-        overflow-x: auto;
+        width: 100%; /* Ensure table takes full width */
+        overflow-x: auto; /* Fallback for very narrow content if needed, though block display should handle most */
     }
-    .leads-table thead, .leads-table tbody, .leads-table th, .leads-table td, .leads-table tr { 
-        display: block;
-    }
-    .leads-table thead tr { 
+    .leads-table thead {
+        /* Hide table header but keep it accessible for screen readers */
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
+    .leads-table tbody {
+        display: block; /* Make tbody a block to stack rows */
+        width: 100%;
+    }
     .leads-table tr { 
+        display: block; /* Each row becomes a block-level element */
         border: 1px solid var(--gray-light);
-        margin-bottom: 15px;
+        margin-bottom: 15px; /* Space between table rows acting as cards */
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
+        padding: 15px; /* Add padding to each row-card */
     }
     .leads-table td { 
+        display: block; /* Each cell becomes a block-level element */
         border-bottom: 1px solid var(--gray-light);
         position: relative;
-        padding-left: 50%;
+        padding-left: 48%; /* Space for the pseudo-element label */
         text-align: right;
+        padding-top: 8px; /* Added padding for better spacing in stacked cells */
+        padding-bottom: 8px; /* Added padding for better spacing in stacked cells */
+        word-wrap: break-word; /* Ensure long words break */
+        white-space: normal; /* Allow text to wrap */
     }
     .leads-table td:last-child {
-        border-bottom: none;
+        border-bottom: none; /* No border for the last cell in a row */
     }
     .leads-table td:before { 
-        position: absolute;
-        top: 0;
-        left: 6px;
+        position: absolute; /* Keep position absolute for label */
+        top: 8px; /* Align with new padding */
+        left: 15px; /* Align label to the left of the row-card */
         width: 45%; 
         padding-right: 10px; 
-        white-space: nowrap;
+        white-space: nowrap; /* Prevent label from wrapping */
         text-align: left;
         font-weight: 600;
         color: var(--gray);
     }
+    
+    /* Specific content for pseudo-elements */
     .leads-table td:nth-of-type(1):before { content: "Lead ID:"; }
     .leads-table td:nth-of-type(2):before { content: "Contact Name:"; }
     .leads-table td:nth-of-type(3):before { content: "Company:"; }
@@ -444,12 +508,73 @@ body {
     .leads-table td:nth-of-type(8):before { content: "Last Updated:"; }
     .leads-table td:nth-of-type(9):before { content: "Created At:"; }
 
-    .contact-info { text-align: right; }
-    .contact-info div { text-align: right; }
-    .select-dropdown { max-width: 100%; text-align: right; }
-    .select-dropdown option { text-align: left; }
-    .badge { float: right; margin-left: 10px; }
-    .time-ago { float: right; margin-left: 10px; }
+    /* Adjust specific elements within table cells for mobile view */
+    .contact-info { 
+        text-align: right; 
+        align-items: flex-end; /* Align contact info to the right */
+    }
+    .contact-info div { 
+        text-align: right; 
+        white-space: normal; /* Allow text to wrap for emails/phones */
+        overflow: visible; /* Prevent ellipsis on mobile, allow full display */
+        text-overflow: clip;
+    }
+    .select-dropdown { 
+        max-width: 100%; /* Ensure dropdown takes full available width in its cell */
+        width: 100%; /* Make it take 100% of its available space */
+        text-align: right; 
+        -webkit-appearance: none; /* Remove default arrow on some browsers */
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%236c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+        padding-right: 30px; /* Make space for the custom arrow */
+    }
+    .select-dropdown option { 
+        text-align: left; 
+    } /* Options text should still be left-aligned */
+
+    /* ADJUSTED: Badge styling for mobile to prevent merging */
+    .badge { 
+        /* Removed float: right; and margin-left: 10px; */
+        display: inline-block; /* Keep as inline-block to allow text-align on td to center/right-align */
+        min-width: unset; /* Override min-width for mobile badges */
+        width: auto; /* Allow badge to size naturally */
+        margin-top: 5px; /* Add a small top margin for vertical separation from label */
+        margin-left: 0; /* Ensure no unwanted left margin */
+        text-align: center; /* Center text within badge */
+    }
+    /* Ensure the text inside the badge respects the parent's text-align: right */
+    .leads-table td:nth-of-type(6) .badge,
+    .leads-table td:nth-of-type(7) .badge {
+        display: block; /* Make badge a block to ensure it's on its own line after the label */
+        margin-left: auto; /* Push block-level badge to the right */
+        margin-right: 0; /* Reset potential right margin */
+    }
+}
+
+/* Smaller mobile screens (e.g., iPhone SE) */
+@media (max-width: 480px) {
+    .container {
+        padding: 12px; /* Even less padding */
+    }
+    .dashboard-header h1 {
+        font-size: 22px; /* Smaller header font */
+    }
+    .date-filter-bar {
+        padding: 12px 15px; /* Adjust padding for filter bar */
+    }
+    .stat-card p {
+        font-size: 24px; /* Smaller stat numbers */
+    }
+    .leads-table td {
+        padding-left: 45%; /* Adjust padding for labels */
+    }
+    .leads-table td:before {
+        width: 40%; /* Adjust label width */
+    }
 }
     </style>
 </head>
@@ -499,15 +624,15 @@ body {
             </div>
             <div class="stat-card">
                 <h3>New Leads</h3>
-                <p>{% if new_leads is not None %}{{ new_leads }}{% else %}—{% endif %}</p>
+                <p><span class="stat-new-leads">{% if new_leads is not None %}{{ new_leads }}{% else %}—{% endif %}</span></p>
             </div>
             <div class="stat-card">
                 <h3>Contacted Leads</h3>
-                <p>{% if contacted_leads is not None %}{{ contacted_leads }}{% else %}—{% endif %}</p>
+                <p><span class="stat-contacted-leads">{% if contacted_leads is not None %}{{ contacted_leads }}{% else %}—{% endif %}</span></p>
             </div>
             <div class="stat-card">
                 <h3>Converted Leads</h3>
-                <p>{% if converted_leads is not None %}{{ converted_leads }}{% else %}—{% endif %}</p>
+                <p><span class="stat-converted-leads">{% if converted_leads is not None %}{{ converted_leads }}{% else %}—{% endif %}</span></p>
             </div>
         </div>
 
@@ -551,21 +676,37 @@ body {
                                     {% for user in users %}
                                         {% if not user.is_staff %}
                                             <option value="{{ user.id }}" {% if lead.assigned_to and user.id == lead.assigned_to.id %}selected{% endif %}>
-                                                {{ user.username }}
+                                                {{ user.email }}
                                             </option>
                                         {% endif %}
                                     {% endfor %}
                                 </select>
                             </td>
                             <td>
-                                <span class="badge status-{{ lead.status|lower|default:'new'|cut:' ' }}">
-                                    {{ lead.status|default:"New" }}
-                                </span>
+                                {% if lead.status == 'New' %}
+                                    <span class="badge status-new">New</span>
+                                {% elif lead.status == 'Contacted' %}
+                                    <span class="badge status-contacted">Contacted</span>
+                                {% elif lead.status == 'In Discussion' %}
+                                    <span class="badge status-qualified">In Discussion</span>
+                                {% elif lead.status == 'Not Interested' %}
+                                    <span class="badge status-lost">Not Interested</span>
+                                {% elif lead.status == 'Converted' %}
+                                    <span class="badge status-won">Converted</span>
+                                {% else %}
+                                    <span class="badge status-pending">{{ lead.status|default:"New" }}</span>
+                                {% endif %}
                             </td>
                             <td>
-                                <span class="badge priority-{{ lead.priority|lower|default:'medium' }}">
-                                    {{ lead.priority|default:"Medium" }}
-                                </span>
+                                {% if lead.priority == 'High' %}
+                                    <span class="badge priority-high">High</span>
+                                {% elif lead.priority == 'Medium' %}
+                                    <span class="badge priority-medium">Medium</span>
+                                {% elif lead.priority == 'Low' %}
+                                    <span class="badge priority-low">Low</span>
+                                {% else %}
+                                    <span class="badge priority-medium">{{ lead.priority|default:"Medium" }}</span>
+                                {% endif %}
                             </td>
                             <td class="time-ago" title="{{ lead.updated_at|date:'Y-m-d H:i' }}">
                                 {% with updated=lead.updated_at %}
@@ -603,6 +744,21 @@ body {
                 window.location.href = this.dataset.href;
             });
         });
+
+        if (window.innerWidth <= 768) {
+        const headers = document.querySelectorAll('.leads-table th');
+        const rows = document.querySelectorAll('.leads-table tbody tr');
+        
+        headers.forEach((header, index) => {
+            const label = header.textContent.trim();
+            rows.forEach(row => {
+                const cell = row.querySelectorAll('td')[index];
+                if (cell) {
+                    cell.setAttribute('data-label', label);
+                }
+            });
+        });
+        }
         
         // Add subtle animation to table rows
         const tableRows = document.querySelectorAll('.leads-table tbody tr');
@@ -615,6 +771,36 @@ body {
                 row.style.opacity = '1';
                 row.style.transform = 'translateY(0)';
             }, 100 + (index * 50));
+        });
+
+           // Handle window resize to update data-labels if needed
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                const headers = document.querySelectorAll('.leads-table th');
+                const rows = document.querySelectorAll('.leads-table tbody tr');
+                
+                headers.forEach((header, index) => {
+                    const label = header.textContent.trim();
+                    rows.forEach(row => {
+                        const cell = row.querySelectorAll('td')[index];
+                        if (cell) {
+                            cell.setAttribute('data-label', label);
+                        }
+                    });
+                });
+            }
+        });
+        
+        // Better touch feedback for mobile
+        const clickableRows = document.querySelectorAll('.clickable-row');
+        clickableRows.forEach(row => {
+            row.addEventListener('touchstart', function() {
+                this.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+            });
+            
+            row.addEventListener('touchend', function() {
+                this.style.backgroundColor = '';
+            });
         });
 
         // Date Filter Logic

@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -10,7 +12,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* Use min-height to ensure it takes full height */
+            margin: 0;
+            padding: 20px; /* Add some padding for smaller screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
 
         .logout-container {
@@ -19,36 +24,83 @@
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
+            max-width: 400px; /* Limit max-width for better readability on larger screens */
+            width: 100%; /* Make it take full width on smaller screens */
+            box-sizing: border-box;
         }
 
         .logout-container h2 {
             margin-bottom: 20px;
             color: #333;
+            font-size: 1.8em; /* Responsive font size */
         }
 
         label {
             font-size: 16px;
             color: #555;
+            display: flex; /* Use flexbox for checkbox and text alignment */
+            align-items: center;
+            justify-content: center; /* Center the content */
+            margin-bottom: 20px; /* Space below the label */
+            padding: 0 10px; /* Add padding to label for touch targets */
         }
 
         input[type="checkbox"] {
             margin-right: 10px;
+            transform: scale(1.2); /* Slightly larger checkbox for easier tapping */
         }
 
         button {
             margin-top: 20px;
-            padding: 10px 25px;
-            font-size: 16px;
+            padding: 12px 30px; /* Increased padding for better touch target */
+            font-size: 1em; /* Adjusted font size for responsiveness */
             background-color: #ff4d4f;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            width: 100%; /* Make button full width on mobile */
+            box-sizing: border-box; /* Include padding in width */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #e63946; /* Darker red on hover */
+            transform: translateY(-2px); /* Slight lift effect */
         }
 
         button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            box-shadow: none; /* Remove shadow when disabled */
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .logout-container {
+                padding: 20px 25px; /* Reduce padding on very small screens */
+                margin: 10px; /* Ensure some margin from screen edges */
+            }
+
+            .logout-container h2 {
+                font-size: 1.5em; /* Further reduce title size */
+            }
+
+            label {
+                font-size: 14px; /* Smaller font for label */
+                flex-direction: row; /* Keep checkbox and text in a row */
+                align-items: center;
+                text-align: center;
+            }
+
+            input[type="checkbox"] {
+                transform: scale(1.1); /* Slightly smaller checkbox if needed */
+            }
+
+            button {
+                padding: 10px 20px; /* Smaller button padding */
+                font-size: 0.9em; /* Smaller button font size */
+            }
         }
     </style>
 </head>

@@ -9,13 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Removed static CSS link as styles are inline -->
     <style>
 /* CSS Variables for White and Golden Theme */
 :root {
     --golden-primary: #FFD700; /* Gold (e.g., for accents, primary buttons) */
-    --golden-dark: #DAA520;    /* Darker Gold (e.g., for hover states, stronger accents) */
-    --golden-light: #FFF8DC;   /* Light Gold/Cream (subtle backgrounds, light elements) */
+    --golden-dark: #DAA520;     /* Darker Gold (e.g., for hover states, stronger accents) */
+    --golden-light: #FFF8DC;    /* Light Gold/Cream (subtle backgrounds, light elements) */
 
     --theme-text-dark: #333333; /* Darker text for good contrast */
     --theme-text-medium: #666666; /* Medium gray for labels, secondary text */
@@ -27,16 +27,16 @@
     --theme-shadow: rgba(0, 0, 0, 0.08); /* Subtle shadow */
 
     /* --- Status Colors (Aligned with your STATUS_CHOICES) --- */
-    --status-new: var(--golden-dark);          /* Gold for new, stands out */
-    --status-contacted: #4CAF50;               /* Strong Green for Contacted (Success) */
-    --status-in-discussion: #2196F3;           /* Bright Blue for In Discussion (Active) */
-    --status-not-interested: #F44336;          /* Red for Not Interested (Negative) */
-    --status-converted: #009688;               /* Teal/Dark Green for Converted (Major Success) */
+    --status-new: var(--golden-dark);           /* Gold for new, stands out */
+    --status-contacted: #4CAF50;                /* Strong Green for Contacted (Success) */
+    --status-in-discussion: #2196F3;            /* Bright Blue for In Discussion (Active) */
+    --status-not-interested: #F44336;           /* Red for Not Interested (Negative) */
+    --status-converted: #009688;                /* Teal/Dark Green for Converted (Major Success) */
 
     /* --- Priority Colors (Aligned with your PRIORITY_CHOICES) --- */
-    --priority-hot: #DC3545;                   /* Red for Hot (High urgency) */
-    --priority-warm: #FFC107;                  /* Amber/Orange for Warm (Medium urgency) */
-    --priority-cold: #607D8B;                  /* Blue-Gray for Cold (Low urgency) */
+    --priority-hot: #DC3545;                     /* Red for Hot (High urgency) */
+    --priority-warm: #FFC107;                    /* Amber/Orange for Warm (Medium urgency) */
+    --priority-cold: #607D8B;                    /* Blue-Gray for Cold (Low urgency) */
 
     /* Font variables */
     --font-family-primary: 'Inter', sans-serif;
@@ -49,12 +49,15 @@ body {
     background-color: var(--theme-background-light);
     color: var(--theme-text-dark);
     line-height: 1.6;
+    display: flex; /* Use flexbox for sticky footer */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
 .main-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    flex-grow: 1; /* Allow it to grow and push footer down */
 }
 
 /* Header Styles */
@@ -151,6 +154,7 @@ body {
     align-items: flex-start;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-left: 5px solid var(--golden-primary); /* Accent border in gold */
+    box-sizing: border-box; /* Added for consistent box model */
 }
 
 .stats-card:hover {
@@ -169,6 +173,8 @@ body {
     color: var(--theme-text-medium);
     margin-bottom: 5px;
     font-weight: 500;
+    word-wrap: break-word; /* Ensure long words break */
+    white-space: normal; /* Explicitly allow wrapping */
 }
 
 .stats-value {
@@ -176,6 +182,8 @@ body {
     font-weight: 700;
     color: var(--theme-text-dark);
     margin: 0;
+    word-wrap: break-word; /* Ensure long words break */
+    white-space: normal; /* Explicitly allow wrapping */
 }
 
 /* Leads Section */
@@ -449,20 +457,22 @@ body {
 /* Responsive Adjustments */
 @media (max-width: 992px) {
     .header-main-title {
-        font-size: 1.6em;
+        font-size: 1.4em;
     }
     .stats-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
     }
     .salesman-dashboard {
-        padding: 0 15px;
+        padding: 0 10px;
     }
     .leads-container {
-        padding: 20px;
+        padding: 14px;
     }
     .section-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 8px;
     }
     .sort-dropdown {
         width: 100%;
@@ -470,6 +480,8 @@ body {
     .dropdown-toggle {
         width: 100%;
         justify-content: space-between;
+        font-size: 0.92em;
+        padding: 8px 10px;
     }
     .sort-dropdown-content {
         width: 100%;
@@ -477,40 +489,80 @@ body {
         right: auto;
     }
     .leads-table th, .leads-table td {
-        padding: 10px;
+        padding: 8px;
+        font-size: 0.93em;
     }
     .footer-content {
         flex-direction: column;
         text-align: center;
+        gap: 8px;
     }
     .footer-links a {
-        margin: 5px 10px;
+        margin: 4px 8px;
     }
 }
 
 @media (max-width: 768px) {
     .portal-header .container {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        padding: 0 8px;
+        flex-wrap: nowrap;
     }
-    .header-main-title {
-        font-size: 1.5em;
+    .brand-logo {
+        flex-shrink: 0;
+        order: 1;
     }
     .brand-logo img {
-        height: 40px;
+        height: 22px;
+    }
+    .header-title-wrapper {
+        flex-grow: 1;
+        text-align: center;
+        order: 2;
+        min-width: 0;
+        padding: 0 2px;
+    }
+    .header-main-title {
+        font-size: 1em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .user-controls {
-        width: 100%;
-        justify-content: center;
+        order: 3;
+        justify-content: flex-end;
+        flex-shrink: 0;
+    }
+    .logout-btn {
+        padding: 4px 6px;
+        font-size: 0.75em;
+        gap: 3px;
     }
     .stats-card {
-        border-left-width: 3px; /* Smaller accent border on mobile */
+        border-left-width: 2px;
+        padding: 10px;
+        align-items: flex-start;
+        flex-grow: 1;
+        max-width: 100%;
     }
     .stats-icon {
-        font-size: 2.5em;
+        font-size: 1.5em;
+        margin-bottom: 5px;
+    }
+    .stats-label {
+        font-size: 0.85em;
+        margin-bottom: 2px;
+        white-space: normal;
     }
     .stats-value {
-        font-size: 2em;
+        font-size: 1.2em;
+        white-space: normal;
+    }
+    .leads-table-responsive {
+        overflow-x: visible;
     }
     .leads-table thead {
         display: none;
@@ -518,27 +570,178 @@ body {
     .leads-table, .leads-table tbody, .leads-table tr, .leads-table td {
         display: block;
         width: 100%;
+        box-sizing: border-box;
     }
     .leads-table tr {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         border: 1px solid var(--theme-border);
         border-radius: 8px;
-        padding: 10px;
+        padding: 6px;
         box-shadow: 0 2px 4px var(--theme-shadow);
+        background: var(--theme-background-card);
     }
     .leads-table td {
         text-align: right;
-        padding-left: 50%;
+        padding-left: 44%;
         position: relative;
+        word-break: break-word;
+        white-space: normal;
+        min-height: 28px;
+        box-sizing: border-box;
+        margin-bottom: 6px;
+        font-size: 0.92em;
+        overflow-wrap: break-word;
+        max-width: 100vw;
     }
     .leads-table td::before {
         content: attr(data-label);
         position: absolute;
-        left: 15px;
-        width: calc(50% - 30px);
+        left: 8px;
+        width: 42%;
         text-align: left;
         font-weight: 600;
         color: var(--theme-text-medium);
+        white-space: normal;
+        overflow-wrap: break-word;
+        font-size: 0.85em;
+        max-width: 44vw;
+    }
+    .leads-table td[data-label="Contact"] {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        min-height: 32px;
+    }
+    .leads-table td[data-label="Contact"]::before {
+        position: static;
+        display: inline-block;
+        width: auto;
+        min-width: 70px;
+        margin-right: auto;
+        text-align: left;
+        padding-right: 8px;
+        margin-bottom: 0;
+        font-size: 0.85em;
+    }
+    .leads-table td[data-label="Name"],
+    .leads-table td[data-label="Company"] {
+        word-break: break-word;
+        white-space: normal;
+        min-height: 24px;
+    }
+    .no-leads {
+        padding: 18px 6px;
+    }
+    .no-leads-icon {
+        font-size: 2.2em;
+    }
+    .no-leads p {
+        font-size: 0.98em;
+    }
+    .request-btn {
+        padding: 7px 14px;
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 576px) {
+    .portal-header .container {
+        padding: 0 4px;
+        gap: 2px;
+    }
+    .brand-logo img {
+        height: 18px;
+    }
+    .header-main-title {
+        font-size: 0.85em;
+    }
+    .logout-btn {
+        padding: 2px 4px;
+        font-size: 0.7em;
+        gap: 2px;
+    }
+    .portal-main {
+        padding: 10px 0;
+    }
+    .salesman-dashboard {
+        padding: 0 4px;
+    }
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .stats-card {
+        padding: 7px;
+    }
+    .stats-icon {
+        font-size: 1.1em;
+        margin-bottom: 2px;
+    }
+    .stats-label {
+        font-size: 0.78em;
+        white-space: normal;
+    }
+    .stats-value {
+        font-size: 1em;
+        white-space: normal;
+    }
+    .leads-container {
+        padding: 6px;
+    }
+    .section-header {
+        margin-bottom: 8px;
+        gap: 6px;
+    }
+    .section-title {
+        font-size: 1.1em;
+    }
+    .dropdown-toggle {
+        padding: 6px 8px;
+        font-size: 0.8em;
+    }
+    .leads-table th, .leads-table td {
+        padding: 5px;
+        font-size: 0.85em;
+    }
+    .leads-table td::before {
+        left: 4px;
+        width: 40%;
+        font-size: 0.75em;
+        max-width: 40vw;
+    }
+    .contact-link {
+        font-size: 0.95em;
+        margin-right: 3px;
+    }
+    .edit-btn-small {
+        padding: 3px 6px;
+        font-size: 0.7em;
+        gap: 2px;
+    }
+    .no-leads-icon {
+        font-size: 1.5em;
+    }
+    .no-leads p {
+        font-size: 0.9em;
+    }
+    .request-btn {
+        padding: 5px 10px;
+        font-size: 0.8em;
+        gap: 5px;
+    }
+    .footer-content {
+        padding: 0 4px;
+        gap: 6px;
+    }
+    .footer-content p {
+        font-size: 0.7em;
+    }
+    .footer-links a {
+        font-size: 0.7em;
+        margin: 3px;
     }
 }
     </style>
@@ -549,7 +752,7 @@ body {
             <div class="container">
                 <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener noreferrer">
                     {% load static %}
-                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo">
+                    <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x45/FFD700/333333?text=Kripalu';">
                 </a>
                 <div class="header-title-wrapper">
                     <h1 class="header-main-title">BDA Dashboard</h1>
@@ -670,9 +873,9 @@ body {
                 <div class="footer-content">
                     <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
                     <div class="footer-links">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Contact Support</a>
+                        <a href="{% url 'term_contact' %}">Privacy Policy</a>
+                        <a href="{% url 'term_contact' %}">Terms of Service</a>
+                        <a href="{% url 'term_contact' %}">Contact Support</a>
                     </div>
                 </div>
             </div>
