@@ -41,7 +41,6 @@
         }
 
         .main-container {
-            /* This div wraps header, main, and footer. Body itself now handles flex column. */
             width: 100%; /* Ensure it spans full width */
         }
 
@@ -63,9 +62,9 @@
         }
 
         .brand-logo img {
-            height: 60px;
+            height: 60px; /* Reduced height for desktop */
             max-width: 100%; /* Ensure image is responsive */
-            height: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure logo scales within its bounds */
         }
 
         /* Main Content for Login */
@@ -200,6 +199,7 @@
             text-decoration: none;
             margin-left: 1.5rem;
             font-size: 0.9rem;
+            transition: var(--transition);
         }
 
         .footer-links a:hover {
@@ -207,6 +207,12 @@
         }
 
         /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .brand-logo img {
+                height: 50px; /* Slightly larger for tablets */
+            }
+        }
+
         @media (max-width: 768px) {
             .portal-header .container {
                 justify-content: center; /* Center logo on smaller screens */
@@ -214,7 +220,7 @@
                 padding-left: 1rem; /* Adjust padding */
             }
             .brand-logo img {
-                height: 50px; /* Smaller logo on tablet */
+                height: 45px; /* Smaller logo on tablet */
             }
 
             .login-card {
@@ -270,7 +276,7 @@
                 padding: 0.75rem 0;
             }
             .brand-logo img {
-                height: 45px; /* Even smaller logo on mobile */
+                height: 40px; /* Even smaller logo on mobile */
             }
             .portal-main {
                 padding: 2rem 1rem; /* More compact padding on very small screens */

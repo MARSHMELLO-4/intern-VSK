@@ -40,6 +40,7 @@
             /* Status Colors (aligned with previous dashboards for consistency) */
             --status-approved: #4CAF50; /* Green for approved */
             --status-pending: var(--golden-dark); /* Gold for pending */
+            --status-discarded: #F44336; /* Red for discarded/rejected */
         }
 
         body {
@@ -171,10 +172,7 @@
             cursor: not-allowed;
         }
 
-        .btn-primary {
-            background-color: var(--golden-primary);
-            border-color: var(--golden-primary);
-            color: var(--theme-background-card);
+        .btn-action { /* Generic class for action buttons */
             padding: 10px 25px;
             border-radius: 8px;
             font-weight: 500;
@@ -184,13 +182,34 @@
             gap: 10px;
         }
 
-        .btn-primary:hover {
+        .btn-approve {
+            background-color: var(--golden-primary);
+            border-color: var(--golden-primary);
+            color: var(--theme-background-card);
+        }
+
+        .btn-approve:hover {
             background-color: var(--golden-dark);
             border-color: var(--golden-dark);
             transform: translateY(-2px);
+            color: var(--theme-background-card); /* Keep text white on hover */
+        }
+        
+        .btn-discard {
+            background-color: var(--status-discarded);
+            border-color: var(--status-discarded);
+            color: var(--theme-background-card);
         }
 
-        .btn-primary:disabled {
+        .btn-discard:hover {
+            background-color: #d12f3d; /* Darker red on hover */
+            border-color: #d12f3d;
+            transform: translateY(-2px);
+            color: var(--theme-background-card); /* Keep text white on hover */
+        }
+
+
+        .btn-action:disabled {
             background-color: var(--theme-text-light);
             border-color: var(--theme-text-light);
             cursor: not-allowed;
@@ -216,6 +235,15 @@
             font-weight: 500;
         }
 
+        .action-buttons-group {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 25px; /* Adjust margin */
+            gap: 15px; /* Space between buttons */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            padding: 0 20px; /* Consistent padding with other sections */
+        }
+
 
         /* --- Media Queries --- */
 
@@ -233,6 +261,15 @@
             .users-table th, .users-table td {
                 padding: 10px;
                 font-size: 0.9em;
+            }
+            .action-buttons-group {
+                justify-content: center; /* Center buttons on smaller screens */
+                gap: 10px;
+                padding: 0 15px;
+            }
+            .btn-action {
+                padding: 8px 20px;
+                font-size: 0.95em;
             }
         }
 
@@ -291,8 +328,13 @@
                 color: var(--theme-text-medium);
             }
 
-            .btn-primary {
-                width: 100%; /* Full width button */
+            .action-buttons-group {
+                flex-direction: column; /* Stack buttons vertically */
+                gap: 10px;
+                padding: 0 15px;
+            }
+            .btn-action {
+                width: 100%; /* Full width buttons */
                 justify-content: center;
                 padding: 10px 15px;
                 font-size: 0.9em;
@@ -323,7 +365,7 @@
                 width: calc(45% - 25px);
                 font-size: 0.8em;
             }
-            .btn-primary {
+            .btn-action {
                 font-size: 0.85em;
             }
         }
@@ -364,7 +406,7 @@
                                     <th scope="col">Phone</th>
                                     <th scope="col">Region</th>
                                     <th scope="col">Joined Date</th>
-                                    <th scope="col" class="text-center">Approve</th>
+                                    <th scope="col" class="text-center">Select</th> {# Changed from Approve to Select #}
                                 </tr>
                             </thead>
                             <tbody>
@@ -377,7 +419,7 @@
                                     <td data-label="Phone">{{ user.phone }}</td> {# CustomUser field #}
                                     <td data-label="Region">{{ user.region }}</td> {# CustomUser field #}
                                     <td data-label="Joined Date">{{ user.date_joined|date:"M d, Y" }}</td>
-                                    <td data-label="Approve" class="text-center">
+                                    <td data-label="Select" class="text-center"> {# Changed from Approve to Select #}
                                         {# IMPORTANT: Use data-email-id and pass user.email here #}
                                         <input type="checkbox" class="form-check-input approve-checkbox" data-email-id="{{ user.email }}">
                                     </td>
@@ -386,9 +428,12 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-end mt-4">
-                        <button id="approveSelectedBtn" class="btn btn-primary d-none">
-                            <i class="bi bi-check-circle-fill me-2"></i> Click check to approve
+                    <div class="action-buttons-group"> {# Grouped action buttons #}
+                        <button id="discardSelectedBtn" class="btn btn-action btn-discard d-none">
+                            <i class="bi bi-x-circle-fill"></i> Discard Selected
+                        </button>
+                        <button id="approveSelectedBtn" class="btn btn-action btn-approve d-none">
+                            <i class="bi bi-check-circle-fill"></i> Approve Selected
                         </button>
                     </div>
                     {% else %}
@@ -410,29 +455,25 @@
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.approve-checkbox');
     const approveSelectedBtn = document.getElementById('approveSelectedBtn');
+    const discardSelectedBtn = document.getElementById('discardSelectedBtn');
 
-    function updateApproveButtonVisibility() {
+    function updateButtonVisibility() {
         const checkedCount = document.querySelectorAll('.approve-checkbox:checked').length;
         if (checkedCount > 0) {
             approveSelectedBtn.classList.remove('d-none');
+            discardSelectedBtn.classList.remove('d-none');
         } else {
             approveSelectedBtn.classList.add('d-none');
+            discardSelectedBtn.classList.add('d-none');
         }
     }
 
     // Initial check for button visibility on page load
-    updateApproveButtonVisibility();
+    updateButtonVisibility();
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function () {
-            updateApproveButtonVisibility(); // Update visibility whenever a checkbox changes
-
-            // Optional: Auto-approve on single click (as per your original logic)
-            // If you want a "batch approve" button, remove this block and rely solely on the button.
-            const email = this.getAttribute('data-email-id');
-            if (this.checked) {
-                sendApprovalRequest([email], this); // Pass the checkbox itself to handle UI feedback
-            }
+            updateButtonVisibility(); // Update visibility whenever a checkbox changes
         });
     });
 
@@ -443,25 +484,46 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (selectedEmails.length > 0) {
-            // Optional: Add a confirmation dialog for batch approval
-            if (confirm(`Are you sure you want to approve ${selectedEmails.length} user(s)?`)) {
-                sendApprovalRequest(selectedEmails, null); // Null for checkbox as it's batch
+            if (confirm(`Are you sure you want to APPROVE ${selectedEmails.length} user(s)?`)) {
+                sendActionRequest(selectedEmails, 'approve');
             } else {
                 // If user cancels, uncheck all selected boxes
                 document.querySelectorAll('.approve-checkbox:checked').forEach(cb => cb.checked = false);
-                updateApproveButtonVisibility();
+                updateButtonVisibility();
             }
         } else {
             alert('No users selected for approval.');
         }
     });
 
-    function sendApprovalRequest(emails, singleCheckbox = null) {
-        // Disable the checkbox/button to prevent double-clicks
-        if (singleCheckbox) singleCheckbox.disabled = true;
+    discardSelectedBtn.addEventListener('click', function() {
+        const selectedEmails = [];
+        document.querySelectorAll('.approve-checkbox:checked').forEach(checkbox => {
+            selectedEmails.push(checkbox.getAttribute('data-email-id'));
+        });
+
+        if (selectedEmails.length > 0) {
+            if (confirm(`Are you sure you want to DISCARD ${selectedEmails.length} user(s)? This action cannot be undone.`)) {
+                sendActionRequest(selectedEmails, 'discard');
+            } else {
+                // If user cancels, uncheck all selected boxes
+                document.querySelectorAll('.approve-checkbox:checked').forEach(cb => cb.checked = false);
+                updateButtonVisibility();
+            }
+        } else {
+            alert('No users selected for discard.');
+        }
+    });
+
+    function sendActionRequest(emails, actionType) {
+        // Disable both buttons to prevent double-clicks
         approveSelectedBtn.disabled = true;
+        discardSelectedBtn.disabled = true;
         
-        fetch('/approve-users/', { // Changed URL to handle plural 'users' for batch
+        const url = actionType === 'approve' ? '/approve-users/' : '/discard-users/'; // Assuming /discard-users/ endpoint
+        const actionVerb = actionType === 'approve' ? 'approving' : 'discarding';
+
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -478,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data.success) {
-                // Remove approved rows from the UI
+                // Remove processed rows from the UI
                 emails.forEach(email => {
                     const row = document.querySelector(`tr[data-email-row="${email}"]`);
                     if (row) {
@@ -501,22 +563,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         `;
                     }
                 }
-                updateApproveButtonVisibility(); // Re-evaluate button visibility
-                // Optional: Show a success message to the user
-                // alert('User(s) approved successfully!'); // Use Django messages instead for better UX
+                updateButtonVisibility(); // Re-evaluate button visibility
+                // Optional: Show a success message to the user (consider using Django messages for better UX)
+                // alert(`User(s) ${actionVerb} successfully!`); 
             } else {
-                alert('Error approving user(s): ' + (data.error || 'An unknown error occurred.'));
-                if (singleCheckbox) singleCheckbox.checked = false; // Revert checkbox state
+                alert(`Error ${actionVerb} user(s): ` + (data.error || 'An unknown error occurred.'));
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            alert('Network error or server unreachable. Please try again. Check console for details.');
-            if (singleCheckbox) singleCheckbox.checked = false; // Revert checkbox state
+            alert(`Network error or server unreachable during ${actionVerb}. Please try again. Check console for details.`);
         })
-        .finally(() => { // Re-enable checkbox/button regardless of success/failure
-            if (singleCheckbox) singleCheckbox.disabled = false;
+        .finally(() => { // Re-enable buttons regardless of success/failure
             approveSelectedBtn.disabled = false;
+            discardSelectedBtn.disabled = false;
         });
     }
 });

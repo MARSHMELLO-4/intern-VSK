@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from .models import Lead, category ,CustomUser # Ensure Lead and category models are imported
 import pandas as pd
 from django.http import JsonResponse
@@ -328,7 +328,7 @@ def viewCategory(request):
 
     categories = category.objects.all()
     # Exclude users where is_superuser is True
-    salesman = CustomUser.objects.filter(is_superuser=False) # Filter out superusers
+    salesman = CustomUser.objects.filter(is_superuser=False,is_approved = True) # Filter out superusers
     context = {'categories': categories,
                'salesman' : salesman}  # Pass the categories to the template
     return render(request, 'salesmanPortal/viewCategory.html', context)  # Render the view category template
@@ -477,3 +477,55 @@ def deleteSalesman(request, email):
         messages.error(request, "Salesman does not exist")
     
     return redirect('viewCategory')  # Redirect to view categories after deletion
+
+@csrf_exempt  # Use this decorator for simplicity with AJAX POST. Consider more secure methods for production.
+def discard_users_view(request):
+    """
+    Handles POST requests to discard (deactivate and delete) user accounts.
+
+    Expects a JSON body with a list of emails in the 'emails' key.
+    Deactivates and deletes the CustomUser accounts corresponding to the provided emails.
+    Returns a JSON response indicating success or an error.
+    """
+    if request.method == 'POST':
+        try:
+            # Load the JSON data from the request body
+            data = json.loads(request.body)
+            emails_to_discard = data.get('emails', [])
+
+            # Validate that 'emails' is a list
+            if not isinstance(emails_to_discard, list):
+                return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Emails must be a list.'}), content_type="application/json")
+
+            # If no emails are provided, return a success message indicating no action needed
+            if not emails_to_discard:
+                return JsonResponse({'success': True, 'message': 'No users specified for discard.'})
+
+            discarded_count = 0
+            # Filter users by email to find the ones to deactivate and delete
+            users_to_update = CustomUser.objects.filter(email__in=emails_to_discard)
+
+            # Iterate through the found users, deactivate and delete them
+            for user in users_to_update:
+                # Optional: Add checks here, e.g., to prevent discarding superusers
+                # if not user.is_superuser:
+                user.is_active = False  # Deactivate the user account
+                user.save()  # Save the changes to the database
+                user.delete()  # Delete the user from the table
+                discarded_count += 1
+
+            # Return a success JSON response with the count of discarded users
+            return JsonResponse({
+                'success': True,
+                'message': f'{discarded_count} user(s) discarded and deleted successfully.'
+            })
+
+        except json.JSONDecodeError:
+            # Handle cases where the request body is not valid JSON
+            return HttpResponseBadRequest(json.dumps({'success': False, 'error': 'Invalid JSON in request body.'}), content_type="application/json")
+        except Exception as e:
+            # Catch any other unexpected errors and return a 500 server error response
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    else:
+        # Handle cases where the request method is not POST (e.g., GET, PUT, DELETE)
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
