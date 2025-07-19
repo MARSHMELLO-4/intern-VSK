@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import psycopg2
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'adminPanel.apps.AdminpanelConfig',
     'salesmanPanel.apps.SalesmanpanelConfig',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -77,13 +79,23 @@ WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'BdaManagementDB',
+        'USER': 'piyushrajmeena',
+        'PASSWORD': 'Aryan786786',
+        'HOST': 'bdamanagementdb.crewuk6usst2.eu-north-1.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -124,6 +136,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -133,3 +146,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 AUTH_USER_MODEL = 'salesmanPanel.CustomUser'
 
+AWS_ACCESS_KEY_ID='AKIAW6L724GMN55XKNFJ'
+AWS_SECRET_ACCESS_KEY='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'
+AWS_STORAGE_BUCKET_NAME='bdamanagementdb'
+AWS_S3_SIGNATURE_NAME='s3v4'
+AWS_S3_REGION_NAME='eu-north-1'
+AWS_S3_FILE_OVERWRITE=False
+AWS_S3_VERIFY=True
+AWS_DEFAULT_ACL = None
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    }
+}
