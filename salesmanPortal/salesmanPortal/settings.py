@@ -23,7 +23,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 # GOOD: ALLOWED_HOSTS is restricted to your server's IP
-ALLOWED_HOSTS = ['65.0.20.58']
+ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','65.0.20.58']
 
 
 # --- APPLICATION DEFINITION ---
