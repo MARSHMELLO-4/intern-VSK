@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '-',
+        'NAME': 'postgres',
         'USER': 'myadmin',
         'PASSWORD': 'Aryan786786',
         'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
