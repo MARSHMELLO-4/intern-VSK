@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # GOOD: DEBUG is set to False for production
-DEBUG = True
+DEBUG = False
 
 # GOOD: ALLOWED_HOSTS is restricted to your server's IP
 ALLOWED_HOSTS = ['13.201.74.134']
