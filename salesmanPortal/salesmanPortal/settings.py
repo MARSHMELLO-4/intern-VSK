@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import psycopg2
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +29,7 @@ SECRET_KEY = 'django-insecure-3g!vnde6scq1(6i#bjm3-uq&8u8k@bmr-51)9by(6wpdx&+qkh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.51.194.146']
+ALLOWED_HOSTS = ['3.111.37.208','*']
 
 
 # Application definition
@@ -90,10 +93,10 @@ WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'BdaManagementDB',
-        'USER': 'piyushrajmeena',
+        'NAME': 'my-django-db',
+        'USER': 'myadmin',
         'PASSWORD': 'Aryan786786',
-        'HOST': 'bdamanagementdb.crewuk6usst2.eu-north-1.rds.amazonaws.com',
+        'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
