@@ -23,7 +23,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 # GOOD: ALLOWED_HOSTS is restricted to your server's IP
-ALLOWED_HOSTS = ['13.201.74.134']
+ALLOWED_HOSTS = ['65.0.20.58']
 
 
 # --- APPLICATION DEFINITION ---
