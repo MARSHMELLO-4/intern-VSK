@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3g!vnde6scq1(6i#bjm3-uq&8u8k@bmr-51)9by(6wpdx&+qkh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['3.111.37.208','*']
 
@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my-django-db',
+        'NAME': '-',
         'USER': 'myadmin',
         'PASSWORD': 'Aryan786786',
         'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
