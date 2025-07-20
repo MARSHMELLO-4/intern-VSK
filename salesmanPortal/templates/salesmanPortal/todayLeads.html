@@ -392,7 +392,7 @@
                                 </span>
                             </div>
                             <div class="lead-body">
-                                <p class="lead-detail"><i class="bi bi-person-fill"></i> Assigned To: {{ lead.assigned_to.get_full_name|default:lead.assigned_to.username }}</p>
+                                <p class="lead-detail"><i class="bi bi-person-fill"></i> Assigned To: {{ lead.assigned_to.username }}</p>
                                 <p class="lead-detail"><i class="bi bi-envelope-fill"></i> Email: {{ lead.email }}</p>
                                 <p class="lead-detail"><i class="bi bi-telephone-fill"></i> Phone: {{ lead.phone }}</p>
                                 <p class="lead-detail"><i class="bi bi-calendar-check-fill"></i> Created On: {{ lead.created_at|date:"M d, Y" }}</p>
