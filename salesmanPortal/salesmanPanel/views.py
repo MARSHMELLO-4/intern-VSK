@@ -428,12 +428,12 @@ def deleteLead(request, lead_id):
 
 def viewCategory(request):
     # Fetch all categories for the sidebar
-    categories = Category.objects.all().order_by('name')
+    categories = category.objects.all().order_by('name')
 
     # Fetch all salesmen for the 'Assigned To' filter
     # Assuming 'Salesman' is a custom user model or a profile related to User
     # Adjust this query if your salesmen are stored differently
-    salesmen = User.objects.filter(is_salesman=True) # Example: filter by a flag
+    salesmen = CustomUser.objects.filter(is_approved=True) # Example: filter by a flag
 
     # Start with all leads
     leads = Lead.objects.all()
@@ -475,7 +475,7 @@ def viewCategory(request):
         try:
             # Convert string to date object
             start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            leads = leads.filter(date_created__gte=start_date) # __gte means "greater than or equal to"
+            leads = leads.filter(created_at__gte=start_date) # __gte means "greater than or equal to"
         except ValueError:
             # Handle invalid date format if necessary, e.g., log it or show an error message
             pass # For now, just ignore bad date format
@@ -488,14 +488,14 @@ def viewCategory(request):
             # to include the whole day, e.g., `date_created__lte=end_date + timedelta(days=1)`
             # or `date_created__date__lte=end_date` if using a DateField lookup.
             # Assuming `date_created` is a DateField or you want to match the date part:
-            leads = leads.filter(date_created__lte=end_date)
+            leads = leads.filter(created_at__lte=end_date)
         except ValueError:
             pass # For now, just ignore bad date format
     # --- END NEW DATE FILTERS ---
 
 
     # Ensure leads are ordered (e.g., by creation date or name)
-    leads = leads.order_by('-date_created') # Or whatever default ordering you prefer
+    leads = leads.order_by('-created_at') # Or whatever default ordering you prefer
 
     # Prepare choices for status and priority dropdowns (assuming these are defined in your Lead model)
     status_choices = Lead.STATUS_CHOICES # Assuming this is a tuple of tuples in Lead model

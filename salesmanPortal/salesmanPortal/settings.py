@@ -25,10 +25,10 @@ SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
 DEBUG = True
 
 # GOOD: ALLOWED_HOSTS is restricted to your server's IP for production
-ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
+# ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
 
 #for local development, you can use:
-# ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # --- APPLICATION DEFINITION ---
