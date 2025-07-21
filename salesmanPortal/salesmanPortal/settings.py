@@ -127,7 +127,7 @@ USE_TZ = True
 
 # --- STATIC & MEDIA FILES ---
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Note: STATICFILES_DIRS is not typically needed in production if all your static
 # files are inside your apps' static/ folders. But it doesn't hurt.
