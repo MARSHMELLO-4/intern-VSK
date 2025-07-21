@@ -14,18 +14,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings # new
-from  django.conf.urls.static import static #new
 from django.contrib import admin
-from django.urls import path,include
-#import static 
+from django.urls import path, include
 from django.conf import settings
-from django.conf.urls.static import static
+from django.conf.urls.static import static # This line is good, no need for the duplicate
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('salesmanPanel.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
+# This is the correct way to serve static and media files during development (DEBUG = True)
+# It should ONLY be in the if settings.DEBUG block.
+# Do NOT put static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) outside this block
+# if you intend to use a production web server (like Nginx) for static files.
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_URL)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Remove the problematic line: urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_URL)
