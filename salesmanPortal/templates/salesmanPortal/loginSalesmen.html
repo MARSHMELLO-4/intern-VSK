@@ -1,659 +1,734 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Salesman Portal | Kripalu Innovations</title>
     {% load static %}
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary-color: #A67C52; /* A warm golden brown */
-            --primary-hover: #8C6A43; /* A darker shade for hover */
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --white: #ffffff;
-            --gray-light: #e9ecef;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
+      :root {
+        --primary-color: #a67c52; /* A warm golden brown */
+        --primary-hover: #8c6a43; /* A darker shade for hover */
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #17a2b8;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+        --white: #ffffff;
+        --gray-light: #e9ecef;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+      }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--white); /* White background */
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column; /* Use flex column for full page layout */
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--white); /* White background */
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column; /* Use flex column for full page layout */
+        min-height: 100vh;
+      }
 
-        .main-container {
-            width: 100%; /* Ensure it spans full width */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+      .main-container {
+        width: 100%; /* Ensure it spans full width */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-        /* Header Styles - REMOVED AS REQUESTED */
+      /* Header Styles - REMOVED AS REQUESTED */
 
-        /* Main Content Styles */
-        .portal-main {
-            flex: 1; /* Allows main content to grow and push footer down */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem 1.5rem; /* Added horizontal padding for mobile */
-            padding-top: 5rem; /* Adjusted top padding since header is removed */
-        }
+      /* Main Content Styles */
+      .portal-main {
+        flex: 1; /* Allows main content to grow and push footer down */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1.5rem; /* Added horizontal padding for mobile */
+        padding-top: 5rem; /* Adjusted top padding since header is removed */
+      }
 
+      .auth-card {
+        display: flex;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+        min-height: 600px; /* Kept for desktop, will adjust for mobile */
+        width: 100%;
+        max-width: 1000px; /* Limit max width for readability */
+      }
+
+      .auth-graphic {
+        flex: 1;
+        /* Use a gradient with golden hues, slightly muted for professionalism */
+        background: linear-gradient(
+          135deg,
+          #d4af37,
+          #a67c52
+        ); /* Gold to Golden Brown */
+        color: var(--white);
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center content vertically */
+        align-items: center; /* Center content horizontally */
+        text-align: center; /* Center text */
+      }
+
+      .graphic-content {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center items in column */
+      }
+
+      /* Styling for the main logo in the graphic section */
+      .graphic-content .main-logo {
+        height: 100px; /* Make it larger and more prominent */
+        max-width: 80%; /* Ensure it's responsive */
+        height: auto; /* Maintain aspect ratio */
+        margin-bottom: 2.5rem; /* More space below the logo */
+        filter: drop-shadow(
+          0 0 15px rgba(0, 0, 0, 0.3)
+        ); /* Stronger shadow for main logo */
+      }
+
+      .auth-graphic h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .auth-graphic p {
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      .features {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column; /* Stack features vertically */
+        gap: 1rem; /* Space between feature items */
+        align-items: center; /* Align feature items to center */
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .feature-item i {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Form Styles */
+      .auth-form-container {
+        flex: 1;
+        padding: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center form horizontally */
+      }
+
+      .form-wrapper {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .form-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--dark-color);
+        text-align: center; /* Center form title */
+      }
+
+      .form-subtitle {
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+        text-align: center; /* Center form subtitle */
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--dark-color);
+      }
+
+      .input-group {
+        margin-bottom: 0.5rem;
+      }
+
+      .input-group-text {
+        background-color: var(--gray-light); /* Keep it light for contrast */
+        border: 1px solid #ced4da;
+        border-right: none;
+        border-radius: var(--border-radius) 0 0 var(--border-radius);
+      }
+
+      .form-control {
+        height: 48px;
+        border: 1px solid #ced4da;
+        border-left: none;
+        padding-left: 0.75rem;
+        border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      }
+
+      .form-control:focus {
+        box-shadow: none;
+        border-color: var(--primary-color); /* Golden border on focus */
+      }
+
+      .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .forgot-password {
+        color: var(--primary-color); /* Golden link for forgot password */
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .forgot-password:hover {
+        text-decoration: underline;
+      }
+
+      .submit-btn {
+        width: 100%;
+        height: 48px;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        border-radius: var(--border-radius);
+        background-color: var(--primary-color);
+        border: none;
+        transition: var(--transition);
+        color: var(--white); /* White text on golden button */
+      }
+
+      .submit-btn:hover {
+        background-color: var(--primary-hover);
+        box-shadow: 0 4px 15px rgba(166, 124, 82, 0.4); /* Subtle golden shadow on hover */
+      }
+
+      /* Form Footer */
+      .form-footer {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .register-text {
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+      }
+
+      .register-link {
+        color: var(--primary-color); /* Golden link for registration */
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .register-link:hover {
+        text-decoration: underline;
+      }
+
+      .admin-login {
+        display: inline-flex;
+        align-items: center;
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .admin-login:hover {
+        color: var(--primary-color); /* Golden link for admin login */
+      }
+
+      /* Footer Styles */
+      .portal-footer {
+        padding: 1.5rem 0;
+        background-color: var(--white);
+        border-top: 1px solid var(--gray-light);
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+        padding: 0 1.5rem; /* Add horizontal padding to footer content */
+      }
+
+      .footer-content p {
+        margin-bottom: 0;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap; /* Allow links to wrap */
+        gap: 1.5rem; /* Space between links */
+      }
+
+      .footer-links a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary-color); /* Golden links in footer on hover */
+      }
+
+      /* Message/Alerts */
+      .message-container {
+        margin-bottom: 2rem;
+        width: 100%; /* Ensure messages take full width */
+      }
+
+      .alert {
+        border-radius: var(--border-radius);
+        padding: 1rem;
+      }
+
+      /* Custom alert styles for golden theme */
+      .alert-success {
+        background-color: #e6f3e6; /* Light green */
+        color: #28a745;
+        border-color: #c3e6cb;
+      }
+
+      .alert-error,
+      .alert-danger {
+        background-color: #f8e6e6; /* Light red */
+        color: #dc3545;
+        border-color: #f5c6cb;
+      }
+
+      .alert-info {
+        background-color: #e6f0f4; /* Light blue */
+        color: #17a2b8;
+        border-color: #bee5eb;
+      }
+
+      .alert-warning {
+        background-color: #fff3e6; /* Light orange */
+        color: #ffc107;
+        border-color: #ffeeba;
+      }
+
+      /* Icon colors within alerts */
+      .alert .bi {
+        color: inherit; /* Inherit color from parent alert */
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 992px) {
         .auth-card {
-            display: flex;
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-            min-height: 600px; /* Kept for desktop, will adjust for mobile */
-            width: 100%;
-            max-width: 1000px; /* Limit max width for readability */
+          flex-direction: column; /* Stack graphic and form vertically */
+          min-height: auto; /* Allow height to adjust */
         }
 
         .auth-graphic {
-            flex: 1;
-            /* Use a gradient with golden hues, slightly muted for professionalism */
-            background: linear-gradient(135deg, #D4AF37, #A67C52); /* Gold to Golden Brown */
-            color: var(--white);
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
-            text-align: center; /* Center text */
+          padding: 2rem;
+          text-align: center;
+          align-items: center; /* Center content horizontally */
         }
 
-        .graphic-content {
-            max-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center items in column */
-        }
-
-        /* Styling for the main logo in the graphic section */
         .graphic-content .main-logo {
-            height: 100px; /* Make it larger and more prominent */
-            max-width: 80%; /* Ensure it's responsive */
-            height: auto; /* Maintain aspect ratio */
-            margin-bottom: 2.5rem; /* More space below the logo */
-            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.3)); /* Stronger shadow for main logo */
-        }
-        
-        .auth-graphic h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+          height: 80px; /* Adjust size for tablet */
+          margin-bottom: 2rem; /* Adjust space */
         }
 
+        .auth-graphic h2 {
+          font-size: 1.6rem;
+        }
         .auth-graphic p {
-            opacity: 0.9;
-            margin-bottom: 2rem;
+          font-size: 0.95rem;
+        }
+
+        .auth-form-container {
+          padding: 2.5rem; /* Adjust padding for form */
         }
 
         .features {
-            margin-top: 2rem;
-            display: flex;
-            flex-direction: column; /* Stack features vertically */
-            gap: 1rem; /* Space between feature items */
-            align-items: center; /* Align feature items to center */
+          justify-content: center;
+          gap: 0.75rem; /* Reduce gap */
         }
-
         .feature-item {
-            display: flex;
-            align-items: center;
+          font-size: 0.9rem; /* Smaller font for features */
         }
-
         .feature-item i {
-            font-size: 1.2rem;
-            margin-right: 1rem;
-            color: rgba(255, 255, 255, 0.8);
+          font-size: 1.1rem;
         }
 
-        /* Form Styles */
-        .auth-form-container {
-            flex: 1;
-            padding: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center form horizontally */
+        .portal-main {
+          padding: 2rem 1rem; /* Adjust main padding */
+          padding-top: 3rem; /* Adjust top padding for smaller screens */
         }
-
-        .form-wrapper {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
         .form-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark-color);
-            text-align: center; /* Center form title */
+          font-size: 1.6rem;
         }
-
         .form-subtitle {
-            color: var(--secondary-color);
-            margin-bottom: 2rem;
-            text-align: center; /* Center form subtitle */
+          font-size: 0.9rem;
         }
+      }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+      @media (max-width: 768px) {
+        .brand-logo img {
+          /* This rule is now effectively for the main logo */
+          height: 60px; /* Adjust logo size */
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark-color);
+        .auth-graphic h2 {
+          font-size: 1.4rem;
         }
-
-        .input-group {
-            margin-bottom: 0.5rem;
+        .auth-graphic p {
+          font-size: 0.9rem;
         }
-
-        .input-group-text {
-            background-color: var(--gray-light); /* Keep it light for contrast */
-            border: 1px solid #ced4da;
-            border-right: none;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        .features {
+          margin-top: 1.5rem;
         }
-
+        .feature-item i {
+          font-size: 1rem;
+        }
+        .feature-item span {
+          font-size: 0.85rem;
+        }
+        .auth-form-container {
+          padding: 2rem;
+        }
+        .form-title {
+          font-size: 1.4rem;
+        }
+        .form-subtitle {
+          font-size: 0.85rem;
+        }
         .form-control {
-            height: 48px;
-            border: 1px solid #ced4da;
-            border-left: none;
-            padding-left: 0.75rem;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+          height: 45px;
+          font-size: 0.9rem;
         }
-
-        .form-control:focus {
-            box-shadow: none;
-            border-color: var(--primary-color); /* Golden border on focus */
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .forgot-password {
-            color: var(--primary-color); /* Golden link for forgot password */
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-
         .submit-btn {
-            width: 100%;
-            height: 48px;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            border-radius: var(--border-radius);
-            background-color: var(--primary-color);
-            border: none;
-            transition: var(--transition);
-            color: var(--white); /* White text on golden button */
+          height: 45px;
+          font-size: 0.95rem;
         }
-
-        .submit-btn:hover {
-            background-color: var(--primary-hover);
-            box-shadow: 0 4px 15px rgba(166, 124, 82, 0.4); /* Subtle golden shadow on hover */
-        }
-
-        /* Form Footer */
         .form-footer {
-            text-align: center;
-            margin-top: 2rem;
+          margin-top: 1.5rem;
         }
+      }
 
+      @media (max-width: 576px) {
+        .brand-logo img {
+          /* This rule is now effectively for the main logo */
+          height: 50px; /* Smallest logo size */
+        }
+        .portal-main {
+          padding: 1.5rem 0.75rem; /* Minimal padding */
+          padding-top: 2.5rem; /* Adjust top padding for smallest screens */
+        }
+        .auth-card {
+          margin: 0; /* Remove margin, rely on main padding */
+          box-shadow: none; /* Remove shadow to make it seem like a direct part of the page */
+          border-radius: 0; /* No rounded corners on very small devices for full screen feel */
+        }
+        .auth-graphic {
+          padding: 1.5rem;
+        }
+        .auth-graphic h2 {
+          font-size: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+        .auth-graphic p {
+          font-size: 0.8rem;
+          margin-bottom: 1.5rem;
+        }
+        .features {
+          margin-top: 1rem;
+          gap: 0.5rem;
+        }
+        .feature-item span {
+          font-size: 0.8rem;
+        }
+        .auth-form-container {
+          padding: 1.5rem;
+        }
+        .form-title {
+          font-size: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+        .form-subtitle {
+          font-size: 0.8rem;
+          margin-bottom: 1.5rem;
+        }
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        .form-group label {
+          font-size: 0.85rem;
+        }
+        .form-control {
+          height: 40px;
+          font-size: 0.85rem;
+        }
+        .submit-btn {
+          height: 40px;
+          font-size: 0.9rem;
+        }
+        .form-options {
+          flex-direction: column; /* Stack remember me and forgot password */
+          align-items: flex-start;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        .form-footer {
+          margin-top: 1rem;
+        }
         .register-text {
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
+          font-size: 0.85rem;
+          margin-bottom: 0.5rem;
         }
-
-        .register-link {
-            color: var(--primary-color); /* Golden link for registration */
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .register-link:hover {
-            text-decoration: underline;
-        }
-
+        .register-link,
         .admin-login {
-            display: inline-flex;
-            align-items: center;
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-size: 0.9rem;
+          font-size: 0.8rem;
         }
-
-        .admin-login:hover {
-            color: var(--primary-color); /* Golden link for admin login */
-        }
-
-        /* Footer Styles */
-        .portal-footer {
-            padding: 1.5rem 0;
-            background-color: var(--white);
-            border-top: 1px solid var(--gray-light);
-        }
-
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
-            padding: 0 1.5rem; /* Add horizontal padding to footer content */
+          flex-direction: column;
+          text-align: center;
+          padding: 0 0.75rem;
         }
-
-        .footer-content p {
-            margin-bottom: 0;
-        }
-
         .footer-links {
-            display: flex;
-            flex-wrap: wrap; /* Allow links to wrap */
-            gap: 1.5rem; /* Space between links */
+          margin-top: 0.75rem;
+          gap: 0.75rem;
         }
-
         .footer-links a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-size: 0.9rem;
+          font-size: 0.8rem;
         }
-
-        .footer-links a:hover {
-            color: var(--primary-color); /* Golden links in footer on hover */
-        }
-
-        /* Message/Alerts */
         .message-container {
-            margin-bottom: 2rem;
-            width: 100%; /* Ensure messages take full width */
+          margin-bottom: 1rem;
         }
-
         .alert {
-            border-radius: var(--border-radius);
-            padding: 1rem;
+          padding: 0.75rem;
+          font-size: 0.85rem;
         }
-
-        /* Custom alert styles for golden theme */
-        .alert-success {
-            background-color: #E6F3E6; /* Light green */
-            color: #28a745;
-            border-color: #c3e6cb;
-        }
-
-        .alert-error, .alert-danger {
-            background-color: #F8E6E6; /* Light red */
-            color: #dc3545;
-            border-color: #f5c6cb;
-        }
-
-        .alert-info {
-            background-color: #E6F0F4; /* Light blue */
-            color: #17a2b8;
-            border-color: #bee5eb;
-        }
-
-        .alert-warning {
-            background-color: #FFF3E6; /* Light orange */
-            color: #ffc107;
-            border-color: #ffeeba;
-        }
-
-        /* Icon colors within alerts */
-        .alert .bi {
-            color: inherit; /* Inherit color from parent alert */
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .auth-card {
-                flex-direction: column; /* Stack graphic and form vertically */
-                min-height: auto; /* Allow height to adjust */
-            }
-            
-            .auth-graphic {
-                padding: 2rem;
-                text-align: center;
-                align-items: center; /* Center content horizontally */
-            }
-            
-            .graphic-content .main-logo {
-                height: 80px; /* Adjust size for tablet */
-                margin-bottom: 2rem; /* Adjust space */
-            }
-
-            .auth-graphic h2 {
-                font-size: 1.6rem;
-            }
-            .auth-graphic p {
-                font-size: 0.95rem;
-            }
-            
-            .auth-form-container {
-                padding: 2.5rem; /* Adjust padding for form */
-            }
-            
-            .features {
-                justify-content: center;
-                gap: 0.75rem; /* Reduce gap */
-            }
-            .feature-item {
-                font-size: 0.9rem; /* Smaller font for features */
-            }
-            .feature-item i {
-                font-size: 1.1rem;
-            }
-
-            .portal-main {
-                padding: 2rem 1rem; /* Adjust main padding */
-                padding-top: 3rem; /* Adjust top padding for smaller screens */
-            }
-            .form-title {
-                font-size: 1.6rem;
-            }
-            .form-subtitle {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .brand-logo img { /* This rule is now effectively for the main logo */
-                height: 60px; /* Adjust logo size */
-            }
-            .auth-graphic h2 {
-                font-size: 1.4rem;
-            }
-            .auth-graphic p {
-                font-size: 0.9rem;
-            }
-            .features {
-                margin-top: 1.5rem;
-            }
-            .feature-item i {
-                font-size: 1rem;
-            }
-            .feature-item span {
-                font-size: 0.85rem;
-            }
-            .auth-form-container {
-                padding: 2rem;
-            }
-            .form-title {
-                font-size: 1.4rem;
-            }
-            .form-subtitle {
-                font-size: 0.85rem;
-            }
-            .form-control {
-                height: 45px;
-                font-size: 0.9rem;
-            }
-            .submit-btn {
-                height: 45px;
-                font-size: 0.95rem;
-            }
-            .form-footer {
-                margin-top: 1.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .brand-logo img { /* This rule is now effectively for the main logo */
-                height: 50px; /* Smallest logo size */
-            }
-            .portal-main {
-                padding: 1.5rem 0.75rem; /* Minimal padding */
-                padding-top: 2.5rem; /* Adjust top padding for smallest screens */
-            }
-            .auth-card {
-                margin: 0; /* Remove margin, rely on main padding */
-                box-shadow: none; /* Remove shadow to make it seem like a direct part of the page */
-                border-radius: 0; /* No rounded corners on very small devices for full screen feel */
-            }
-            .auth-graphic {
-                padding: 1.5rem;
-            }
-            .auth-graphic h2 {
-                font-size: 1.25rem;
-                margin-bottom: 0.75rem;
-            }
-            .auth-graphic p {
-                font-size: 0.8rem;
-                margin-bottom: 1.5rem;
-            }
-            .features {
-                margin-top: 1rem;
-                gap: 0.5rem;
-            }
-            .feature-item span {
-                font-size: 0.8rem;
-            }
-            .auth-form-container {
-                padding: 1.5rem;
-            }
-            .form-title {
-                font-size: 1.25rem;
-                margin-bottom: 0.75rem;
-            }
-            .form-subtitle {
-                font-size: 0.8rem;
-                margin-bottom: 1.5rem;
-            }
-            .form-group {
-                margin-bottom: 1rem;
-            }
-            .form-group label {
-                font-size: 0.85rem;
-            }
-            .form-control {
-                height: 40px;
-                font-size: 0.85rem;
-            }
-            .submit-btn {
-                height: 40px;
-                font-size: 0.9rem;
-            }
-            .form-options {
-                flex-direction: column; /* Stack remember me and forgot password */
-                align-items: flex-start;
-                gap: 0.5rem;
-                margin-bottom: 1rem;
-            }
-            .form-footer {
-                margin-top: 1rem;
-            }
-            .register-text {
-                font-size: 0.85rem;
-                margin-bottom: 0.5rem;
-            }
-            .register-link, .admin-login {
-                font-size: 0.8rem;
-            }
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-                padding: 0 0.75rem;
-            }
-            .footer-links {
-                margin-top: 0.75rem;
-                gap: 0.75rem;
-            }
-            .footer-links a {
-                font-size: 0.8rem;
-            }
-            .message-container {
-                margin-bottom: 1rem;
-            }
-            .alert {
-                padding: 0.75rem;
-                font-size: 0.85rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="main-container">
-        <!-- Header: This section has been removed as the logo is now in the graphic panel -->
-        
-        <!-- Main Content -->
-        <main class="portal-main">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-10">
-                        <div class="auth-card">
-                            <!-- Left Panel (Graphic) -->
-                            <div class="auth-graphic">
-                                <div class="graphic-content">
-                                    <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
-                                        {% load static %}
-                                        <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo" class="main-logo" onerror="this.onerror=null;this.src='https://placehold.co/250x100/A67C52/ffffff?text=Kripalu+Logo';">
-                                    </a>
-                                    <h2>BDA Sales Portal</h2>
-                                    <p>Streamline your sales process and manage customer relationships efficiently.</p>
-                                    <div class="features">
-                                        <div class="feature-item">
-                                            <i class="bi bi-graph-up"></i>
-                                            <span>Real-time analytics</span>
-                                        </div>
-                                        <div class="feature-item">
-                                            <i class="bi bi-people-fill"></i>
-                                            <span>Customer management</span>
-                                        </div>
-                                        <div class="feature-item">
-                                            <i class="bi bi-file-earmark-text"></i>
-                                            <span>Sales reporting</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+      <!-- Header: This section has been removed as the logo is now in the graphic panel -->
 
-                            <!-- Right Panel (Form) -->
-                            <div class="auth-form-container">
-                                <div class="form-wrapper">
-                                    <!-- Messages Section -->
-                                    {% if messages %}
-                                    <div class="message-container">
-                                        {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                            <div class="d-flex align-items-center">
-                                                {% if message.tags == 'success' %}
-                                                    <i class="bi bi-check-circle-fill me-2"></i>
-                                                {% elif message.tags == 'error' or message.tags == 'danger' %}
-                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                                {% elif message.tags == 'info' %}
-                                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                                {% elif message.tags == 'warning' %}
-                                                    <i class="bi bi-exclamation-circle-fill me-2"></i>
-                                                {% endif %}
-                                                <div>{{ message }}</div>
-                                            </div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
+      <!-- Main Content -->
+      <main class="portal-main">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+              <div class="auth-card">
+                <!-- Left Panel (Graphic) -->
+                <div class="auth-graphic">
+                  <div class="graphic-content">
+                    <a
+                      href="https://www.kripaluinnovations.com/"
+                      class="brand-logo"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {% load static %}
+                      <img
+                        src="{% static 'images/kripalu_innovation.png' %}"
+                        alt="Kripalu Innovations Logo"
+                        class="main-logo"
+                        onerror="this.onerror=null;this.src='https://placehold.co/250x100/A67C52/ffffff?text=Kripalu+Logo';"
+                      />
+                    </a>
+                    <h2>BDA Sales Portal</h2>
+                    <p>
+                      Streamline your sales process and manage customer
+                      relationships efficiently.
+                    </p>
+                    <div class="features">
+                      <div class="feature-item">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Real-time analytics</span>
+                      </div>
+                      <div class="feature-item">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Customer management</span>
+                      </div>
+                      <div class="feature-item">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Sales reporting</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                                    <h1 class="form-title">Welcome Back</h1>
-                                    <p class="form-subtitle">Sign in to access your sales dashboard</p>
-                                    
-                                    <form action="" method="POST" class="auth-form">
-                                        {% csrf_token %}
-                                        <div class="form-group">
-                                            <label for="email">Email Address</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="password">Password</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary submit-btn">
-                                            <i class="bi bi-box-arrow-in-right me-2"></i> Login
-                                        </button>
-                                    </form>
-                                    
-                                    <div class="form-footer">
-                                        <p class="register-text">
-                                            Don't have an account? <a href="{% url 'register' %}" class="register-link">Sign up here</a>
-                                        </p>
-                                        <a href="{% url 'loginAdmin' %}" class="admin-login">
-                                            <i class="bi bi-shield-lock me-1"></i> Admin login
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Right Panel (Form) -->
+                <div class="auth-form-container">
+                  <div class="form-wrapper">
+                    <!-- Messages Section -->
+                    {% if messages %}
+                    <div class="message-container">
+                      {% for message in messages %}
+                      <div
+                        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                        role="alert"
+                      >
+                        <div class="d-flex align-items-center">
+                          {% if message.tags == 'success' %}
+                          <i class="bi bi-check-circle-fill me-2"></i>
+                          {% elif message.tags == 'error' or message.tags ==
+                          'danger' %}
+                          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                          {% elif message.tags == 'info' %}
+                          <i class="bi bi-info-circle-fill me-2"></i>
+                          {% elif message.tags == 'warning' %}
+                          <i class="bi bi-exclamation-circle-fill me-2"></i>
+                          {% endif %}
+                          <div>{{ message }}</div>
                         </div>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="alert"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      {% endfor %}
                     </div>
-                </div>
-            </div>
-        </main>
+                    {% endif %}
 
-        <!-- Footer -->
-        <footer class="portal-footer">
-            <div class="container">
-                <div class="footer-content">
-                    <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
-                    <div class="footer-links">
-                        <a href="{% url 'term_contact' %}">Privacy Policy</a>
-                        <a href="{% url 'term_contact' %}">Terms of Service</a>
-                        <a href="{% url 'term_contact' %}">Contact Support</a>
+                    <h1 class="form-title">Welcome Back</h1>
+                    <p class="form-subtitle">
+                      Sign in to access your sales dashboard
+                    </p>
+
+                    <form action="" method="POST" class="auth-form">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-group">
+                          <span class="input-group-text"
+                            ><i class="bi bi-envelope"></i
+                          ></span>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                          <span class="input-group-text"
+                            ><i class="bi bi-lock"></i
+                          ></span>
+                          <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          name="remember_me"
+                          id="remember_me"
+                        />
+                        <label class="form-check-label" for="remember_me">
+                          Remember me
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary submit-btn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                      </button>
+                    </form>
+
+                    <div class="form-footer">
+                      <p class="register-text">
+                        Don't have an account?
+                        <a href="{% url 'register' %}" class="register-link"
+                          >Sign up here</a
+                        >
+                      </p>
+                      <a href="{% url 'loginAdmin' %}" class="admin-login">
+                        <i class="bi bi-shield-lock me-1"></i> Admin login
+                      </a>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-        </footer>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="portal-footer">
+        <div class="container">
+          <div class="footer-content">
+            <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
+            <div class="footer-links">
+              <a href="{% url 'term_contact' %}">Privacy Policy</a>
+              <a href="{% url 'term_contact' %}">Terms of Service</a>
+              <a href="{% url 'term_contact' %}">Contact Support</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Auto-dismiss alerts after 5 seconds -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                var alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function(alert) {
-                    var bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 5000);
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          var alerts = document.querySelectorAll(".alert");
+          alerts.forEach(function (alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          });
+        }, 5000);
+      });
     </script>
-</body>
+  </body>
 </html>

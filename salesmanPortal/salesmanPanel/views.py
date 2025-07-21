@@ -15,35 +15,40 @@ import json
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
 from django.db import transaction
+from django.db.models import F, Count
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 
 def loginSalesman(request):
-    page = 'login'
+    # If already logged in, redirect to dashboard
+    if request.user.is_authenticated and not request.user.is_superuser:
+        return redirect('salesmanDashboard')
     
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-
-        try: 
+        remember_me = request.POST.get('remember_me')
+        
+        try:
             user = CustomUser.objects.get(email=email)
+            if not user.is_approved:
+                messages.error(request, "Account not approved")
+                return redirect('loginSalesman')
+            
+            user = authenticate(request, username=user.username, password=password)
+            if user is not None:
+                login(request, user)
+                if remember_me:
+                    request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+                else:
+                    request.session.set_expiry(0)
+                return redirect('salesmanDashboard')
+            else:
+                messages.error(request, "Invalid credentials")
         except CustomUser.DoesNotExist:
             messages.error(request, "User does not exist")
-            return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
-
-        # Check if user is approved before authenticating
-        if not getattr(user, 'is_approved', False):
-            messages.error(request, "Your account is not approved yet. Please contact the administrator.")
-            return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
-
-        # Authenticate using email instead of username
-        user = authenticate(request, username=user.username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return redirect('salesmanDashboard')
-        else:
-            messages.error(request, "Incorrect password")
-
-    return render(request, 'salesmanPortal/loginSalesmen.html', {'page': page})
+    
+    return render(request, 'salesmanPortal/loginSalesmen.html', {'page': 'login'})
 
 from .forms import CustomUserCreationForm
 
@@ -86,24 +91,29 @@ def salesmanDashboard(request):
     return render(request, 'salesmanPortal/salesmanDashboard.html', context)
 
 def loginAdmin(request):
+    # If already logged in, redirect to dashboard
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('viewCategory')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        try:
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
-            messages.error(request, "Admin user does not exist")
-            return render(request, 'salesmanPortal/loginAdmin.html')
-
+        remember_me = request.POST.get('remember_me')
+        
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_superuser:
             login(request, user)
-            return redirect('viewCategory')  # Redirect to admin dashboard after login
+            if remember_me:
+                request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+            else:
+                request.session.set_expiry(0)
+            return redirect('viewCategory')
         else:
-            messages.error(request, "Invalid admin credentials")
-    return render(request, 'salesmanPortal/loginAdmin.html')  # Render the admin login template
+            messages.error(request, "Invalid credentials")
+    
+    return render(request, 'salesmanPortal/loginAdmin.html')
 
-from django.db.models import F
+
 
 def adminDashboard(request, category_id=None):
     leads_queryset = Lead.objects.filter(category_id=category_id)  # Filter by category first
@@ -287,13 +297,22 @@ def editLead(request, lead_id):
     context = {'lead': lead}  # Pass the lead to the template
     return render(request, 'salesmanPortal/editLead.html', context)  # Render the edit lead template
 
+@never_cache
+@require_http_methods(["GET", "POST"])
 def logoutUser(request):
     if request.method == 'POST':
-        logout(request)  # Log out the user
+        logout(request)
         messages.success(request, "You have been logged out successfully")
-        return redirect('loginSalesman')  # Redirect to login page after logout
+        response = redirect('loginSalesman')
+        # Clear session cookie and prevent caching
+        response.delete_cookie('sessionid')
+        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
+        return response
     
-    return render(request, 'salesmanPortal/confirm_logout.html')  # Render the logout confirmation template
+    # GET request - show confirmation page
+    return render(request, 'salesmanPortal/confirm_logout.html')
 
 def viewLead(request, lead_id):
     if not request.user.is_authenticated:
@@ -353,18 +372,22 @@ def addCategory(request):
 
     return render(request, 'salesmanPortal/addCategory.html')  # Render the add category template  
 
+@never_cache
+@require_http_methods(["GET", "POST"])
 def logOutAdmin(request):
     if request.method == 'POST':
-        logout(request)  # Log out the user
+        logout(request)
         messages.success(request, "You have been logged out successfully")
-        response = redirect('loginAdmin')  # Redirect to login page after logout
-        # Invalidate browser history by setting headers
-        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response = redirect('loginAdmin')
+        # Clear session cookie and prevent caching
+        response.delete_cookie('sessionid')
+        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
         response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
+        response['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
         return response
-
-    return render(request, 'salesmanPortal/confirm_logout_admin.html')  # Render the logout confirmation template for admin
+    
+    # GET request - show confirmation page
+    return render(request, 'salesmanPortal/confirm_logout_admin.html')
 
 def viewSalesman(request, email):
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -454,16 +477,16 @@ def approve_users_view(request): # Handles batch approval
     # If it's not a POST request to this endpoint
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 
-def todayLeads(request):
-    if not request.user.is_authenticated:
-        return redirect('loginSalesman')  # Redirect to login if user is not authenticated
-    today = localdate()  # Get the current date (timezone-aware)
-    # Filter leads where updated_at's date matches today
-    today_leads = Lead.objects.filter(updated_at__date=today)
-    context = {
-        'today_leads': today_leads,  # Pass the leads updated today to the template
-    }
-    return render(request, 'salesmanPortal/todayLeads.html', context)  # Render the today leads template
+# def todayLeads(request):
+#     if not request.user.is_authenticated:
+#         return redirect('loginSalesman')  # Redirect to login if user is not authenticated
+#     today = localdate()  # Get the current date (timezone-aware)
+#     # Filter leads where updated_at's date matches today
+#     today_leads = Lead.objects.filter(updated_at__date=today)
+#     context = {
+#         'today_leads': today_leads,  # Pass the leads updated today to the template
+#     }
+#     return render(request, 'salesmanPortal/todayLeads.html', context)  # Render the today leads template
 
 def deleteSalesman(request, email):
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -529,3 +552,36 @@ def discard_users_view(request):
     else:
         # Handle cases where the request method is not POST (e.g., GET, PUT, DELETE)
         return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+    
+from django.db.models import Count,Q
+def viewBDAs(request):
+    if not request.user.is_superuser:
+        return redirect('salesmanDashboard')
+
+    # ✅ Get the search query from the URL (?q=...)
+    search_query = request.GET.get('q', None)
+
+    # Start with the base queryset
+    bda_queryset = CustomUser.objects.filter(
+        is_superuser=False,
+        is_approved=True
+    )
+
+    # ✅ If a search query exists, filter the queryset
+    if search_query:
+        bda_queryset = bda_queryset.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+
+    # Annotate and order the (potentially filtered) queryset
+    bda_data = bda_queryset.order_by('first_name')
+
+    context = {
+        'bda_list': bda_data,
+        'page_title': 'BDA Management',
+        'search_query': search_query,  # ✅ Pass the query back to the template
+    }
+    
+    return render(request, 'salesmanPortal/viewBDAs.html', context)

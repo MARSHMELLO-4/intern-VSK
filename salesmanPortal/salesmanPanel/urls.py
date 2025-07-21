@@ -22,7 +22,7 @@ urlpatterns = [
     path('contactUs/', views.contactUs, name='term_contact'),
     path('requestPage/', views.requestPage, name='requestPage'),
     path('approve-users/', views.approve_users_view, name='approve_users'),
-    path('todayLeads/', views.todayLeads, name='todayLeads'),
+    path('viewBDAs/', views.viewBDAs, name='viewBDAs'),
     path('deleteSalesman/<str:email>/', views.deleteSalesman, name='deleteSalesman'),
     path('discard-users/',views.discard_users_view, name='discard_users'),
 ]

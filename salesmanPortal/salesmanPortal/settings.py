@@ -17,13 +17,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- SECURITY SETTINGS ---
 
 # GOOD: Load the secret key from the .env file
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+
+SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
 
 # GOOD: DEBUG is set to False for production
 DEBUG = True
 
-# GOOD: ALLOWED_HOSTS is restricted to your server's IP
-ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
+# GOOD: ALLOWED_HOSTS is restricted to your server's IP for production
+# ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
+
+#for local development, you can use:
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # --- APPLICATION DEFINITION ---
@@ -73,20 +78,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 
-
+# --- testing database --- 
 # --- DATABASE ---
+# Switched to SQLite for local development
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'myadmin',
-        # GOOD: Load the database password from the .env file
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# --- production DATABASE ---
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'myadmin',
+#         # GOOD: Load the database password from the .env file
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # --- PASSWORD VALIDATION ---
@@ -104,7 +120,7 @@ AUTH_USER_MODEL = 'salesmanPanel.CustomUser'
 # --- INTERNATIONALIZATION ---
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
@@ -130,18 +146,26 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # AWS_DEFAULT_ACL = None
 # AWS_S3_VERIFY = True
 
-STORAGES = {
-    # For user-uploaded media files (goes to S3)
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-    },
-    # For static files (served locally by WhiteNoise)
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    }
-}
+# STORAGES = {
+#     # For user-uploaded media files (goes to S3)
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+#     },
+#     # For static files (served locally by WhiteNoise)
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     }
+# }
 
 
 # --- DEFAULT PRIMARY KEY ---
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 days in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessions persist
+SESSION_COOKIE_SECURE = True  # If using HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+
+SESSION_COOKIE_AGE = 60 * 60 * 2  # 2 hours for regular sessions
+SESSION_SAVE_EVERY_REQUEST = True  # Reset timeout with each request

@@ -1,394 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login | Kripalu Innovations</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary-color: #A67C52; /* A warm golden brown */
-            --primary-hover: #8C6A43; /* A darker shade for hover */
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --white: #ffffff;
-            --gray-light: #e9ecef;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
+      :root {
+        --primary-color: #a67c52; /* A warm golden brown */
+        --primary-hover: #8c6a43; /* A darker shade for hover */
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #17a2b8;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+        --white: #ffffff;
+        --gray-light: #e9ecef;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+      }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-color); /* Light background for main content area */
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column; /* Ensure full page takes flex column layout */
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(
+          --light-color
+        ); /* Light background for main content area */
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column; /* Ensure full page takes flex column layout */
+        min-height: 100vh;
+      }
 
-        .main-container {
-            width: 100%; /* Ensure it spans full width */
-        }
+      .main-container {
+        width: 100%; /* Ensure it spans full width */
+      }
 
-        /* Header Styles */
-        .portal-header {
-            padding: 1rem 0;
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      /* Header Styles */
+      .portal-header {
+        padding: 1rem 0;
+        background-color: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .portal-header .container {
-            display: flex;
-            justify-content: flex-end; /* Keep logo to the right on larger screens */
-            padding-right: 1.5rem; /* Ensure some padding on the right */
-            padding-left: 1.5rem; /* Ensure some padding on the left */
-        }
+      .portal-header .container {
+        display: flex;
+        justify-content: flex-end; /* Keep logo to the right on larger screens */
+        padding-right: 1.5rem; /* Ensure some padding on the right */
+        padding-left: 1.5rem; /* Ensure some padding on the left */
+      }
 
+      .brand-logo img {
+        height: 60px; /* Reduced height for desktop */
+        max-width: 100%; /* Ensure image is responsive */
+        object-fit: contain; /* Ensure logo scales within its bounds */
+      }
+
+      /* Main Content for Login */
+      .portal-main {
+        flex: 1; /* Allows main content to grow and push footer down */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1.5rem; /* Added horizontal padding for mobile */
+      }
+
+      .login-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px; /* Slightly wider card for better form layout */
+        box-sizing: border-box; /* Include padding in width */
+      }
+
+      .card-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--dark-color);
+      }
+
+      .input-group {
+        margin-bottom: 0.5rem; /* For consistency if you decide to add input-groups */
+      }
+
+      .form-control {
+        height: 48px;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+      }
+
+      .form-control::placeholder {
+        font-style: italic;
+        color: var(--secondary-color);
+      }
+
+      .form-control:focus {
+        box-shadow: none;
+        border-color: var(--primary-color); /* Golden border on focus */
+      }
+
+      .btn-golden {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 0.8rem 2rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-golden:hover {
+        background-color: var(--primary-hover);
+        box-shadow: 0 6px 15px rgba(166, 124, 82, 0.4);
+        color: var(--white);
+      }
+
+      .btn-golden i {
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+      }
+
+      /* Back to Salesman Login link */
+      .back-link {
+        position: absolute;
+        top: 2rem; /* Adjusted from 20px */
+        left: 2rem; /* Adjusted from 30px */
+        text-decoration: none;
+        font-size: 1rem;
+        color: var(--secondary-color);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        z-index: 10; /* Ensure it's above other content if overlapping */
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+        color: var(--primary-color); /* Golden on hover */
+      }
+
+      .back-link svg {
+        margin-right: 0.5rem;
+      }
+
+      /* Footer Styles */
+      .portal-footer {
+        padding: 1.5rem 0;
+        background-color: var(--white);
+        border-top: 1px solid var(--gray-light);
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 0 1.5rem; /* Add horizontal padding to footer content */
+      }
+
+      .footer-content p {
+        margin-bottom: 0;
+      }
+
+      .footer-links a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-size: 0.9rem;
+        transition: var(--transition);
+      }
+
+      .footer-links a:hover {
+        color: var(--primary-color);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 992px) {
         .brand-logo img {
-            height: 60px; /* Reduced height for desktop */
-            max-width: 100%; /* Ensure image is responsive */
-            object-fit: contain; /* Ensure logo scales within its bounds */
+          height: 50px; /* Slightly larger for tablets */
         }
+      }
 
-        /* Main Content for Login */
-        .portal-main {
-            flex: 1; /* Allows main content to grow and push footer down */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem 1.5rem; /* Added horizontal padding for mobile */
+      @media (max-width: 768px) {
+        .portal-header .container {
+          justify-content: center; /* Center logo on smaller screens */
+          padding-right: 1rem; /* Adjust padding */
+          padding-left: 1rem; /* Adjust padding */
+        }
+        .brand-logo img {
+          height: 45px; /* Smaller logo on tablet */
         }
 
         .login-card {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 3rem;
-            width: 100%;
-            max-width: 450px; /* Slightly wider card for better form layout */
-            box-sizing: border-box; /* Include padding in width */
+          padding: 2.5rem 1.5rem; /* Reduce padding on smaller screens */
+          margin: 0 1.5rem; /* Add horizontal margin on smaller screens */
         }
 
         .card-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 2rem;
-            text-align: center;
+          font-size: 1.6rem;
+          margin-bottom: 1.5rem;
         }
 
         .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark-color);
-        }
-
-        .input-group {
-            margin-bottom: 0.5rem; /* For consistency if you decide to add input-groups */
+          font-size: 0.95rem;
         }
 
         .form-control {
-            height: 48px;
-            border: 1px solid #ced4da;
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .form-control::placeholder {
-            font-style: italic;
-            color: var(--secondary-color);
-        }
-
-        .form-control:focus {
-            box-shadow: none;
-            border-color: var(--primary-color); /* Golden border on focus */
+          height: 45px;
+          padding: 0.6rem 0.8rem;
         }
 
         .btn-golden {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 0.8rem 2rem;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          padding: 0.7rem 1.5rem;
+          font-size: 1rem;
         }
 
-        .btn-golden:hover {
-            background-color: var(--primary-hover);
-            box-shadow: 0 6px 15px rgba(166, 124, 82, 0.4);
-            color: var(--white);
-        }
-
-        .btn-golden i {
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        /* Back to Salesman Login link */
         .back-link {
-            position: absolute;
-            top: 2rem; /* Adjusted from 20px */
-            left: 2rem; /* Adjusted from 30px */
-            text-decoration: none;
-            font-size: 1rem;
-            color: var(--secondary-color);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-            z-index: 10; /* Ensure it's above other content if overlapping */
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-            color: var(--primary-color); /* Golden on hover */
-        }
-
-        .back-link svg {
-            margin-right: 0.5rem;
-        }
-
-        /* Footer Styles */
-        .portal-footer {
-            padding: 1.5rem 0;
-            background-color: var(--white);
-            border-top: 1px solid var(--gray-light);
+          top: 1.25rem;
+          left: 1.25rem;
+          font-size: 0.85rem;
         }
 
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 0 1.5rem; /* Add horizontal padding to footer content */
+          flex-direction: column;
+          text-align: center;
+          padding: 0 1rem; /* Adjust footer padding */
         }
 
-        .footer-content p {
-            margin-bottom: 0;
+        .footer-links {
+          margin-top: 1rem;
+          width: 100%; /* Ensure links take full width */
         }
 
         .footer-links a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-size: 0.9rem;
-            transition: var(--transition);
+          margin: 0 0.75rem;
+          display: inline-block; /* Keep links in line, but allow wrap */
+          margin-bottom: 0.5rem; /* Add vertical space between wrapped links */
         }
+      }
 
-        .footer-links a:hover {
-            color: var(--primary-color);
+      @media (max-width: 576px) {
+        .portal-header {
+          padding: 0.75rem 0;
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 992px) {
-            .brand-logo img {
-                height: 50px; /* Slightly larger for tablets */
-            }
+        .brand-logo img {
+          height: 40px; /* Even smaller logo on mobile */
         }
-
-        @media (max-width: 768px) {
-            .portal-header .container {
-                justify-content: center; /* Center logo on smaller screens */
-                padding-right: 1rem; /* Adjust padding */
-                padding-left: 1rem; /* Adjust padding */
-            }
-            .brand-logo img {
-                height: 45px; /* Smaller logo on tablet */
-            }
-
-            .login-card {
-                padding: 2.5rem 1.5rem; /* Reduce padding on smaller screens */
-                margin: 0 1.5rem; /* Add horizontal margin on smaller screens */
-            }
-
-            .card-title {
-                font-size: 1.6rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .form-label {
-                font-size: 0.95rem;
-            }
-
-            .form-control {
-                height: 45px;
-                padding: 0.6rem 0.8rem;
-            }
-
-            .btn-golden {
-                padding: 0.7rem 1.5rem;
-                font-size: 1rem;
-            }
-
-            .back-link {
-                top: 1.25rem;
-                left: 1.25rem;
-                font-size: 0.85rem;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-                padding: 0 1rem; /* Adjust footer padding */
-            }
-            
-            .footer-links {
-                margin-top: 1rem;
-                width: 100%; /* Ensure links take full width */
-            }
-            
-            .footer-links a {
-                margin: 0 0.75rem;
-                display: inline-block; /* Keep links in line, but allow wrap */
-                margin-bottom: 0.5rem; /* Add vertical space between wrapped links */
-            }
+        .portal-main {
+          padding: 2rem 1rem; /* More compact padding on very small screens */
         }
-
-        @media (max-width: 576px) {
-            .portal-header {
-                padding: 0.75rem 0;
-            }
-            .brand-logo img {
-                height: 40px; /* Even smaller logo on mobile */
-            }
-            .portal-main {
-                padding: 2rem 1rem; /* More compact padding on very small screens */
-            }
-            .login-card {
-                padding: 2rem 1rem; /* More compact card padding */
-                margin: 0 1rem; /* Smallest horizontal margin */
-            }
-            .card-title {
-                font-size: 1.4rem;
-                margin-bottom: 1.2rem;
-            }
-            .card-text {
-                font-size: 0.9rem;
-            }
-            .form-control {
-                height: 40px;
-                font-size: 0.9rem;
-            }
-            .btn-golden {
-                padding: 0.6rem 1rem;
-                font-size: 0.95rem;
-            }
-            .back-link {
-                top: 1rem;
-                left: 1rem;
-                font-size: 0.8rem;
-            }
-            .footer-content p {
-                font-size: 0.85rem;
-            }
-            .footer-links a {
-                font-size: 0.8rem;
-                margin: 0 0.5rem;
-            }
+        .login-card {
+          padding: 2rem 1rem; /* More compact card padding */
+          margin: 0 1rem; /* Smallest horizontal margin */
         }
+        .card-title {
+          font-size: 1.4rem;
+          margin-bottom: 1.2rem;
+        }
+        .card-text {
+          font-size: 0.9rem;
+        }
+        .form-control {
+          height: 40px;
+          font-size: 0.9rem;
+        }
+        .btn-golden {
+          padding: 0.6rem 1rem;
+          font-size: 0.95rem;
+        }
+        .back-link {
+          top: 1rem;
+          left: 1rem;
+          font-size: 0.8rem;
+        }
+        .footer-content p {
+          font-size: 0.85rem;
+        }
+        .footer-links a {
+          font-size: 0.8rem;
+          margin: 0 0.5rem;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="main-container">
-        <!-- Header -->
-        <header class="portal-header">
-            <div class="container" style="justify-content: flex-end !important;">
-            <a href="https://www.kripaluinnovations.com/" class="brand-logo" target="_blank" rel="noopener">
-                {% load static %}
-                <img src="{% static 'images/kripalu_innovation.png' %}" alt="Kripalu Innovations Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x60/A67C52/ffffff?text=Kripalu+Logo';">
-            </a>
-            </div>
-        </header>
+      <!-- Header -->
+      <header class="portal-header">
+        <div class="container" style="justify-content: flex-end !important">
+          <a
+            href="https://www.kripaluinnovations.com/"
+            class="brand-logo"
+            target="_blank"
+            rel="noopener"
+          >
+            {% load static %}
+            <img
+              src="{% static 'images/kripalu_innovation.png' %}"
+              alt="Kripalu Innovations Logo"
+              onerror="this.onerror=null;this.src='https://placehold.co/150x60/A67C52/ffffff?text=Kripalu+Logo';"
+            />
+          </a>
+        </div>
+      </header>
 
-        <!-- Back to Salesman Login Link -->
-        <a href="{% url 'loginSalesman' %}" class="back-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"/>
-            </svg>
-            Login as Salesman
-        </a>
+      <!-- Back to Salesman Login Link -->
+      <a href="{% url 'loginSalesman' %}" class="back-link">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-arrow-left me-2"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"
+          />
+        </svg>
+        Login as Salesman
+      </a>
 
-        <!-- Main Content -->
-        <main class="portal-main">
-            <div class="login-card">
-                <h2 class="card-title">Manager Login</h2>
-                
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="username"
-                            name="username" 
-                            placeholder="Enter Admin username" 
-                            required
-                        >
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            id="password"
-                            name="password" 
-                            placeholder="Enter Admin password" 
-                            required
-                        >
-                    </div>
-                    
-                    <button type="submit" class="btn-golden">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </button>
-                </form>
-            </div>
-        </main>
+      <!-- Main Content -->
+      <main class="portal-main">
+        <div class="login-card">
+          <h2 class="card-title">Manager Login</h2>
 
-        <!-- Footer -->
-        <footer class="portal-footer">
-            <div class="container">
-                <div class="footer-content">
-                    <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
-                    <div class="footer-links">
-                        <a href="{% url 'term_contact' %}">Privacy Policy</a>
-                        <a href="{% url 'term_contact' %}">Terms of Service</a>
-                        <a href="{% url 'term_contact' %}">Contact Support</a>
-                    </div>
-                </div>
+          <form action="" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                placeholder="Enter Admin username"
+                required
+              />
             </div>
-        </footer>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Enter Admin password"
+                required
+              />
+            </div>
+            <div class="form-check mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="remember_me"
+                id="remember_me"
+              />
+              <label class="form-check-label" for="remember_me">
+                Remember me
+              </label>
+            </div>
+
+            <button type="submit" class="btn-golden">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="portal-footer">
+        <div class="container">
+          <div class="footer-content">
+            <p>&copy; 2023 Kripalu Innovations. All rights reserved.</p>
+            <div class="footer-links">
+              <a href="{% url 'term_contact' %}">Privacy Policy</a>
+              <a href="{% url 'term_contact' %}">Terms of Service</a>
+              <a href="{% url 'term_contact' %}">Contact Support</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  </body>
 </html>
