@@ -426,29 +426,20 @@ def deleteLead(request, lead_id):
     except Lead.DoesNotExist:
         return JsonResponse({'error': 'Lead does not exist'}, status=404)
 
-def viewCategory(request,category_id=None):
-# Fetch all categories for the sidebar
-    categories = category.objects.all()
+def viewCategory(request):
+    # Fetch all categories for the sidebar
+    categories = Category.objects.all().order_by('name')
 
-    # Get filter parameters from GET request
-    search_query = request.GET.get('q')
-    status_filter = request.GET.get('status')
-    priority_filter = request.GET.get('priority')
-    assigned_to_filter = request.GET.get('assigned_to')
-    category_filter = request.GET.get('category')
+    # Fetch all salesmen for the 'Assigned To' filter
+    # Assuming 'Salesman' is a custom user model or a profile related to User
+    # Adjust this query if your salesmen are stored differently
+    salesmen = User.objects.filter(is_salesman=True) # Example: filter by a flag
 
+    # Start with all leads
     leads = Lead.objects.all()
 
-    # Apply category filter from URL if present
-    if category_id:
-        current_category = get_object_or_404(category, id=category_id)
-        leads = leads.filter(category=current_category)
-    elif category_filter:
-        # Apply category filter from dropdown
-        leads = leads.filter(category_id=category_filter)
-
-
-    # Apply search query filter
+    # Apply search query 'q' (name, email, company)
+    search_query = request.GET.get('q')
     if search_query:
         leads = leads.filter(
             Q(name__icontains=search_query) |
@@ -457,35 +448,66 @@ def viewCategory(request,category_id=None):
         )
 
     # Apply status filter
+    status_filter = request.GET.get('status')
     if status_filter:
         leads = leads.filter(status=status_filter)
 
     # Apply priority filter
+    priority_filter = request.GET.get('priority')
     if priority_filter:
         leads = leads.filter(priority=priority_filter)
 
     # Apply assigned_to filter
+    assigned_to_filter = request.GET.get('assigned_to')
     if assigned_to_filter:
-        leads = leads.filter(assigned_to_id=assigned_to_filter)
+        leads = leads.filter(assigned_to__id=assigned_to_filter)
 
-    # Order the leads (optional, but good for consistency)
-    leads = leads.order_by('-created_at')
+    # Apply category filter
+    category_filter = request.GET.get('category')
+    if category_filter:
+        leads = leads.filter(category__id=category_filter)
 
-    # Get choices for dropdowns directly from the Lead model
-    status_choices = Lead.STATUS_CHOICES
-    priority_choices = Lead.PRIORITY_CHOICES
+    # --- NEW: Apply date filters ---
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
 
-    # Get all salesmen (CustomUser instances) for the "Assigned To" filter
-    # Assuming salesmen are CustomUser instances that you want to be assignable
-    salesmen = CustomUser.objects.filter(is_approved=True) # Or filter by a specific role if you have one
+    if start_date_str:
+        try:
+            # Convert string to date object
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            leads = leads.filter(date_created__gte=start_date) # __gte means "greater than or equal to"
+        except ValueError:
+            # Handle invalid date format if necessary, e.g., log it or show an error message
+            pass # For now, just ignore bad date format
+
+    if end_date_str:
+        try:
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            # For end date, filter by less than or equal to the end of that day.
+            # If your `date_created` is a DateTimeField, you might want to adjust
+            # to include the whole day, e.g., `date_created__lte=end_date + timedelta(days=1)`
+            # or `date_created__date__lte=end_date` if using a DateField lookup.
+            # Assuming `date_created` is a DateField or you want to match the date part:
+            leads = leads.filter(date_created__lte=end_date)
+        except ValueError:
+            pass # For now, just ignore bad date format
+    # --- END NEW DATE FILTERS ---
+
+
+    # Ensure leads are ordered (e.g., by creation date or name)
+    leads = leads.order_by('-date_created') # Or whatever default ordering you prefer
+
+    # Prepare choices for status and priority dropdowns (assuming these are defined in your Lead model)
+    status_choices = Lead.STATUS_CHOICES # Assuming this is a tuple of tuples in Lead model
+    priority_choices = Lead.PRIORITY_CHOICES # Assuming this is a tuple of tuples in Lead model
 
     context = {
         'categories': categories,
         'leads': leads,
+        'salesmen': salesmen,
         'status_choices': status_choices,
         'priority_choices': priority_choices,
-        'salesmen': salesmen,
-        'default_category_id': category_id if category_id else '', # To correctly clear filters
+        # 'request.GET' is automatically available in the template, but good practice to pass if you modify it.
     }
     return render(request, 'salesmanPortal/viewCategory.html', context) # Replace 'your_template_name.html'
 

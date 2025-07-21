@@ -531,89 +531,89 @@
       /* Mobile Styles */
       /* ... (your existing CSS) ... */
 
-/* Mobile Styles */
-@media (max-width: 992px) {
-  .category-drawer {
-    transform: translateX(-100%); /* Off-canvas by default */
-    z-index: 1100;
-    /* On mobile, the drawer itself should take the full drawer-width */
-    width: var(--drawer-width); /* Ensure it has a defined width */
-  }
+      /* Mobile Styles */
+      @media (max-width: 992px) {
+        .category-drawer {
+          transform: translateX(-100%); /* Off-canvas by default */
+          z-index: 1100;
+          /* On mobile, the drawer itself should take the full drawer-width */
+          width: var(--drawer-width); /* Ensure it has a defined width */
+        }
 
-  .category-drawer.open {
-    transform: translateX(0); /* Slide in when open */
-    /* No need to re-set width here, it's already set above */
-  }
+        .category-drawer.open {
+          transform: translateX(0); /* Slide in when open */
+          /* No need to re-set width here, it's already set above */
+        }
 
-  .main-content {
-    margin-left: 0; /* No margin on mobile, it will be shifted by transform */
-    width: 100%; /* Ensure main content takes full width */
-    transition: transform var(--transition-speed) ease,
-                filter var(--transition-speed) ease; /* Transition for transform and filter */
-  }
+        .main-content {
+          margin-left: 0; /* No margin on mobile, it will be shifted by transform */
+          width: 100%; /* Ensure main content takes full width */
+          transition: transform var(--transition-speed) ease,
+            filter var(--transition-speed) ease; /* Transition for transform and filter */
+        }
 
-  /* Show mobile toggle on small screens (hamburger icon) */
-  .drawer-toggle {
-    display: flex !important;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    flex-shrink: 0;
-  }
-  /* Hide the desktop drawer toggle (chevron) on small screens */
-  #drawerToggle {
-    display: none;
-  }
+        /* Show mobile toggle on small screens (hamburger icon) */
+        .drawer-toggle {
+          display: flex !important;
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          color: white;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          align-items: center;
+          justify-content: center;
+          margin-right: 1rem;
+          flex-shrink: 0;
+        }
+        /* Hide the desktop drawer toggle (chevron) on small screens */
+        #drawerToggle {
+          display: none;
+        }
 
-  .dashboard-header {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 1rem;
-  }
-  .dashboard-header .dashboard-title {
-    margin-left: 0;
-    flex-grow: 1;
-    text-align: left;
-    margin-bottom: 0;
-  }
-  .dashboard-header .btn-group {
-    width: 100%;
-    justify-content: center;
-    margin-top: 1rem;
-    gap: 0.5rem;
-  }
-  .dashboard-header .btn-group .btn-logout {
-    flex-grow: 1;
-  }
-  .content-container {
-    padding: 1rem;
-  }
+        .dashboard-header {
+          flex-wrap: wrap;
+          justify-content: space-between;
+          padding: 1rem;
+        }
+        .dashboard-header .dashboard-title {
+          margin-left: 0;
+          flex-grow: 1;
+          text-align: left;
+          margin-bottom: 0;
+        }
+        .dashboard-header .btn-group {
+          width: 100%;
+          justify-content: center;
+          margin-top: 1rem;
+          gap: 0.5rem;
+        }
+        .dashboard-header .btn-group .btn-logout {
+          flex-grow: 1;
+        }
+        .content-container {
+          padding: 1rem;
+        }
 
-  /* When drawer is open, apply blur/dim and shift main-content */
-  body.drawer-open {
-    overflow: hidden; /* Prevent scrolling when drawer is open */
-  }
+        /* When drawer is open, apply blur/dim and shift main-content */
+        body.drawer-open {
+          overflow: hidden; /* Prevent scrolling when drawer is open */
+        }
 
-  body.drawer-open .main-content {
-    transform: translateX(var(--drawer-width)); /* Shift content to the right */
-    filter: blur(2px); /* Apply blur effect */
-    pointer-events: none; /* Make content non-interactive */
-  }
-}
+        body.drawer-open .main-content {
+          transform: translateX(var(--drawer-width)); /* Shift content to the right */
+          filter: blur(2px); /* Apply blur effect */
+          pointer-events: none; /* Make content non-interactive */
+        }
+      }
 
-/* Further adjustments for blur/dim effect - keep this as it is already good */
-/* body.drawer-open .main-content {
-  filter: blur(2px);
-  pointer-events: none;
-} */ /* This rule is now integrated into the @media block above */
+      /* Further adjustments for blur/dim effect - keep this as it is already good */
+      /* body.drawer-open .main-content {
+          filter: blur(2px);
+          pointer-events: none;
+        } */ /* This rule is now integrated into the @media block above */
 
-/* ... (rest of your existing CSS) ... */
+      /* ... (rest of your existing CSS) ... */
       /* Further adjustments for blur/dim effect */
       body.drawer-open .main-content {
         filter: blur(2px);
@@ -844,9 +844,9 @@
 
         <div class="btn-group">
           {# Wrap multiple buttons in a group for better layout control #}
-            <a href="{% url 'downloadLeads' %}" class="btn-logout">
+          <a href="{% url 'downloadLeads' %}" class="btn-logout">
             <i class="bi bi-download"></i> Download Leads
-            </a>
+          </a>
           <a href="{% url 'requestPage' %}" class="btn-logout">
             <i class="bi bi-bell-fill"></i> Requests
           </a>
@@ -938,6 +938,32 @@
                 {% endfor %}
               </select>
             </div>
+
+            {# --- NEW DATE FILTERS START --- #}
+            <div class="col-md-3">
+              <label for="startDateFilter" class="form-label"
+                >Start Date</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="startDateFilter"
+                name="start_date"
+                value="{{ request.GET.start_date }}"
+              />
+            </div>
+            <div class="col-md-3">
+              <label for="endDateFilter" class="form-label">End Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="endDateFilter"
+                name="end_date"
+                value="{{ request.GET.end_date }}"
+              />
+            </div>
+            {# --- NEW DATE FILTERS END --- #}
+
             <div class="col-12 d-flex justify-content-end gap-2">
               <button type="submit" class="btn btn-apply-filters">
                 <i class="bi bi-funnel me-2"></i>Apply Filters
