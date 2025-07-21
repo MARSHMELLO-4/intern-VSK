@@ -122,6 +122,37 @@ body {
     box-shadow: var(--box-shadow);
 }
 
+/* New: Active state for filter buttons */
+.btn.active {
+    background-color: var(--primary); /* Active button is primary blue */
+    color: white;
+    /* You might want a stronger shadow or slight transformation here too */
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Specific colors for new filter buttons */
+.btn-warning { /* Used for Pending Leads */
+    background-color: var(--warning);
+    color: var(--dark); /* Dark text for readability on yellow */
+}
+.btn-warning:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+    color: var(--dark);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+.btn-info { /* Used for All Leads */
+    background-color: var(--info);
+    color: white;
+}
+.btn-info:hover {
+    background-color: #138496; /* Darker cyan on hover */
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+
 /* Date Filter Bar */
 .date-filter-bar {
     display: flex;
@@ -498,15 +529,12 @@ body {
     }
     
     /* Specific content for pseudo-elements */
-    .leads-table td:nth-of-type(1):before { content: "Lead ID:"; }
+    /* Updated pseudo-elements after column removal */
+    .leads-table td:nth-of-type(1):before { content: "Select:"; } /* Checkbox column */
     .leads-table td:nth-of-type(2):before { content: "Contact Name:"; }
     .leads-table td:nth-of-type(3):before { content: "Company:"; }
-    .leads-table td:nth-of-type(4):before { content: "Contact Info:"; }
-    .leads-table td:nth-of-type(5):before { content: "Assigned To:"; }
-    .leads-table td:nth-of-type(6):before { content: "Status:"; }
-    .leads-table td:nth-of-type(7):before { content: "Priority:"; }
-    .leads-table td:nth-of-type(8):before { content: "Last Updated:"; }
-    .leads-table td:nth-of-type(9):before { content: "Created At:"; }
+    .leads-table td:nth-of-type(4):before { content: "Assigned To:"; }
+
 
     /* Adjust specific elements within table cells for mobile view */
     .contact-info { 
@@ -600,17 +628,61 @@ body {
         </div>
         
         <div class="date-filter-bar">
-            <form id="dateFilterForm" method="GET" action="{% url 'adminDashboard' category_id %}" class="d-flex align-items-center gap-3 flex-wrap">
+            <form id="filterForm" method="GET" action="{% url 'adminDashboard' category_id %}" class="d-flex align-items-center gap-3 flex-wrap">
                 <label for="createdOnDate">Created On:</label>
                 <input type="date" id="createdOnDate" name="created_on_date" value="{{ current_created_on_date|default:'' }}">
                 
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-filter"></i> Filter
                 </button>
-                <button type="button" class="btn btn-secondary" id="showAllLeads">
-                    <i class="bi bi-arrow-clockwise"></i> All Leads
+                <button type="button" class="btn btn-secondary" id="clearDateFilter">
+                    <i class="bi bi-x-circle"></i> Clear
+                </button>
+
+                <label for="statusFilter">Status:</label>
+                <select class="select-dropdown" id="statusFilter" name="status">
+                    <option value="">All</option>
+                    {% for status_value, status_label in status_choices %}
+                        <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+                            {{ status_label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="priorityFilter">Priority:</label>
+                <select class="select-dropdown" id="priorityFilter" name="priority">
+                    <option value="">All</option>
+                    {% for priority_value, priority_label in priority_choices %}
+                        <option value="{{ priority_value }}" {% if request.GET.priority == priority_value %}selected{% endif %}>
+                            {{ priority_label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" name="lead_filter" value="assigned" class="btn btn-primary {% if request.GET.lead_filter == 'assigned' %}active{% endif %}">
+                    <i class="bi bi-person-check-fill"></i> Assigned Leads
+                </button>
+                <button type="submit" name="lead_filter" value="pending" class="btn btn-warning {% if request.GET.lead_filter == 'pending' %}active{% endif %}">
+                    <i class="bi bi-person-x-fill"></i> Pending Leads
                 </button>
             </form>
+        </div>
+
+        <div id="bulkAssignSection" style="display: none; margin-top: 20px; padding: 15px; background: var(--card-background); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border: 1px solid var(--gray-light); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <label for="bulkAssignSalesman" style="font-weight: 500; color: var(--dark); white-space: nowrap;">Assign selected leads to:</label>
+            <select class="select-dropdown" id="bulkAssignSalesman" style="flex-grow: 1; max-width: 250px;">
+                <option value="">— Select Salesman —</option>
+                {% for user in users %}
+                    {% if not user.is_staff %}
+                        <option value="{{ user.id }}">
+                            {{ user.email }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-primary" id="assignSelectedBtn">
+                <i class="bi bi-person-check-fill"></i> Assign Selected Leads
+            </button>
         </div>
 
         <div class="stats-container">
@@ -636,40 +708,31 @@ body {
             </div>
         </div>
 
-        <h2 class="section-header">Recent Leads</h2>
+        <h2 class="section-header" id="leadsListHeader">Recent Leads</h2>
         <div class="table-container">
             <table class="leads-table">
                 <thead>
                     <tr>
-                        <th>Lead ID</th>
+                        <th class="no-click">
+                            <input type="checkbox" id="selectAllLeads">
+                        </th>
                         <th>Contact Name</th>
                         <th>Company</th>
-                        <th>Contact Info</th>
                         <th>Assigned To</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>
-                            Last Updated <span class="sort-indicator">▼</span>
-                        </th>
-                        <th>
-                            Created At <span class="sort-indicator">▼</span>
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if leads %} {# Check if leads iterable is not empty #}
                         {% for lead in leads %}
                         <tr class="clickable-row" data-href="{% url 'viewLead' lead.id %}">
-                            <td>{{ lead.id }}</td>
+                            <td class="no-click">
+                                <input type="checkbox" name="selected_leads" value="{{ lead.id }}" class="lead-checkbox">
+                            </td>
                             <td>
                                 <div class="contact-name">{{ lead.name|default:"—" }}</div>
                                 <div class="contact-role">{{ lead.role|default:"" }}</div>
                             </td>
                             <td>{{ lead.company|default:"—" }}</td>
-                            <td class="contact-info">
-                                <div>{{ lead.email|default:"—" }}</div>
-                                <div>{{ lead.phone|default:"" }}</div>
-                            </td>
                             <td class="no-click">
                                 <select onchange="assignLead(this, {{ lead.id }})" class="select-dropdown">
                                     <option value="">— Select —</option>
@@ -682,150 +745,268 @@ body {
                                     {% endfor %}
                                 </select>
                             </td>
-                            <td>
-                                {% if lead.status == 'New' %}
-                                    <span class="badge status-new">New</span>
-                                {% elif lead.status == 'Contacted' %}
-                                    <span class="badge status-contacted">Contacted</span>
-                                {% elif lead.status == 'In Discussion' %}
-                                    <span class="badge status-qualified">In Discussion</span>
-                                {% elif lead.status == 'Not Interested' %}
-                                    <span class="badge status-lost">Not Interested</span>
-                                {% elif lead.status == 'Converted' %}
-                                    <span class="badge status-won">Converted</span>
-                                {% else %}
-                                    <span class="badge status-pending">{{ lead.status|default:"New" }}</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if lead.priority == 'High' %}
-                                    <span class="badge priority-high">High</span>
-                                {% elif lead.priority == 'Medium' %}
-                                    <span class="badge priority-medium">Medium</span>
-                                {% elif lead.priority == 'Low' %}
-                                    <span class="badge priority-low">Low</span>
-                                {% else %}
-                                    <span class="badge priority-medium">{{ lead.priority|default:"Medium" }}</span>
-                                {% endif %}
-                            </td>
-                            <td class="time-ago" title="{{ lead.updated_at|date:'Y-m-d H:i' }}">
-                                {% with updated=lead.updated_at %}
-                                    {{ updated }} ago
-                                {% endwith %}
-                            </td>
-                            <td class="time-ago" title="{{ lead.created_at|date:'Y-m-d H:i' }}">
-                                {% with created=lead.created_at %}
-                                    {{ created }} ago
-                                {% endwith %}
-                            </td>
                         </tr>
                         {% endfor %}
                     {% else %}
                     <tr>
-                        <td colspan="8" class="empty-state">No leads available for the selected date.</td>
+                        <td colspan="4" class="empty-state">No leads available for the selected criteria.</td>
                     </tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
+
     </div>
 
     <script>
     // Make rows clickable except for the select dropdown area
     document.addEventListener('DOMContentLoaded', function() {
-        const rows = document.querySelectorAll('.clickable-row');
-        rows.forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Check if the clicked element or any of its parents is part of the 'no-click' area (the select dropdown)
-                if (e.target.closest('.no-click')) {
-                    return; // Do nothing if the click originated from the select dropdown
-                }
-                // Otherwise, navigate to the data-href URL
-                window.location.href = this.dataset.href;
-            });
+    // --- Existing Clickable Row Logic ---
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function(e) {
+            if (e.target.closest('.no-click')) {
+                return;
+            }
+            window.location.href = this.dataset.href;
         });
+    });
 
-        if (window.innerWidth <= 768) {
+    // --- Mobile Data Label Logic (correctly inside DOMContentLoaded) ---
+    if (window.innerWidth <= 768) {
         const headers = document.querySelectorAll('.leads-table th');
-        const rows = document.querySelectorAll('.leads-table tbody tr');
-        
+        const tableRowsForLabels = document.querySelectorAll('.leads-table tbody tr'); // Renamed to avoid conflict
         headers.forEach((header, index) => {
             const label = header.textContent.trim();
-            rows.forEach(row => {
+            tableRowsForLabels.forEach(row => { // Use the renamed variable
                 const cell = row.querySelectorAll('td')[index];
                 if (cell) {
                     cell.setAttribute('data-label', label);
                 }
             });
         });
-        }
+    }
+
+    // --- Table Row Animation Logic (correctly inside DOMContentLoaded) ---
+    const tableRows = document.querySelectorAll('.leads-table tbody tr');
+    tableRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(10px)';
+        row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         
-        // Add subtle animation to table rows
-        const tableRows = document.querySelectorAll('.leads-table tbody tr');
-        tableRows.forEach((row, index) => {
-            row.style.opacity = '0';
-            row.style.transform = 'translateY(10px)';
-            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            
-            setTimeout(() => {
-                row.style.opacity = '1';
-                row.style.transform = 'translateY(0)';
-            }, 100 + (index * 50));
-        });
-
-           // Handle window resize to update data-labels if needed
-        window.addEventListener('resize', function() {
-            if (window.innerWidth <= 768) {
-                const headers = document.querySelectorAll('.leads-table th');
-                const rows = document.querySelectorAll('.leads-table tbody tr');
-                
-                headers.forEach((header, index) => {
-                    const label = header.textContent.trim();
-                    rows.forEach(row => {
-                        const cell = row.querySelectorAll('td')[index];
-                        if (cell) {
-                            cell.setAttribute('data-label', label);
-                        }
-                    });
-                });
-            }
-        });
-        
-        // Better touch feedback for mobile
-        const clickableRows = document.querySelectorAll('.clickable-row');
-        clickableRows.forEach(row => {
-            row.addEventListener('touchstart', function() {
-                this.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
-            });
-            
-            row.addEventListener('touchend', function() {
-                this.style.backgroundColor = '';
-            });
-        });
-
-        // Date Filter Logic
-        const showAllLeadsBtn = document.getElementById('showAllLeads');
-        const createdOnDateInput = document.getElementById('createdOnDate');
-        const dateFilterForm = document.getElementById('dateFilterForm');
-
-        if (showAllLeadsBtn) {
-            showAllLeadsBtn.addEventListener('click', function() {
-                // Clear the date input
-                createdOnDateInput.value = '';
-                // Submit the form to remove date filter
-                dateFilterForm.submit();
-            });
-        }
+        setTimeout(() => {
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 100 + (index * 50));
     });
 
-    // AJAX function to assign leads (existing functionality)
+    // --- Touch Feedback Logic (correctly inside DOMContentLoaded) ---
+    const clickableRows = document.querySelectorAll('.clickable-row'); // Re-selecting for clarity, though `rows` above is same
+    clickableRows.forEach(row => {
+        row.addEventListener('touchstart', function() {
+            this.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+        });
+        
+        row.addEventListener('touchend', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // --- Date Filter Logic (correctly inside DOMContentLoaded) ---
+    const clearDateFilterBtn = document.getElementById('clearDateFilter');
+    const createdOnDateInput = document.getElementById('createdOnDate');
+    const filterForm = document.getElementById('filterForm');
+
+    if (clearDateFilterBtn) {
+        clearDateFilterBtn.addEventListener('click', function() {
+            createdOnDateInput.value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('priorityFilter').value = '';
+
+            const tempInput = document.createElement('input');
+            tempInput.type = 'hidden';
+            tempInput.name = 'lead_filter';
+            tempInput.value = 'all';
+            filterForm.appendChild(tempInput);
+            filterForm.submit();
+        });
+    }
+    
+    // --- Update "Recent Leads" Header (correctly inside DOMContentLoaded) ---
+    const leadsListHeader = document.getElementById('leadsListHeader');
+    const leadFilterParam = new URLSearchParams(window.location.search).get('lead_filter');
+    const createdOnDateParam = new URLSearchParams(window.location.search).get('created_on_date');
+    const statusFilterParam = new URLSearchParams(window.location.search).get('status');
+    const priorityFilterParam = new URLSearchParams(window.location.search).get('priority');
+
+    if (createdOnDateParam) {
+        leadsListHeader.textContent = `Leads Created On ${createdOnDateParam}`;
+    } else if (leadFilterParam === 'assigned') {
+        leadsListHeader.textContent = 'Assigned Leads';
+    } else if (leadFilterParam === 'pending') {
+        leadsListHeader.textContent = 'Pending Leads';
+    } else if (statusFilterParam && priorityFilterParam) {
+        const statusText = document.querySelector(`#statusFilter option[value="${statusFilterParam}"]`).textContent;
+        const priorityText = document.querySelector(`#priorityFilter option[value="${priorityFilterParam}"]`).textContent;
+        leadsListHeader.textContent = `${statusText} & ${priorityText} Leads`;
+    } else if (statusFilterParam) {
+        const statusText = document.querySelector(`#statusFilter option[value="${statusFilterParam}"]`).textContent;
+        leadsListHeader.textContent = `${statusText} Leads`;
+    } else if (priorityFilterParam) {
+        const priorityText = document.querySelector(`#priorityFilter option[value="${priorityFilterParam}"]`).textContent;
+        leadsListHeader.textContent = `${priorityText} Leads`;
+    } else {
+        leadsListHeader.textContent = 'All Leads (Current Category)';
+    }
+
+    // --- Active Button Styling Logic (correctly inside DOMContentLoaded) ---
+    const filterButtons = document.querySelectorAll('#filterForm button[name="lead_filter"]');
+    // Note: 'allLeadsDateClearBtn' was defined but not used here, and there's no button with 'value="all"'
+    // We should add an "All Leads" button for consistency if it's meant to be selectable.
+    // For now, let's just make sure the existing logic for active states is sound.
+
+    function updateActiveButtonStyles() {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        const filterDateSubmitBtn = document.querySelector('.date-filter-bar button[type="submit"].btn-primary');
+        if (filterDateSubmitBtn) { // Check if the element exists before trying to modify it
+            filterDateSubmitBtn.classList.remove('active');
+        }
+        clearDateFilterBtn.classList.remove('active');
+
+        const currentLeadFilter = new URLSearchParams(window.location.search).get('lead_filter');
+        const currentCreatedOnDate = new URLSearchParams(window.location.search).get('created_on_date');
+        const currentStatusFilter = new URLSearchParams(window.location.search).get('status');
+        const currentPriorityFilter = new URLSearchParams(window.location.search).get('priority');
+
+        if (currentCreatedOnDate) {
+            if (filterDateSubmitBtn) { // Check if the element exists
+                filterDateSubmitBtn.classList.add('active');
+            }
+        } else if (currentLeadFilter === 'assigned') {
+            const assignedBtn = document.querySelector('.btn[value="assigned"]');
+            if (assignedBtn) assignedBtn.classList.add('active');
+        } else if (currentLeadFilter === 'pending') {
+            const pendingBtn = document.querySelector('.btn[value="pending"]');
+            if (pendingBtn) pendingBtn.classList.add('active');
+        } else if (currentLeadFilter === 'all' || (!currentLeadFilter && !currentCreatedOnDate && !currentStatusFilter && !currentPriorityFilter)) {
+            // There's no button with value="all" in your HTML currently.
+            // If you want an "All Leads" button to be active by default or when cleared, you need to add it.
+            // Example: <button type="submit" name="lead_filter" value="all" class="btn btn-info">All Leads</button>
+            // For now, this condition will correctly identify the 'all' state.
+            const allLeadsBtn = document.querySelector('.btn[value="all"]'); // This will be null if no such button exists
+            if (allLeadsBtn) allLeadsBtn.classList.add('active');
+        }
+
+        if (currentCreatedOnDate || (!currentLeadFilter && !currentStatusFilter && !currentPriorityFilter)) {
+            clearDateFilterBtn.classList.add('active');
+        }
+    }
+
+    // Add event listeners to Status and Priority dropdowns to trigger form submission
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        filterForm.submit();
+    });
+    document.getElementById('priorityFilter').addEventListener('change', function() {
+        filterForm.submit();
+    });
+
+    // Call it on page load
+    updateActiveButtonStyles();
+
+    // --- Bulk Assignment Logic (This is the crucial part that needs to always run) ---
+    // Re-declare or re-select these elements every time DOMContentLoaded fires
+    const selectAllCheckbox = document.getElementById('selectAllLeads');
+    const leadCheckboxes = document.querySelectorAll('.lead-checkbox');
+    const bulkAssignSection = document.getElementById('bulkAssignSection');
+    const bulkAssignSalesmanSelect = document.getElementById('bulkAssignSalesman');
+    const assignSelectedBtn = document.getElementById('assignSelectedBtn');
+
+    function toggleBulkAssignSection() {
+        // Ensure leadCheckboxes is re-queried or correctly reflects the current DOM
+        const currentLeadCheckboxes = document.querySelectorAll('.lead-checkbox'); // IMPORTANT: Re-query here
+        const anyChecked = Array.from(currentLeadCheckboxes).some(checkbox => checkbox.checked);
+        bulkAssignSection.style.display = anyChecked ? 'flex' : 'none';
+    }
+
+    if (selectAllCheckbox) { // Check if selectAllCheckbox exists
+        selectAllCheckbox.addEventListener('change', function() {
+            // Re-query leadCheckboxes here too to ensure they are current
+            const currentLeadCheckboxes = document.querySelectorAll('.lead-checkbox');
+            currentLeadCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            toggleBulkAssignSection();
+        });
+    }
+
+    // Attach listeners to individual lead checkboxes
+    leadCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', toggleBulkAssignSection);
+    });
+
+    if (assignSelectedBtn) { // Check if assignSelectedBtn exists
+        assignSelectedBtn.addEventListener('click', function() {
+            const selectedLeadIds = Array.from(document.querySelectorAll('.lead-checkbox')) // Re-query here
+                                            .filter(checkbox => checkbox.checked)
+                                            .map(checkbox => checkbox.value);
+            const assignedToUserId = bulkAssignSalesmanSelect.value;
+
+            if (selectedLeadIds.length === 0) {
+                alert('Please select at least one lead to assign.');
+                return;
+            }
+
+            if (!assignedToUserId) {
+                alert('Please select a salesman to assign the leads to.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to assign ${selectedLeadIds.length} lead(s) to the selected salesman?`)) {
+                return;
+            }
+
+            assignSelectedBtn.textContent = 'Assigning...';
+            assignSelectedBtn.disabled = true;
+
+            fetch("{% url 'bulk_assign_leads_ajax' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    lead_ids: selectedLeadIds,
+                    user_id: assignedToUserId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                assignSelectedBtn.textContent = 'Assign Selected Leads';
+                assignSelectedBtn.disabled = false;
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert("Failed to assign leads: " + data.error);
+                }
+            })
+            .catch(error => {
+                assignSelectedBtn.textContent = 'Assign Selected Leads';
+                assignSelectedBtn.disabled = false;
+                console.error("Error during bulk lead assignment:", error);
+                alert("Something went wrong during bulk lead assignment.");
+            });
+        });
+    }
+
+
+    // Individual Lead Assignment
     function assignLead(selectElem, leadId) {
         const userId = selectElem.value;
         const row = selectElem.closest('tr');
         const cell = row.querySelector('td.no-click');
         const originalSelect = selectElem.cloneNode(true);
 
-        // Show loading state
         selectElem.style.display = 'none';
         const loadingSpan = document.createElement('span');
         loadingSpan.className = 'loading';
@@ -848,7 +1029,6 @@ body {
             loadingSpan.remove();
             selectElem.style.display = '';
             if (data.success) {
-                // Optionally update the select to reflect the new assignment
                 if (userId) {
                     for (let i = 0; i < selectElem.options.length; i++) {
                         selectElem.options[i].selected = (selectElem.options[i].value == userId);
@@ -856,14 +1036,12 @@ body {
                 } else {
                     selectElem.selectedIndex = 0;
                 }
-                // Flash the row to show success
                 row.style.backgroundColor = 'rgba(76, 201, 240, 0.1)';
                 setTimeout(() => {
                     row.style.backgroundColor = '';
                 }, 1000);
             } else {
                 alert("Failed to assign lead: " + data.error);
-                // Restore original select
                 cell.innerHTML = '';
                 cell.appendChild(originalSelect);
             }
@@ -873,11 +1051,12 @@ body {
             selectElem.style.display = '';
             console.error("Error during lead assignment:", error);
             alert("Something went wrong during lead assignment.");
-            // Restore original select
             cell.innerHTML = '';
             cell.appendChild(originalSelect);
         });
     }
+    window.assignLead = assignLead;
+});
     </script>
 </body>
 </html>

@@ -17,18 +17,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- SECURITY SETTINGS ---
 
 # GOOD: Load the secret key from the .env file
-# SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
+# SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
 
 # GOOD: DEBUG is set to False for production
 DEBUG = True
 
 # GOOD: ALLOWED_HOSTS is restricted to your server's IP for production
-# ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
+ALLOWED_HOSTS = ['bdamanagementportal.kripaluinnovations.com','3.111.174.41']
 
 #for local development, you can use:
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # --- APPLICATION DEFINITION ---
@@ -82,27 +82,27 @@ WSGI_APPLICATION = 'salesmanPortal.wsgi.application'
 # --- DATABASE ---
 # Switched to SQLite for local development
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # --- production DATABASE ---
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'myadmin',
-#         # GOOD: Load the database password from the .env file
-#         'PASSWORD': os.environ.get('DB_PASSWORD'),
-#         'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'myadmin',
+        # GOOD: Load the database password from the .env file
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
+        'PORT': '5432',
+    }
+}
 
 
 # --- PASSWORD VALIDATION ---
@@ -139,23 +139,23 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # To get this working, you must attach an IAM Role with S3 permissions
 # to your EC2 instance. This is the secure way to grant AWS access.
 
-# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-# AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-# AWS_S3_SIGNATURE_NAME = 's3v4'
-# AWS_S3_FILE_OVERWRITE = False
-# AWS_DEFAULT_ACL = None
-# AWS_S3_VERIFY = True
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_SIGNATURE_NAME = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERIFY = True
 
-# STORAGES = {
-#     # For user-uploaded media files (goes to S3)
-#     "default": {
-#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#     },
-#     # For static files (served locally by WhiteNoise)
-#     "staticfiles": {
-#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-#     }
-# }
+STORAGES = {
+    # For user-uploaded media files (goes to S3)
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    # For static files (served locally by WhiteNoise)
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    }
+}
 
 
 # --- DEFAULT PRIMARY KEY ---

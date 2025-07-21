@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Leads</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* --- Kripalu Innovations Theme Variables (adjust to match your admin_dashboard.css if needed) --- */
+        :root {
+            --ki-primary-blue: #0A2E5B;
+            --ki-secondary-gold: #FFD700;
+            --ki-dark-gold: #CCAA00;
+            --ki-light-gold: #FFFBE6;
+
+            --primary: var(--ki-primary-blue);
+            --primary-light: #eef2ff;
+            --secondary: var(--ki-secondary-gold);
+            
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --dark: #212529;
+            --light: #FDFDFD;
+            --card-background: #FFFFFF;
+            --gray: #6c757d;
+            --gray-light: #e0e0e0;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s ease;
+
+            --primary-rgb: 10, 46, 91;
+            --secondary-rgb: 255, 215, 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            padding: 24px;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--gray-light);
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-control, .select-dropdown {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            color: var(--dark);
+            background-color: var(--card-background);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus, .select-dropdown:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(var(--secondary-rgb), 0.2);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .radio-group div, .checkbox-group div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #08244e;
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dashboard-header h1 i {
+            color: var(--secondary);
+        }
+        
+        .message-container {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .message-container i {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dashboard-header .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>
+                <i class="bi bi-download"></i> Download Leads
+            </h1>
+            <div>
+                <a href="{% url 'adminDashboard' category_id=0 %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-container message-{{ message.tags }}">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-x-circle-fill{% else %}bi-info-circle-fill{% endif %}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-card">
+            <form action="" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Select Lead Scope:</label>
+                    <div class="radio-group">
+                        <div>
+                            <input type="radio" id="scopeAll" name="scope_option" value="all" checked>
+                            <label for="scopeAll">All Leads (All Categories, All Time)</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="scopeAssigned" name="scope_option" value="assigned">
+                            <label for="scopeAssigned">Assigned Leads Only</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="scopePending" name="scope_option" value="pending">
+                            <label for="scopePending">Pending (Unassigned) Leads Only</label>
+                        </div>
+                        </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Apply Additional Filters (Optional):</label>
+                    <div class="checkbox-group">
+                        <div>
+                            <input type="checkbox" id="filterByCategory" name="filter_by_category">
+                            <label for="filterByCategory">Filter by Category</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="filterByDateRange" name="filter_by_date_range">
+                            <label for="filterByDateRange">Filter by Date Range (Created At)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="categoryFilterGroup" style="display: none;">
+                    <label for="category_id">Select Category:</label>
+                    <select id="category_id" name="category_id" class="select-dropdown">
+                        <option value="">— Select a Category —</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group" id="dateRangeFilterGroup" style="display: none;">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control">
+                    
+                    <label for="end_date" style="margin-top: 15px;">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-arrow-down"></i> Download CSV
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scope radio buttons
+            const scopeRadios = document.querySelectorAll('input[name="scope_option"]');
+            
+            // Filter checkboxes
+            const filterByCategoryCheckbox = document.getElementById('filterByCategory');
+            const filterByDateRangeCheckbox = document.getElementById('filterByDateRange');
+
+            // Conditional display groups
+            const categoryFilterGroup = document.getElementById('categoryFilterGroup');
+            const dateRangeFilterGroup = document.getElementById('dateRangeFilterGroup');
+
+            function toggleFormFields() {
+                // Hide all conditional groups first
+                categoryFilterGroup.style.display = 'none';
+                dateRangeFilterGroup.style.display = 'none';
+
+                // Show groups based on checkbox selection
+                if (filterByCategoryCheckbox.checked) {
+                    categoryFilterGroup.style.display = 'block';
+                }
+                if (filterByDateRangeCheckbox.checked) {
+                    dateRangeFilterGroup.style.display = 'block';
+                }
+                
+                // No need to explicitly hide or show based on scope_option as that just changes the base query
+                // The checkboxes control the visibility of the *additional* filter fields.
+            }
+
+            // Set initial state on page load
+            toggleFormFields();
+
+            // Add event listeners to checkboxes
+            filterByCategoryCheckbox.addEventListener('change', toggleFormFields);
+            filterByDateRangeCheckbox.addEventListener('change', toggleFormFields);
+
+            // Scope radios don't affect visibility of these specific filter inputs,
+            // but if you had other specific inputs per scope, you'd listen to them here.
+            scopeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleFormFields); // Calling just in case future logic needs it
+            });
+        });
+    </script>
+</body>
+</html>

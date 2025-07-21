@@ -18,6 +18,9 @@ from django.db import transaction
 from django.db.models import F, Count
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+import csv
+from datetime import date, datetime,time 
+
 
 def loginSalesman(request):
     # If already logged in, redirect to dashboard
@@ -116,44 +119,79 @@ def loginAdmin(request):
 
 
 def adminDashboard(request, category_id=None):
-    leads_queryset = Lead.objects.filter(category_id=category_id)  # Filter by category first
-    selected_category = category.objects.filter(id=category_id).first() if category_id else None
-    created_on_date_str = request.GET.get('created_on_date')
+    # Fetch all categories for the sidebar (if you still have a sidebar)
+    try:
+        categories = category.objects.all()
+    except:
+        categories = [] # Fallback if category model is not used or handled differently
 
-    # Apply single-day date filter if present
-    if created_on_date_str:
+    selected_category = None
+    leads = Lead.objects.all()
+
+    # Filter leads by category from URL if category_id is provided
+    if category_id:
+        selected_category_obj = get_object_or_404(category, id=category_id)
+        leads = leads.filter(category=selected_category_obj)
+        selected_category = selected_category_obj.name
+    
+    # Date filter
+    current_created_on_date = request.GET.get('created_on_date')
+    if current_created_on_date:
         try:
-            selected_date = datetime.strptime(created_on_date_str, '%Y-%m-%d').date()
-            # Filter leads created specifically on this date (compare only the date part)
-            leads_queryset = leads_queryset.filter(created_at__date=selected_date)
+            date_obj = datetime.strptime(current_created_on_date, '%Y-%m-%d').date()
+            leads = leads.filter(created_at__date=date_obj)
         except ValueError:
-            created_on_date_str = None  # Reset to not pre-fill if invalid
+            pass # Invalid date format, ignore filter
 
-    leads = leads_queryset.order_by('-updated_at')
+    # NEW: Status Filter
+    status_filter = request.GET.get('status')
+    if status_filter:
+        leads = leads.filter(status=status_filter)
 
+    # NEW: Priority Filter
+    priority_filter = request.GET.get('priority')
+    if priority_filter:
+        leads = leads.filter(priority=priority_filter)
+
+    # Lead Filters (Assigned, Pending, All) - these should apply AFTER date, status, priority
+    lead_filter = request.GET.get('lead_filter')
+    if lead_filter == 'assigned':
+        leads = leads.filter(assigned_to__isnull=False)
+    elif lead_filter == 'pending':
+        leads = leads.filter(assigned_to__isnull=True)
+    # 'all' filter is default, no additional filtering needed here
+
+    # Calculate stats based on the currently filtered leads
     total_leads = leads.count()
     new_leads = leads.filter(status='New').count()
     contacted_leads = leads.filter(status='Contacted').count()
-    qualified_leads = leads.filter(status='Converted').count()  # Or 'Won' based on your model/logic
+    converted_leads = leads.filter(status='Converted').count()
 
-    converted_leads = qualified_leads  # Using 'Qualified' as a proxy for converted, adjust as needed
+    # Get all assignable users (salesmen)
+    users = CustomUser.objects.filter(is_approved=True) # Adjust this filter as per your user roles
 
-    salesmen = CustomUser.objects.filter(is_staff=False)  # Assuming non-staff are salesmen
-    total_salesmen = salesmen.count()
+    # Total salesmen stat
+    total_salesmen = users.count()
+
+    # Get choices for dropdowns directly from the Lead model
+    status_choices = Lead.STATUS_CHOICES
+    priority_choices = Lead.PRIORITY_CHOICES
 
     context = {
-        'selected_category': selected_category,  # Pass the category name for the header
-        'category_id': category_id,
+        'category_id': category_id, # Pass category_id for URLs
+        'selected_category': selected_category,
+        'leads': leads.order_by('-created_at'), # Order for consistent display
         'total_leads': total_leads,
         'total_salesmen': total_salesmen,
         'new_leads': new_leads,
         'contacted_leads': contacted_leads,
         'converted_leads': converted_leads,
-        'leads': leads,
-        'users': salesmen,  # Pass salesmen (non-staff users) for assignment dropdown
-        'current_created_on_date': created_on_date_str,  # Pass back to template for pre-filling
+        'current_created_on_date': current_created_on_date, # Pass this back to pre-fill the date input
+        'status_choices': status_choices,   # NEW: Pass status choices
+        'priority_choices': priority_choices, # NEW: Pass priority choices
+        'users': users, # Pass users for assignment dropdowns
     }
-    return render(request, 'salesmanPortal/adminDashboard.html', context)
+    return render(request, 'salesmanPortal/adminDashboard.html', context) # Replace 'your_template_name.html' with your actual template path
 
 
 import pandas as pd
@@ -212,60 +250,106 @@ def uploadLeads(request,category_id=None):
 
 
 
-@csrf_exempt  # Consider using @require_POST with proper CSRF protection in production
+@csrf_exempt # Use this for simplicity in development, but for production, use proper CSRF protection
+@csrf_exempt
 def assign_lead_ajax(request):
-    if request.method == "POST":
+    print(f"\n--- assign_lead_ajax hit! Method: {request.method} --- Current Time: {datetime.now()}")
+    if request.method == 'POST':
         try:
-            # Parse JSON data
+            print("Processing POST request for single lead assignment.")
             data = json.loads(request.body)
-            lead_id = data.get("lead_id")
-            user_id = data.get("user_id")
+            lead_id = data.get('lead_id')
+            user_id = data.get('user_id') # This can be null for unassign
 
-            if not lead_id or not user_id:
-                return JsonResponse({
-                    "success": False,
-                    "error": "Missing lead_id or user_id"
-                }, status=400)
+            print(f"Received lead_id: {lead_id}, user_id: {user_id}")
 
-            # Get objects with error handling
+            if not lead_id:
+                print("Error: lead_id is missing or invalid.")
+                return JsonResponse({'success': False, 'error': 'Lead ID is required.'}, status=400) # Bad Request
+
             try:
                 lead = Lead.objects.get(id=lead_id)
-                user = CustomUser.objects.get(id=user_id)  # Changed to CustomUser
+                print(f"Found lead: {lead.name} (ID: {lead.id})")
             except Lead.DoesNotExist:
-                return JsonResponse({
-                    "success": False,
-                    "error": "Lead not found"
-                }, status=404)
-            except CustomUser.DoesNotExist:  # Changed to CustomUser
-                return JsonResponse({
-                    "success": False,
-                    "error": "User not found"
-                }, status=404)
+                print(f"Lead with ID {lead_id} not found. Returning 404.")
+                return JsonResponse({'success': False, 'error': 'Lead not found.'}, status=404) # Not Found
 
-            # Update lead assignment
-            lead.assigned_to = user
-            lead.save()
-
-            return JsonResponse({
-                "success": True,
-                "message": f"Lead successfully assigned to {user.username}"
-            })
+            if user_id:
+                try:
+                    user = CustomUser.objects.get(id=user_id)
+                    lead.assigned_to = user
+                    message = f"Lead assigned to {user.get_full_name() or user.username} successfully."
+                    print(f"Assigned lead {lead.id} to user {user.id}.")
+                except CustomUser.DoesNotExist:
+                    print(f"Salesman with ID {user_id} not found. Returning 404.")
+                    return JsonResponse({'success': False, 'error': 'Salesman not found.'}, status=404) # Not Found
+            else:
+                lead.assigned_to = None # Unassign
+                message = "Lead unassigned successfully."
+                print(f"Lead {lead.id} unassigned.")
             
-        except json.JSONDecodeError:
-            return JsonResponse({
-                "success": False,
-                "error": "Invalid JSON data"
-            }, status=400)
+            lead.save()
+            print("Lead assignment saved. Returning success JSON.")
+            return JsonResponse({'success': True, 'message': message}, status=200) # OK
+
+        except json.JSONDecodeError as e:
+            print(f"JSONDecodeError: Request body is not valid JSON. Error: {e}")
+            print(f"Raw request body: {request.body.decode('utf-8')}") # Print raw body to see what client sent
+            return JsonResponse({'success': False, 'error': 'Invalid JSON in request body.'}, status=400) # Bad Request
         except Exception as e:
-            return JsonResponse({
-                "success": False,
-                "error": str(e)
-            }, status=500)
-    
-    return JsonResponse({
-        "success": False,
-        "error": "Only POST method is allowed"
-    }, status=405)
+            print(f"Unhandled exception in assign_lead_ajax: {e}")
+            import traceback
+            traceback.print_exc() # Print full traceback to console
+            return JsonResponse({'success': False, 'error': f'An unexpected server error occurred: {str(e)}'}, status=500) # Internal Server Error
+    else:
+        print(f"Invalid request method: {request.method}. Expected POST.")
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405) # Method Not Allowed
+
+@csrf_exempt
+def bulk_assign_leads_ajax(request):
+    print(f"\n--- bulk_assign_leads_ajax hit! Method: {request.method} --- Current Time: {datetime.now()}")
+    if request.method == 'POST':
+        try:
+            print("Processing POST request for bulk lead assignment.")
+            data = json.loads(request.body)
+            lead_ids = data.get('lead_ids', [])
+            user_id = data.get('user_id')
+
+            print(f"Received lead_ids: {lead_ids}, user_id: {user_id}")
+
+            if not lead_ids:
+                print("Error: No leads selected for bulk assignment.")
+                return JsonResponse({'success': False, 'error': 'No leads selected.'}, status=400) # Bad Request
+
+            if not user_id:
+                print("Error: No salesman selected for bulk assignment.")
+                return JsonResponse({'success': False, 'error': 'No salesman selected.'}, status=400) # Bad Request
+            
+            try:
+                user = CustomUser.objects.get(id=user_id)
+                print(f"Assigning leads to user: {user.email} (ID: {user.id})")
+            except CustomUser.DoesNotExist:
+                print(f"Salesman with ID {user_id} not found. Returning 404.")
+                return JsonResponse({'success': False, 'error': 'Salesman not found.'}, status=404) # Not Found
+            
+            # Update all selected leads
+            updated_count = Lead.objects.filter(id__in=lead_ids).update(assigned_to=user)
+            
+            print(f"Successfully updated {updated_count} leads. Returning success JSON.")
+            return JsonResponse({'success': True, 'message': f'{updated_count} lead(s) assigned successfully.'}, status=200) # OK
+        
+        except json.JSONDecodeError as e:
+            print(f"JSONDecodeError: Request body is not valid JSON. Error: {e}")
+            print(f"Raw request body: {request.body.decode('utf-8')}") # Print raw body to see what client sent
+            return JsonResponse({'success': False, 'error': 'Invalid JSON in request body.'}, status=400) # Bad Request
+        except Exception as e:
+            print(f"Unhandled exception in bulk_assign_leads_ajax: {e}")
+            import traceback
+            traceback.print_exc() # Print full traceback to console
+            return JsonResponse({'success': False, 'error': f'An unexpected server error occurred: {str(e)}'}, status=500) # Internal Server Error
+    else:
+        print(f"Invalid request method: {request.method}. Expected POST.")
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405) # Method Not Allowed
 
 def editLead(request, lead_id):
     if not request.user.is_authenticated:
@@ -315,16 +399,17 @@ def logoutUser(request):
     return render(request, 'salesmanPortal/confirm_logout.html')
 
 def viewLead(request, lead_id):
-    if not request.user.is_authenticated:
-        return redirect('loginSalesman')  # Redirect to login if user is not authenticated
-    try:
-        lead = Lead.objects.get(id=lead_id)  # Get the lead assigned to the logged-in user
-    except Lead.DoesNotExist:
-        messages.error(request, "Lead does not exist or you do not have permission to view it")
-        return redirect('adminDashboard/')  # Redirect to dashboard if lead does not exist
-    context = {'lead': lead}  # Pass the lead to
+    lead = get_object_or_404(Lead, id=lead_id)
+    
+    # Get all users who are approved and not staff (assuming they are your salesmen)
+    salesmen = CustomUser.objects.filter(is_approved=True, is_staff=False)
 
-    return render(request, 'salesmanPortal/viewLead.html', context)  # Render the view lead template
+    context = {
+        'lead': lead,
+        'salesmen': salesmen, # Pass salesmen to the template
+        'csrf_token': request.META.get('CSRF_COOKIE', ''), # Ensure CSRF token is available
+    }
+    return render(request, 'salesmanPortal/viewLead.html', context) # Make sure your template name is correct
 
 @csrf_exempt
 def deleteLead(request, lead_id):
@@ -341,16 +426,68 @@ def deleteLead(request, lead_id):
     except Lead.DoesNotExist:
         return JsonResponse({'error': 'Lead does not exist'}, status=404)
 
-def viewCategory(request):
-    if not request.user.is_authenticated:
-        return redirect('loginSalesman')  # Redirect to login if user is not authenticated
-
+def viewCategory(request,category_id=None):
+# Fetch all categories for the sidebar
     categories = category.objects.all()
-    # Exclude users where is_superuser is True
-    salesman = CustomUser.objects.filter(is_superuser=False,is_approved = True) # Filter out superusers
-    context = {'categories': categories,
-               'salesman' : salesman}  # Pass the categories to the template
-    return render(request, 'salesmanPortal/viewCategory.html', context)  # Render the view category template
+
+    # Get filter parameters from GET request
+    search_query = request.GET.get('q')
+    status_filter = request.GET.get('status')
+    priority_filter = request.GET.get('priority')
+    assigned_to_filter = request.GET.get('assigned_to')
+    category_filter = request.GET.get('category')
+
+    leads = Lead.objects.all()
+
+    # Apply category filter from URL if present
+    if category_id:
+        current_category = get_object_or_404(category, id=category_id)
+        leads = leads.filter(category=current_category)
+    elif category_filter:
+        # Apply category filter from dropdown
+        leads = leads.filter(category_id=category_filter)
+
+
+    # Apply search query filter
+    if search_query:
+        leads = leads.filter(
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(company__icontains=search_query)
+        )
+
+    # Apply status filter
+    if status_filter:
+        leads = leads.filter(status=status_filter)
+
+    # Apply priority filter
+    if priority_filter:
+        leads = leads.filter(priority=priority_filter)
+
+    # Apply assigned_to filter
+    if assigned_to_filter:
+        leads = leads.filter(assigned_to_id=assigned_to_filter)
+
+    # Order the leads (optional, but good for consistency)
+    leads = leads.order_by('-created_at')
+
+    # Get choices for dropdowns directly from the Lead model
+    status_choices = Lead.STATUS_CHOICES
+    priority_choices = Lead.PRIORITY_CHOICES
+
+    # Get all salesmen (CustomUser instances) for the "Assigned To" filter
+    # Assuming salesmen are CustomUser instances that you want to be assignable
+    salesmen = CustomUser.objects.filter(is_approved=True) # Or filter by a specific role if you have one
+
+    context = {
+        'categories': categories,
+        'leads': leads,
+        'status_choices': status_choices,
+        'priority_choices': priority_choices,
+        'salesmen': salesmen,
+        'default_category_id': category_id if category_id else '', # To correctly clear filters
+    }
+    return render(request, 'salesmanPortal/viewCategory.html', context) # Replace 'your_template_name.html'
 
 def addCategory(request):
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -585,3 +722,93 @@ def viewBDAs(request):
     }
     
     return render(request, 'salesmanPortal/viewBDAs.html', context)
+
+def downloadLeads(request):
+    categories = category.objects.all().order_by('name')
+    context = {
+        'categories': categories,
+        'category_id': 0, 
+    }
+
+    if request.method == 'POST':
+        scope_option = request.POST.get('scope_option')
+        filter_by_category = request.POST.get('filter_by_category') == 'on' 
+        filter_by_date_range = request.POST.get('filter_by_date_range') == 'on'
+
+        category_id = request.POST.get('category_id')
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+
+        leads_queryset = Lead.objects.all()
+
+        if scope_option == 'assigned':
+            leads_queryset = leads_queryset.filter(assigned_to__isnull=False)
+        elif scope_option == 'pending':
+            leads_queryset = leads_queryset.filter(assigned_to__isnull=True)
+
+        if filter_by_category:
+            if category_id:
+                try:
+                    category_obj = category.objects.get(id=category_id)
+                    leads_queryset = leads_queryset.filter(category=category_obj)
+                except category.DoesNotExist:
+                    messages.error(request, "Selected category does not exist.")
+                    return render(request, 'salesmanPortal/downloadLeads.html', context)
+            else:
+                messages.error(request, "Please select a category when filtering by category.")
+                return render(request, 'salesmanPortal/downloadLeads.html', context)
+
+        if filter_by_date_range:
+            if start_date_str and end_date_str:
+                try:
+                    start_date_obj = datetime.strptime(start_date_str, '%Y-%m-%d').date() # Use imported datetime
+                    end_date_obj = datetime.strptime(end_date_str, '%Y-%m-%d').date()     # Use imported datetime
+                    
+                    end_datetime_inclusive = datetime.combine(end_date_obj, time.max) # Use imported datetime and time
+
+                    leads_queryset = leads_queryset.filter(created_at__gte=start_date_obj, created_at__lte=end_datetime_inclusive)
+
+                except ValueError:
+                    messages.error(request, "Invalid date format. Please use YYYY-MM-DD.")
+                    return render(request, 'salesmanPortal/downloadLeads.html', context)
+            else:
+                messages.error(request, "Please provide both start and end dates when filtering by date range.")
+                return render(request, 'salesmanPortal/downloadLeads.html', context)
+        
+        leads_queryset = leads_queryset.order_by('created_at')
+
+        if not leads_queryset.exists():
+            messages.info(request, "No leads found for the selected criteria. Please adjust your filters.")
+            return render(request, 'salesmanPortal/downloadLeads.html', context)
+
+        response = HttpResponse(content_type='text/csv')
+        # Use imported 'date' for today()
+        response['Content-Disposition'] = f'attachment; filename="leads_data_{date.today().strftime("%Y%m%d")}.csv"' 
+
+        writer = csv.writer(response)
+
+        writer.writerow([
+            'ID', 'Name', 'Email', 'Phone', 'Company', 'Role', 
+            'Status', 'Priority', 'Category', 'Assigned To (Email)', 'Created At'
+        ])
+
+        for lead in leads_queryset:
+            assigned_to_email = lead.assigned_to.email if lead.assigned_to else 'Unassigned'
+            category_name = lead.category.name if lead.category else 'No Category'
+            
+            writer.writerow([
+                lead.id,
+                lead.name,
+                lead.email or '', 
+                lead.phone or '',
+                lead.company or '',
+                lead.role or '',
+                lead.get_status_display(),
+                lead.get_priority_display(),
+                category_name,
+                assigned_to_email,
+                lead.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        return response
+
+    return render(request, 'salesmanPortal/downloadLeads.html', context)
