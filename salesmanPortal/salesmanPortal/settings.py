@@ -17,9 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- SECURITY SETTINGS ---
 
 # GOOD: Load the secret key from the .env file
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
+SECRET_KEY='#x2owd2!fq^$)mq-w52404y%xr8l!1tfh^&_g$p&3=jl2bnyic'
 
 # GOOD: DEBUG is set to False for production
 DEBUG = True
@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'myadmin',
         # GOOD: Load the database password from the .env file
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'PASSWORD': 'Aryan786786',
         'HOST': 'my-django-db.cjog0kkish39.ap-south-1.rds.amazonaws.com',
         'PORT': '5432',
     }
