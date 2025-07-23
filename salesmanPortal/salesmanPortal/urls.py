@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # 1. ALWAYS put the Django Admin URL FIRST and specifically.
-    path('/admin', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     # 2. Then, include your application's URLs.
     #    The empty string '' means that salesmanPanel.urls patterns
