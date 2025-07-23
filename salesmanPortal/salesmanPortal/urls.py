@@ -1,34 +1,25 @@
-"""
-URL configuration for salesmanPortal project.
+# salesmanPortal/urls.py
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from django.conf.urls.static import static # This line is good, no need for the duplicate
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include('salesmanPanel.urls')),
+    # 1. ALWAYS put the Django Admin URL FIRST and specifically.
+    path('/admin', admin.site.urls),
+
+    # 2. Then, include your application's URLs.
+    #    The empty string '' means that salesmanPanel.urls patterns
+    #    will be directly accessible at the root of your domain.
+    path('', include('salesmanPanel.urls')),
 ]
 
-# This is the correct way to serve static and media files during development (DEBUG = True)
-# It should ONLY be in the if settings.DEBUG block.
-# Do NOT put static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) outside this block
-# if you intend to use a production web server (like Nginx) for static files.
+# 3. ONLY put the static and media file serving patterns LAST,
+#    and strictly inside the DEBUG block. These are catch-all patterns
+#    for development and should not interfere with your defined URLs.
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # Remove the problematic line: urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_URL)
+    # Ensure no other static() or re_path(r'^(?P<path>.*)$', ...) patterns exist here
+    # that could be placed before the admin/ or your app URLs.

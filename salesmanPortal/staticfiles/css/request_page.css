@@ -1,0 +1,286 @@
+/* --- Base Styling (ensure these are defined in your main CSS) --- */
+:root {
+    /* These colors should ideally match your kripaluinnovations.com actual site colors */
+    --theme-primary: #007bff; /* Example primary color, adjust to KI's blue/orange */
+    --theme-secondary: #6c757d;
+    --theme-success: #28a745;
+    --theme-danger: #dc3545;
+    --theme-warning: #ffc107;
+    --theme-info: #17a2b8;
+    --theme-light: #f8f9fa;
+    --theme-dark: #343a40;
+
+    --theme-background: #f4f7f6; /* Light gray background, common for dashboards */
+    --theme-background-card: #ffffff; /* White for cards */
+    --theme-text-dark: #343a40;
+    --theme-text-medium: #6c757d;
+    --theme-text-light: #f8f9fa;
+
+    --theme-border: #e9ecef;
+    --theme-shadow: rgba(0, 0, 0, 0.08); /* Subtle shadow */
+
+    --golden-light: #fff8e1; /* Your existing golden light color for hover */
+
+    /* Kripalu Innovations specific colors (approximate, find exact values from your site's CSS) */
+    --ki-orange: #FF8C00;
+    --ki-dark-blue: #0A2E5B; /* A common dark blue used on their site */
+    --ki-light-blue: #007bff; /* Placeholder, adjust to actual */
+    --ki-text-color: #333; /* Common dark text */
+}
+
+body {
+    font-family: 'Inter', sans-serif, 'Arial', sans-serif; /* Prioritize Inter if loaded, then a generic sans-serif */
+    background-color: var(--theme-background);
+    color: var(--ki-text-color); /* Use KI's main text color */
+    line-height: 1.6;
+}
+
+/* Ensure your base.html includes Bootstrap CSS */
+/* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> */
+/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> */
+
+.content-wrapper {
+    min-height: calc(100vh - (header_height + footer_height)); /* Adjust based on your actual header/footer heights */
+    padding-top: 20px; /* Space from header */
+    padding-bottom: 20px; /* Space from footer */
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px; /* Max width for content, similar to KripaluInnovations */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* --- Card Styling --- */
+.card {
+    background-color: var(--theme-background-card);
+    border-radius: 12px; /* Slightly more rounded corners */
+    box-shadow: 0 0.5rem 1rem var(--theme-shadow); /* More pronounced shadow */
+    overflow: hidden; /* Ensures borders/shadows are clean with rounded corners */
+}
+
+.card-body {
+    padding: 2.5rem; /* Generous padding */
+}
+
+/* --- Section Header --- */
+.section-header {
+    margin-bottom: 2.5rem; /* More space below header */
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 700; /* Bold */
+    color: var(--ki-dark-blue); /* Using a prominent KI color for titles */
+}
+
+.section-title.text-primary { /* Override if a specific primary is used */
+    color: var(--ki-orange) !important; /* Example: use KI orange for primary emphasis */
+}
+
+.lead-text {
+    font-size: 1.15rem;
+    color: var(--theme-text-medium);
+}
+
+/* --- Table Styling --- */
+.table {
+    width: 100%;
+    margin-bottom: 0;
+    color: var(--ki-text-color);
+}
+
+.table thead th {
+    background-color: var(--theme-light); /* Light background for header */
+    border-bottom: 2px solid var(--theme-border);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 1rem 1.5rem;
+    color: var(--theme-text-medium);
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--golden-light); /* Lighter hover color */
+}
+
+.table tbody td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--theme-border);
+    vertical-align: middle;
+}
+
+.table-borderless th,
+.table-borderless td {
+    border: 0;
+}
+
+/* Responsive Table Container */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid var(--theme-border); /* Subtle border for the whole table container */
+}
+
+/* Checkbox specific styling */
+.form-check-input {
+    width: 1.25em;
+    height: 1.25em;
+    border: 1px solid var(--theme-border);
+    border-radius: 0.25em;
+    cursor: pointer;
+    vertical-align: middle;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-check-input:checked {
+    background-color: var(--theme-success); /* Green when checked */
+    border-color: var(--theme-success);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--theme-primary), 0.25);
+    outline: 0;
+}
+
+/* Approve Selected Button */
+#approveSelectedBtn {
+    background-color: var(--ki-orange); /* Use KI's orange for primary actions */
+    border-color: var(--ki-orange);
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex; /* For icon alignment */
+    align-items: center;
+    justify-content: center;
+}
+
+#approveSelectedBtn:hover {
+    background-color: #e67e00; /* Darker orange on hover */
+    border-color: #e67e00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#approveSelectedBtn:disabled {
+    background-color: #cccccc;
+    border-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+#approveSelectedBtn .bi {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+/* No Pending Users Message */
+.no-pending-users {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--theme-light);
+    border-radius: 8px;
+    border: 1px dashed var(--theme-border);
+    display: flex; /* For centering content vertically if needed */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-pending-users .display-4 {
+    font-size: 3.5rem; /* Larger icon */
+    color: var(--theme-text-medium);
+}
+
+.no-pending-users p.lead {
+    font-size: 1.25rem;
+    color: var(--theme-text-dark);
+}
+
+/* Django Messages Styling (for alerts) */
+.messages-container {
+    padding: 0; /* Bootstrap container will handle padding */
+}
+.alert {
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+.alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* --- Responsive Table (Mobile First) --- */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem; /* Reduce padding on small screens */
+    }
+    .users-table thead {
+        display: none; /* Hide table header on small screens */
+    }
+    .users-table, .users-table tbody, .users-table tr, .users-table td {
+        display: block;
+        width: 100%;
+    }
+    .users-table tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--theme-border);
+        border-radius: 8px;
+        padding: 15px; /* More padding for mobile rows */
+        box-shadow: 0 2px 4px var(--theme-shadow);
+    }
+    .users-table td {
+        text-align: right; /* Align value to right */
+        padding-left: 50%; /* Space for data-label */
+        position: relative;
+        border-bottom: 1px dotted var(--theme-border); /* Dotted separator */
+    }
+    .users-table td:last-child {
+        border-bottom: 0; /* No border for the last cell */
+    }
+    .users-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px; /* Align label to left */
+        width: calc(50% - 30px);
+        text-align: left;
+        font-weight: 600;
+        color: var(--theme-text-medium);
+    }
+    .users-table td.text-center { /* Override for checkbox column */
+        text-align: center;
+    }
+    .users-table td.text-center::before {
+        text-align: left; /* Keep label left */
+    }
+    .form-check-input {
+        margin-left: auto; /* Center checkbox if needed in mobile view */
+        margin-right: auto;
+        display: block;
+    }
+    #approveSelectedBtn {
+        width: 100%; /* Full width button on small screens */
+    }
+}
