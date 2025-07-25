@@ -623,8 +623,8 @@ body {
                 </div>
             {% endif %}
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="{% url 'deleteCategory' category_id %}" class="btn btn-danger" style="background-color: var(--danger); color: white;" onclick="return confirmDeleteCategory();">
-                    <i class="bi bi-trash"></i> Delete Category
+                <a href="{% url 'editCategory' category_id %}" class="btn btn-warning" style="background-color: var(--warning); color: var(--dark);">
+                    <i class="bi bi-pencil-square"></i> Edit Category
                 </a>
                 <a href="{% url 'uploadLeads' category_id %}" class="btn btn-primary">
                     <i class="bi bi-cloud-upload"></i> Upload Leads

@@ -1,4 +1,5 @@
 import json
+import re
 from venv import logger
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.models import User
@@ -964,12 +965,19 @@ def downloadLeads(request):
 @login_required
 @user_passes_test(is_admin)
 def deleteCategory(request, category_id):
-    try:
-        category_to_delete = category.objects.get(id=category_id)
-        category_to_delete.delete()  # Delete the category
-        messages.success(request, f"Category '{category_to_delete.name}' deleted successfully")
-    except category.DoesNotExist:
-        messages.error(request, "Category does not exist")
+    if request.method == 'POST': # Crucial: Only allow POST requests for deletion
+        try:
+            # Assuming your model is Category, not category (lowercase 'c')
+            category_to_delete = category.objects.get(id=category_id)
+            category_name = category_to_delete.name # Store name before deleting
+            category_to_delete.delete()  # Delete the category
+            messages.success(request, f"Category '{category_name}' deleted successfully")
+        except category.DoesNotExist: # Use the correct model name here too
+            messages.error(request, "Category does not exist")
+        except Exception as e: # Catch any other potential errors during deletion
+            messages.error(request, f"An error occurred during deletion: {e}")
+    else:
+        messages.error(request, "Invalid request method for deletion.")
 
     return redirect('viewCategory')  # Redirect to view categories after deletion
 
@@ -1010,3 +1018,32 @@ def bulk_delete_leads_ajax(request):
     except Exception as e:
         messages.error(request, 'An error occurred during bulk deletion.')
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
+@login_required
+@user_passes_test(is_admin)
+def editCategory(request, category_id):
+    try:
+        # Assuming your model is Category, not category (lowercase 'c')
+        selected_category = category.objects.get(id=category_id)
+    except category.DoesNotExist: # Use the correct model name here too
+        messages.error(request, "Category does not exist")
+        return redirect('viewCategory')
+
+    if request.method == 'POST':
+        # Corrected field names from the HTML form
+        name = request.POST.get('category_name')
+        description = request.POST.get('category_description', '')
+
+        if name:
+            selected_category.name = name
+            selected_category.description = description
+            selected_category.save()
+            messages.success(request, f"Category '{selected_category.name}' updated successfully")
+            return redirect('viewCategory')
+        else:
+            messages.error(request, "Category name is required")
+
+    context = {
+        'selected_category': selected_category,
+    }
+    return render(request, 'salesmanPortal/editCategory.html', context)
