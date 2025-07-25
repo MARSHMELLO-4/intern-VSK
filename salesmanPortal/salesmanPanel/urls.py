@@ -32,4 +32,6 @@ urlpatterns = [
     path('deleteSalesman/<str:email>/', views.deleteSalesman, name='deleteSalesman'),
     path('discard-users/',views.discard_users_view, name='discard_users'),
     path('downloadLeads/', views.downloadLeads, name='downloadLeads'),
+    path('deleteCategory/<int:category_id>/', views.deleteCategory, name='deleteCategory'),
+    path('bulk-delete-leads/', views.bulk_delete_leads_ajax, name='bulk_delete_leads_ajax'),
 ]

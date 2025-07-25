@@ -617,7 +617,15 @@ body {
                     Leads Management Dashboard
                 {% endif %}
             </h1>
+            {% if selected_category_description %}
+                <div style="font-size: 14px; color: var(--blue); margin-top: 4px; flex-basis: 100%; width: 100%;">
+                    {{ selected_category_description }}
+                </div>
+            {% endif %}
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="{% url 'deleteCategory' category_id %}" class="btn btn-danger" style="background-color: var(--danger); color: white;" onclick="return confirmDeleteCategory();">
+                    <i class="bi bi-trash"></i> Delete Category
+                </a>
                 <a href="{% url 'uploadLeads' category_id %}" class="btn btn-primary">
                     <i class="bi bi-cloud-upload"></i> Upload Leads
                 </a>
@@ -626,12 +634,12 @@ body {
                 </a>
             </div>
         </div>
-        
+
         <div class="date-filter-bar">
             <form id="filterForm" method="GET" action="{% url 'adminDashboard' category_id %}" class="d-flex align-items-center gap-3 flex-wrap">
                 <label for="createdOnDate">Created On:</label>
                 <input type="date" id="createdOnDate" name="created_on_date" value="{{ current_created_on_date|default:'' }}">
-                
+
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-filter"></i> Filter
                 </button>
@@ -682,6 +690,9 @@ body {
             </select>
             <button type="button" class="btn btn-primary" id="assignSelectedBtn">
                 <i class="bi bi-person-check-fill"></i> Assign Selected Leads
+            </button>
+            <button type="button" class="btn btn-danger" id="bulkDeleteBtn">
+                <i class="bi bi-trash"></i> Delete Selected Leads
             </button>
         </div>
 
@@ -793,7 +804,7 @@ body {
         row.style.opacity = '0';
         row.style.transform = 'translateY(10px)';
         row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        
+
         setTimeout(() => {
             row.style.opacity = '1';
             row.style.transform = 'translateY(0)';
@@ -806,7 +817,7 @@ body {
         row.addEventListener('touchstart', function() {
             this.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
         });
-        
+
         row.addEventListener('touchend', function() {
             this.style.backgroundColor = '';
         });
@@ -831,7 +842,7 @@ body {
             filterForm.submit();
         });
     }
-    
+
     // --- Update "Recent Leads" Header (correctly inside DOMContentLoaded) ---
     const leadsListHeader = document.getElementById('leadsListHeader');
     const leadFilterParam = new URLSearchParams(window.location.search).get('lead_filter');
@@ -913,40 +924,37 @@ body {
     // Call it on page load
     updateActiveButtonStyles();
 
-    // --- Bulk Assignment Logic (This is the crucial part that needs to always run) ---
-    // Re-declare or re-select these elements every time DOMContentLoaded fires
+    // --- Bulk Assignment and Delete Logic ---
     const selectAllCheckbox = document.getElementById('selectAllLeads');
     const leadCheckboxes = document.querySelectorAll('.lead-checkbox');
     const bulkAssignSection = document.getElementById('bulkAssignSection');
     const bulkAssignSalesmanSelect = document.getElementById('bulkAssignSalesman');
     const assignSelectedBtn = document.getElementById('assignSelectedBtn');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn'); // NEW: Get the bulk delete button
 
-    function toggleBulkAssignSection() {
-        // Ensure leadCheckboxes is re-queried or correctly reflects the current DOM
-        const currentLeadCheckboxes = document.querySelectorAll('.lead-checkbox'); // IMPORTANT: Re-query here
+    function toggleBulkActionsSection() {
+        const currentLeadCheckboxes = document.querySelectorAll('.lead-checkbox');
         const anyChecked = Array.from(currentLeadCheckboxes).some(checkbox => checkbox.checked);
         bulkAssignSection.style.display = anyChecked ? 'flex' : 'none';
     }
 
-    if (selectAllCheckbox) { // Check if selectAllCheckbox exists
+    if (selectAllCheckbox) {
         selectAllCheckbox.addEventListener('change', function() {
-            // Re-query leadCheckboxes here too to ensure they are current
             const currentLeadCheckboxes = document.querySelectorAll('.lead-checkbox');
             currentLeadCheckboxes.forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
-            toggleBulkAssignSection();
+            toggleBulkActionsSection();
         });
     }
 
-    // Attach listeners to individual lead checkboxes
     leadCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', toggleBulkAssignSection);
+        checkbox.addEventListener('change', toggleBulkActionsSection);
     });
 
-    if (assignSelectedBtn) { // Check if assignSelectedBtn exists
+    if (assignSelectedBtn) {
         assignSelectedBtn.addEventListener('click', function() {
-            const selectedLeadIds = Array.from(document.querySelectorAll('.lead-checkbox')) // Re-query here
+            const selectedLeadIds = Array.from(document.querySelectorAll('.lead-checkbox'))
                                             .filter(checkbox => checkbox.checked)
                                             .map(checkbox => checkbox.value);
             const assignedToUserId = bulkAssignSalesmanSelect.value;
@@ -999,6 +1007,54 @@ body {
         });
     }
 
+    // NEW: Bulk Delete Leads Functionality
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.addEventListener('click', function() {
+            const selectedLeadIds = Array.from(document.querySelectorAll('.lead-checkbox'))
+                                            .filter(checkbox => checkbox.checked)
+                                            .map(checkbox => checkbox.value);
+
+            if (selectedLeadIds.length === 0) {
+                alert('Please select at least one lead to delete.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete ${selectedLeadIds.length} selected lead(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            bulkDeleteBtn.textContent = 'Deleting...';
+            bulkDeleteBtn.disabled = true;
+
+            fetch("{% url 'bulk_delete_leads_ajax' %}", { // You'll need to define this URL in Django
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    lead_ids: selectedLeadIds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                bulkDeleteBtn.textContent = 'Delete Selected Leads';
+                bulkDeleteBtn.disabled = false;
+                if (data.success) {
+                    alert(data.message);
+                    location.reload(); // Reload the page to show updated list
+                } else {
+                    alert("Failed to delete leads: " + data.error);
+                }
+            })
+            .catch(error => {
+                bulkDeleteBtn.textContent = 'Delete Selected Leads';
+                bulkDeleteBtn.disabled = false;
+                console.error("Error during bulk lead deletion:", error);
+                alert("Something went wrong during bulk lead deletion.");
+            });
+        });
+    }
 
     // Individual Lead Assignment
     function assignLead(selectElem, leadId) {
@@ -1056,6 +1112,13 @@ body {
         });
     }
     window.assignLead = assignLead;
+
+    // --- Confirmation for Delete Category ---
+    function confirmDeleteCategory() {
+        const categoryName = "{{ selected_category|default:'this category' }}";
+        return confirm(`Are you sure you want to delete ${categoryName}? This action cannot be undone.`);
+    }
+    window.confirmDeleteCategory = confirmDeleteCategory; // Make it globally accessible
 });
     </script>
 </body>

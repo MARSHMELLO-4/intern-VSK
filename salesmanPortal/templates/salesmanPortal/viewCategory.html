@@ -777,366 +777,380 @@
     </style>
   </head>
   <body>
-    <aside class="category-drawer">
-      <div class="drawer-header">
-        <h4><i class="bi bi-collection me-2"></i>Categories</h4>
-        <button class="toggle-btn" id="drawerToggle">
-          {# Desktop toggle button #}
-          <i class="bi bi-chevron-double-left"></i>
-        </button>
-        <button
-          class="close-mobile-drawer-btn d-lg-none"
-          id="closeDrawerButton"
+  <aside class="category-drawer">
+    <div class="drawer-header">
+      <h4><i class="bi bi-collection me-2"></i>Categories</h4>
+      <button class="toggle-btn" id="drawerToggle">
+        {# Desktop toggle button #}
+        <i class="bi bi-chevron-double-left"></i>
+      </button>
+      <button
+        class="close-mobile-drawer-btn d-lg-none"
+        id="closeDrawerButton"
+      >
+        {# Mobile close button #}
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="drawer-content">
+      {% if categories %}
+      <div class="category-list">
+        {% for category_item in categories %}
+        <a
+          href="{% url 'adminDashboard' category_item.id %}"
+          class="category-item"
         >
-          {# Mobile close button #}
-          <i class="bi bi-x-lg"></i>
-        </button>
+          <i class="bi bi-folder-fill"></i>
+          <span>{{ category_item.name }}</span>
+          <i class="bi bi-chevron-right ms-auto text-muted chevron"></i>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="bi bi-folder-x"></i>
+        <p>No categories yet</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="drawer-footer">
+      <a href="{% url 'addCategory' %}" class="btn-add">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add Category</span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    {# Overlay for mobile drawer #}
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <header class="dashboard-header">
+      {# Mobile Hamburger menu button (visible only on small screens) #}
+      <button
+        class="drawer-toggle d-flex d-lg-none"
+        type="button"
+        id="mobileDrawerToggle"
+      >
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div class="dashboard-title">
+        <h2><i class="bi bi-speedometer2 me-2"></i>Kripalu Innovations</h2>
+        <p>Admin Dashboard</p>
       </div>
 
-      <div class="drawer-content">
-        {% if categories %}
-        <div class="category-list">
-          {% for category_item in categories %}
-          <a
-            href="{% url 'adminDashboard' category_item.id %}"
-            class="category-item"
-          >
-            <i class="bi bi-folder-fill"></i>
-            <span>{{ category_item.name }}</span>
-            <i class="bi bi-chevron-right ms-auto text-muted chevron"></i>
-          </a>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-          <i class="bi bi-folder-x"></i>
-          <p>No categories yet</p>
-        </div>
-        {% endif %}
-      </div>
-
-      <div class="drawer-footer">
-        <a href="{% url 'addCategory' %}" class="btn-add">
-          <i class="bi bi-plus-lg"></i>
-          <span>Add Category</span>
+      <div class="btn-group">
+        {# Wrap multiple buttons in a group for better layout control #}
+        <a href="{% url 'downloadLeads' %}" class="btn-logout">
+          <i class="bi bi-download"></i> Download Leads
+        </a>
+        <a href="{% url 'requestPage' %}" class="btn-logout">
+          <i class="bi bi-bell-fill"></i> Requests
+        </a>
+        <a href="{% url 'viewBDAs' %}" class="btn-logout">
+          <i class="bi bi-people-fill"></i> Salesman List
+        </a>
+        <a href="{% url 'logoutAdmin' %}" class="btn-logout">
+          <i class="bi bi-box-arrow-right"></i> Logout
         </a>
       </div>
-    </aside>
+    </header>
 
-    <main class="main-content">
-      {# Overlay for mobile drawer #}
-      <div class="drawer-overlay" id="drawerOverlay"></div>
-
-      <header class="dashboard-header">
-        {# Mobile Hamburger menu button (visible only on small screens) #}
+    <div class="container-fluid mt-3">
+      {% if messages %}
+      {% for message in messages %}
+      <div
+        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
         <button
-          class="drawer-toggle d-flex d-lg-none"
           type="button"
-          id="mobileDrawerToggle"
-        >
-          <i class="bi bi-list"></i>
-        </button>
-
-        <div class="dashboard-title">
-          <h2><i class="bi bi-speedometer2 me-2"></i>Kripalu Innovations</h2>
-          <p>Admin Dashboard</p>
-        </div>
-
-        <div class="btn-group">
-          {# Wrap multiple buttons in a group for better layout control #}
-          <a href="{% url 'downloadLeads' %}" class="btn-logout">
-            <i class="bi bi-download"></i> Download Leads
-          </a>
-          <a href="{% url 'requestPage' %}" class="btn-logout">
-            <i class="bi bi-bell-fill"></i> Requests
-          </a>
-          <a href="{% url 'viewBDAs' %}" class="btn-logout">
-            <i class="bi bi-people-fill"></i> Salesman List
-          </a>
-          <a href="{% url 'logoutAdmin' %}" class="btn-logout">
-            <i class="bi bi-box-arrow-right"></i> Logout
-          </a>
-        </div>
-      </header>
-
-      <div class="content-container">
-        <h3>
-          <i class="bi bi-funnel-fill me-2"></i>Lead Filters & Search
-        </h3>
-        <div class="filters-container">
-          <form method="get" class="row g-3">
-            <div class="col-md-4">
-              <label for="searchQuery" class="form-label">Search Leads</label>
-              <input
-                type="text"
-                class="form-control"
-                id="searchQuery"
-                name="q"
-                placeholder="Name, Email, Company..."
-                value="{{ request.GET.q }}"
-              />
-            </div>
-            <div class="col-md-3">
-              <label for="statusFilter" class="form-label">Status</label>
-              <select class="form-select" id="statusFilter" name="status">
-                <option value="">All Statuses</option>
-                {% for status_value, status_label in status_choices %}
-                <option
-                  value="{{ status_value }}"
-                  {% if request.GET.status == status_value %}selected{% endif %}
-                >
-                  {{ status_label }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label for="priorityFilter" class="form-label">Priority</label>
-              <select class="form-select" id="priorityFilter" name="priority">
-                <option value="">All Priorities</option>
-                {% for priority_value, priority_label in priority_choices %}
-                <option
-                  value="{{ priority_value }}"
-                  {% if request.GET.priority == priority_value %}selected{% endif %}
-                >
-                  {{ priority_label }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label for="assignedToFilter" class="form-label"
-                >Assigned To</label
-              >
-              <select
-                class="form-select"
-                id="assignedToFilter"
-                name="assigned_to"
-              >
-                <option value="">All Salesmen</option>
-                {% for salesman in salesmen %}
-                <option
-                  value="{{ salesman.id }}"
-                  {% if request.GET.assigned_to|stringformat:"s" == salesman.id|stringformat:"s" %}selected{% endif %}
-                >
-                  {{ salesman.get_full_name|default:salesman.username }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label for="categoryFilter" class="form-label">Category</label>
-              <select class="form-select" id="categoryFilter" name="category">
-                <option value="">All Categories</option>
-                {% for cat in categories %}
-                <option
-                  value="{{ cat.id }}"
-                  {% if request.GET.category|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}
-                >
-                  {{ cat.name }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {# --- NEW DATE FILTERS START --- #}
-            <div class="col-md-3">
-              <label for="startDateFilter" class="form-label"
-                >Start Date</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="startDateFilter"
-                name="start_date"
-                value="{{ request.GET.start_date }}"
-              />
-            </div>
-            <div class="col-md-3">
-              <label for="endDateFilter" class="form-label">End Date</label>
-              <input
-                type="date"
-                class="form-control"
-                id="endDateFilter"
-                name="end_date"
-                value="{{ request.GET.end_date }}"
-              />
-            </div>
-            {# --- NEW DATE FILTERS END --- #}
-
-            <div class="col-12 d-flex justify-content-end gap-2">
-              <button type="submit" class="btn btn-apply-filters">
-                <i class="bi bi-funnel me-2"></i>Apply Filters
-              </button>
-              <a
-                href="{% url 'viewCategory' %}"
-                class="btn btn-clear-filters"
-              >
-                <i class="bi bi-x-circle me-2"></i>Clear Filters
-              </a>
-            </div>
-          </form>
-        </div>
-
-        <h3><i class="bi bi-person-lines-fill me-2"></i>Leads List</h3>
-        {% if leads %}
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped align-middle">
-            <thead class="table-primary">
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Company</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Assigned To</th>
-                <th>Category</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for lead in leads %}
-              <tr>
-                <td>{{ lead.name }}</td>
-                <td class="text-primary">{{ lead.email }}</td>
-                <td>{{ lead.company }}</td>
-                <td>{{ lead.get_status_display }}</td>
-                <td>{{ lead.get_priority_display }}</td>
-                <td>
-                  {% if lead.assigned_to %}
-                    {{ lead.assigned_to.get_full_name|default:lead.assigned_to.username }}
-                  {% else %}
-                    <span class="text-muted">Unassigned</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if lead.category %}
-                    {{ lead.category.name }}
-                  {% else %}
-                    <span class="text-muted">N/A</span>
-                  {% endif %}
-                </td>
-                <td>
-                  <a
-                    href="{% url 'viewLead' lead.id %}"
-                    class="btn btn-sm btn-outline-primary"
-                  >
-                    View
-                  </a>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-        <div class="alert alert-info">
-          <i class="bi bi-info-circle me-2"></i> No lead records found matching
-          your criteria.
-        </div>
-        {% endif %}
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
-    </main>
+      {% endfor %}
+      {% endif %}
+    </div>
+    <div class="content-container">
+      <h3><i class="bi bi-funnel-fill me-2"></i>Lead Filters & Search</h3>
+      <div class="filters-container">
+        <form method="get" class="row g-3">
+          <div class="col-md-4">
+            <label for="searchQuery" class="form-label">Search Leads</label>
+            <input
+              type="text"
+              class="form-control"
+              id="searchQuery"
+              name="q"
+              placeholder="Name, Email, Company..."
+              value="{{ request.GET.q }}"
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="statusFilter" class="form-label">Status</label>
+            <select class="form-select" id="statusFilter" name="status">
+              <option value="">All Statuses</option>
+              {% for status_value, status_label in status_choices %}
+              <option
+                value="{{ status_value }}"
+                {% if request.GET.status == status_value %}selected{% endif %}
+              >
+                {{ status_label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="priorityFilter" class="form-label">Priority</label>
+            <select class="form-select" id="priorityFilter" name="priority">
+              <option value="">All Priorities</option>
+              {% for priority_value, priority_label in priority_choices %}
+              <option
+                value="{{ priority_value }}"
+                {% if request.GET.priority == priority_value %}selected{% endif %}
+              >
+                {{ priority_label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="assignedToFilter" class="form-label"
+              >Assigned To</label
+            >
+            <select
+              class="form-select"
+              id="assignedToFilter"
+              name="assigned_to"
+            >
+              <option value="">All Salesmen</option>
+              {% for salesman in salesmen %}
+              <option
+                value="{{ salesman.id }}"
+                {% if request.GET.assigned_to|stringformat:"s" == salesman.id|stringformat:"s" %}selected{% endif %}
+              >
+                {{ salesman.get_full_name|default:salesman.username }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="categoryFilter" class="form-label">Category</label>
+            <select class="form-select" id="categoryFilter" name="category">
+              <option value="">All Categories</option>
+              {% for cat in categories %}
+              <option
+                value="{{ cat.id }}"
+                {% if request.GET.category|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}
+              >
+                {{ cat.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+          {# --- NEW DATE FILTERS START --- #}
+          <div class="col-md-3">
+            <label for="startDateFilter" class="form-label"
+              >Start Date</label
+            >
+            <input
+              type="date"
+              class="form-control"
+              id="startDateFilter"
+              name="start_date"
+              value="{{ request.GET.start_date }}"
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="endDateFilter" class="form-label">End Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="endDateFilter"
+              name="end_date"
+              value="{{ request.GET.end_date }}"
+            />
+          </div>
+          {# --- NEW DATE FILTERS END --- #}
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Get elements
-        const drawerToggle = document.getElementById("drawerToggle"); // Desktop chevron toggle
-        const drawer = document.querySelector(".category-drawer");
-        const mobileDrawerToggle =
-          document.getElementById("mobileDrawerToggle"); // Mobile hamburger toggle
-        const closeDrawerButton = document.getElementById("closeDrawerButton"); // New mobile X close button
-        const drawerOverlay = document.getElementById("drawerOverlay"); // Overlay element
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-apply-filters">
+              <i class="bi bi-funnel me-2"></i>Apply Filters
+            </button>
+            <a
+              href="{% url 'viewCategory' %}"
+              class="btn btn-clear-filters"
+            >
+              <i class="bi bi-x-circle me-2"></i>Clear Filters
+            </a>
+          </div>
+        </form>
+      </div>
 
-        // Desktop drawer collapse/expand functionality
-        if (drawerToggle) {
-          drawerToggle.addEventListener("click", function () {
-            drawer.classList.toggle("collapsed");
-            const icon = this.querySelector("i");
-            if (drawer.classList.contains("collapsed")) {
-              icon.classList.remove("bi-chevron-double-left");
-              icon.classList.add("bi-chevron-double-right");
-            } else {
-              icon.classList.remove("bi-chevron-double-right");
-              icon.classList.add("bi-chevron-double-left");
-            }
-            localStorage.setItem(
-              "drawerCollapsed",
-              drawer.classList.contains("collapsed")
-            ); // Store state
-          });
-        }
+      <h3><i class="bi bi-person-lines-fill me-2"></i>Leads List</h3>
+      {% if leads %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Assigned To</th>
+              <th>Category</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lead in leads %}
+            <tr>
+              <td>{{ lead.name }}</td>
+              <td class="text-primary">{{ lead.email }}</td>
+              <td>{{ lead.company }}</td>
+              <td>{{ lead.get_status_display }}</td>
+              <td>{{ lead.get_priority_display }}</td>
+              <td>
+                {% if lead.assigned_to %}
+                {{ lead.assigned_to.get_full_name|default_if_none:lead.assigned_to.username }}
+                {% else %}
+                <span class="text-muted">Unassigned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if lead.category %} {{ lead.category.name }} {% else %}
+                <span class="text-muted">N/A</span>
+                {% endif %}
+              </td>
+              <td>
+                <a
+                  href="{% url 'viewLead' lead.id %}"
+                  class="btn btn-sm btn-outline-primary"
+                >
+                  View
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i> No lead records found matching
+        your criteria.
+      </div>
+      {% endif %}
+    </div>
+  </main>
 
-        // Apply stored drawer state on load for desktop view only
-        // This prevents the drawer from starting collapsed on mobile if it was collapsed on desktop previously
-        if (
-          window.innerWidth > 992 &&
-          localStorage.getItem("drawerCollapsed") === "true"
-        ) {
-          drawer.classList.add("collapsed");
-          if (drawerToggle) {
-            const icon = drawerToggle.querySelector("i");
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Get elements
+      const drawerToggle = document.getElementById("drawerToggle"); // Desktop chevron toggle
+      const drawer = document.querySelector(".category-drawer");
+      const mobileDrawerToggle =
+        document.getElementById("mobileDrawerToggle"); // Mobile hamburger toggle
+      const closeDrawerButton = document.getElementById("closeDrawerButton"); // New mobile X close button
+      const drawerOverlay = document.getElementById("drawerOverlay"); // Overlay element
+
+      // Desktop drawer collapse/expand functionality
+      if (drawerToggle) {
+        drawerToggle.addEventListener("click", function () {
+          drawer.classList.toggle("collapsed");
+          const icon = this.querySelector("i");
+          if (drawer.classList.contains("collapsed")) {
             icon.classList.remove("bi-chevron-double-left");
             icon.classList.add("bi-chevron-double-right");
+          } else {
+            icon.classList.remove("bi-chevron-double-right");
+            icon.classList.add("bi-chevron-double-left");
           }
-        }
-
-        // Mobile drawer toggle (hamburger icon in header)
-        if (mobileDrawerToggle) {
-          mobileDrawerToggle.addEventListener("click", function () {
-            drawer.classList.toggle("open");
-            document.body.classList.toggle("drawer-open"); // Add/remove class on body for blur/overflow
-          });
-        }
-
-        // New: Close mobile drawer button (X icon inside drawer header)
-        if (closeDrawerButton) {
-          closeDrawerButton.addEventListener("click", function () {
-            drawer.classList.remove("open");
-            document.body.classList.remove("drawer-open");
-          });
-        }
-
-        // Close mobile drawer when clicking outside (on overlay)
-        if (drawerOverlay) {
-          drawerOverlay.addEventListener("click", function () {
-            drawer.classList.remove("open");
-            document.body.classList.remove("drawer-open");
-          });
-        }
-
-        // Close mobile drawer when a category item is clicked (only on mobile)
-        const categoryItems = document.querySelectorAll(".category-item");
-        categoryItems.forEach((item) => {
-          item.addEventListener("click", function () {
-            if (window.innerWidth <= 992) {
-              // Apply only for mobile viewports
-              drawer.classList.remove("open");
-              document.body.classList.remove("drawer-open");
-            }
-          });
+          localStorage.setItem(
+            "drawerCollapsed",
+            drawer.classList.contains("collapsed")
+          ); // Store state
         });
+      }
 
-        // Add subtle click animation to cards and category items
-        const clickableElements = document.querySelectorAll(
-          ".salesman-card, .category-item"
-        );
-        clickableElements.forEach((element) => {
-          element.addEventListener("mousedown", function () {
-            this.style.transform = "translateY(2px)";
-          });
+      // Apply stored drawer state on load for desktop view only
+      // This prevents the drawer from starting collapsed on mobile if it was collapsed on desktop previously
+      if (
+        window.innerWidth > 992 &&
+        localStorage.getItem("drawerCollapsed") === "true"
+      ) {
+        drawer.classList.add("collapsed");
+        if (drawerToggle) {
+          const icon = drawerToggle.querySelector("i");
+          icon.classList.remove("bi-chevron-double-left");
+          icon.classList.add("bi-chevron-double-right");
+        }
+      }
 
-          element.addEventListener("mouseup", function () {
-            this.style.transform = "";
-          });
+      // Mobile drawer toggle (hamburger icon in header)
+      if (mobileDrawerToggle) {
+        mobileDrawerToggle.addEventListener("click", function () {
+          drawer.classList.toggle("open");
+          document.body.classList.toggle("drawer-open"); // Add/remove class on body for blur/overflow
+        });
+      }
 
-          element.addEventListener("mouseleave", function () {
-            this.style.transform = "";
-          });
+      // New: Close mobile drawer button (X icon inside drawer header)
+      if (closeDrawerButton) {
+        closeDrawerButton.addEventListener("click", function () {
+          drawer.classList.remove("open");
+          document.body.classList.remove("drawer-open");
+        });
+      }
+
+      // Close mobile drawer when clicking outside (on overlay)
+      if (drawerOverlay) {
+        drawerOverlay.addEventListener("click", function () {
+          drawer.classList.remove("open");
+          document.body.classList.remove("drawer-open");
+        });
+      }
+
+      // Close mobile drawer when a category item is clicked (only on mobile)
+      const categoryItems = document.querySelectorAll(".category-item");
+      categoryItems.forEach((item) => {
+        item.addEventListener("click", function () {
+          if (window.innerWidth <= 992) {
+            // Apply only for mobile viewports
+            drawer.classList.remove("open");
+            document.body.classList.remove("drawer-open");
+          }
         });
       });
-    </script>
-  </body>
+
+      // Add subtle click animation to cards and category items
+      const clickableElements = document.querySelectorAll(
+        ".salesman-card, .category-item"
+      );
+      clickableElements.forEach((element) => {
+        element.addEventListener("mousedown", function () {
+          this.style.transform = "translateY(2px)";
+        });
+
+        element.addEventListener("mouseup", function () {
+          this.style.transform = "";
+        });
+
+        element.addEventListener("mouseleave", function () {
+          this.style.transform = "";
+        });
+      });
+    });
+  </script>
+</body>
 </html>
